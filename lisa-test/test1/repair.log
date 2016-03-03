@@ -1,0 +1,16 @@
+Initialize the program!
+Verify Test Cases
+All passed!
+Done Verification
+Generating repair candidates!
+Total 0 different repair schemas!!!!
+Total 0 different repair candidate templates for scoring!!!
+Trying different candidates!
+BasicTester pointer: 0x3532a60
+StringConstTester pointer: 0x35326d0
+CondTester pointer: 0x3532320
+Repair process ends without working fix!!
+Total 0 different repair schemas!!!!
+Total 0 different repair candidate templates for scoring!!!
+Total number of compiles: 0
+Total number of test eval: 12

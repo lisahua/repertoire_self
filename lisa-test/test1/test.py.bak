@@ -1,0 +1,18 @@
+#!/bin/bash
+
+B_DIR=/home/ubuntu/lisa/test1/src/
+T_DIR=/home/ubuntu/lisa/test1/test/
+
+
+
+sh $T_DIR/test.sh $B_DIR/DoublyLinkedList n1
+sh $T_DIR/test.sh $B_DIR/DoublyLinkedList n2
+sh $T_DIR/test.sh $B_DIR/DoublyLinkedList n3
+sh $T_DIR/test.sh $B_DIR/DoublyLinkedList n4
+sh $T_DIR/test.sh $B_DIR/DoublyLinkedList n5
+sh $T_DIR/test.sh $B_DIR/DoublyLinkedList n6
+sh $T_DIR/test.sh $B_DIR/DoublyLinkedList n7
+sh $T_DIR/test.sh $B_DIR/DoublyLinkedList n8
+sh $T_DIR/test.sh $B_DIR/DoublyLinkedList n9
+sh $T_DIR/test.sh $B_DIR/DoublyLinkedList n10
+sh $T_DIR/test.sh $B_DIR/DoublyLinkedList p1
