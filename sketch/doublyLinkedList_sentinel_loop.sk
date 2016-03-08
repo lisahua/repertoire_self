@@ -1,0 +1,90 @@
+struct Entry{
+    int element;
+    Entry next;
+    Entry previous;
+}
+
+Entry newEntry(){
+    Entry n = new Entry();
+    n.previous = null;
+    n.next = null;
+    return n;
+}
+
+struct LinkedList{
+    Entry header;
+    int size;
+}
+
+LinkedList newList() {
+    LinkedList l = new LinkedList();
+    l.header = newEntry();
+   // l.header.next = l.header;
+   // l.header.previous = l.header;
+    l.size = 0;
+    return l;
+}
+
+void addFirst(LinkedList l, int o) {
+    Entry t = l.header.next;
+    Entry e = newEntry();
+    e.element = o;
+    l.header.next = e;
+    e.previous = l.header;
+    e.next = t;
+ //   t.previous = l.header;
+ if (condition(t,e,l))
+    t.previous = {|e|l.header|}; //BUG
+ //   l.size = l.size+??;//BUG omission 
+}
+
+bit condition(Entry t, Entry e, LinkedList l) {
+    Entry a = {|(t|e|head)(.next|.previous)?|};
+    Entry b  = {|t|e|head|null|};
+    return {|a==b|a!=b|true|};
+}
+
+Entry getLastEntry(LinkedList l) {
+    Entry e = l.header;
+    if (e==null|| e.next ==null)
+        return e;
+    while (e.next != null) {
+        e = e.next;
+    }
+    return e;
+}
+
+void checkList(LinkedList l) {
+        Entry head = l.header;
+       
+        Entry cur = head.next;
+        Entry prev = head;
+        int len = 0;
+        while (cur != null) {
+            assert cur.previous == prev;
+            assert prev.next == cur;
+            prev = cur;
+            cur = cur.next;  
+            len = len+1;
+        }
+        assert prev.next == null;
+       // assert len == l.size;
+    }
+
+harness void insertFrontHarness() {
+    int length = 4;
+    LinkedList l = newList();
+    Entry cur = l.header;
+    //test insert
+    for (int i = 0; i < length; i++) {
+        addFirst(l, i);
+        checkList(l);
+    }
+//test insert correct;
+  cur = l.header.next;
+    for (int i = 0; i < length; i++) {
+      assert cur.element == length - i - 1;
+       cur = cur.next;
+   }
+  assert cur == null;   
+}
