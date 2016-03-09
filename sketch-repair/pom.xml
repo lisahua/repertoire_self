@@ -4,6 +4,36 @@
   <artifactId>sketch-repair</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>sketch-repair</name>
+<build>
+  <plugins>
+    <plugin>
+      <!-- Build an executable JAR -->
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-assembly-plugin</artifactId>
+      <version>2.4</version>
+      <configuration>
+        <archive>
+         <index>true</index>
+          <manifest>
+           <mainClass>sketch.compiler.main.RepairSketchMain</mainClass> 
+          </manifest>
+        </archive>
+        <descriptorRefs>
+          <descriptorRef>jar-with-dependencies</descriptorRef>
+        </descriptorRefs>
+      </configuration>
+     <!--  <executions>
+     <execution>
+      <id>make-my-jar-with-dependencies</id>  this is used for inheritance merges 
+      <phase>package</phase>  bind to the packaging phase 
+      <goals>
+        <goal>single</goal>
+      </goals>
+    </execution> 
+  </executions> -->
+    </plugin>
+  </plugins>
+</build>
 
   <properties>
     <default.encoding>UTF-8</default.encoding>
@@ -17,5 +47,11 @@
   		<artifactId>junit</artifactId>
   		<version>4.11</version>
   	</dependency>
+  		<dependency>
+  		<groupId>ece.utexas.edu</groupId>
+  		<artifactId>sketch</artifactId>
+  		<version>1.7.0</version>
+  	</dependency>
+  	
   </dependencies>
 </project>
