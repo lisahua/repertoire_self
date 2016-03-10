@@ -34,7 +34,7 @@ void addFirst(LinkedList l, int o) {
    // if (t!=null)
    //  t.previous = l.header;
     t.previous = {|e|l.header|}; //BUG
-    l.size = l.size+??;//BUG omission 
+   // l.size = l.size+??;//BUG omission 
 }
 
 bit condition(Entry t, Entry e, Entry head) {

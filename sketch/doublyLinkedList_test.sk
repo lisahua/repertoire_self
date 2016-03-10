@@ -31,7 +31,7 @@ void addFirst(LinkedList l, int o) {
     e.previous = l.header;
     e.next = t;
     update_Entry(t,e,l); //BUG Entry
-    update_Size(l); //BUG size
+   // update_Size(l); //Intended bug BUG size
 }
 
 //should be auto
