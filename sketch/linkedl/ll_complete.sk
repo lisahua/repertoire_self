@@ -1,0 +1,190 @@
+struct Node {
+Node next;
+int value;
+}
+
+struct LinkedList {
+Node header;
+}
+
+Node newNode() {
+Node n = new Node();
+n.next = null;
+return n;
+}
+//sentinel header
+LinkedList newList() {
+LinkedList l = new LinkedList();
+l.header = newNode();
+return l;
+}
+
+void reverse(LinkedList l) {
+Node a =l.header.next;
+if (a==null || a.next==null)
+    return;
+    
+Node b = a.next;
+Node c = null;
+a.next =null;
+ while (b !=null) {
+    l.header.next = b;
+    c = b.next;
+    b.next = a;
+    a = b;
+    b = b.next;
+ }
+}
+
+Node addFirst (LinkedList l, int val) {
+Node n = newNode();
+n.value = val;
+Node first = l.header.next;
+n.next = first;
+l.header.next = n;
+return n;
+}
+
+
+Node addLast (LinkedList l, int val) {
+Node n = newNode();
+n.value = val;
+Node prev = l.header.next;
+if (prev ==null) {
+l.header.next = n;
+}
+while (prev.next!=null) {
+prev = prev.next;
+}
+prev.next = n;
+return n;
+}
+
+
+Node deleteFirst(LinkedList l) {
+Node n = l.header.next;
+if (n!=null) {
+l.header.next = n.next;
+}
+return n;
+}
+
+
+Node deleteLast(LinkedList l) {
+Node n = l.header.next;
+    if (n ==null)
+    return n;
+    Node prev = null;
+    while (n.next!=null) {
+        prev=n;
+        n= n.next;
+    }
+    prev.next = null;
+    return n;
+}
+
+Node findLast(LinkedList l) {
+    Node n = l.header.next;
+    Node prev = null;
+    while (n!= null) {
+    prev = n;
+    n = n.next;
+    }
+    return prev;
+}
+
+void swapHeadTail(LinkedList l) {
+    Node n = l.header.next;
+    Node prev = null;
+    if (n ==null)
+        return;
+    while (n.next!= null) {
+        prev = n;
+        n = n.next;
+    }
+   if ( prev !=null) {
+prev.next = l.header.next;
+n.next = l.header.next.next;
+l.header.next = n;
+prev.next.next = null;
+   }
+}
+
+void swapTwoNodes (LinkedList l, Node a, Node b) {
+if (a==null|| b==null || (a.val ==b.val&& a.next ==b.next)) 
+return;
+Node tmp = l.header.next;
+Node a_prev = null;
+Node b_prev =null;
+
+while (tmp!=null && (a_prev ==null || b.prev ==null)) {
+if (tmp.next.val == a.val && tmp.next.next = a.next)
+a_prev =tmp;
+if (tmp.next.val == b.val && tmp.next.next = b.next)
+b_prev =tmp;
+}
+if (a_prev ==null || b.prev ==null) return;
+Node a_next = a.next;
+a.next = b.next;
+b_prev.next = a;
+b.next = a_next;
+a_prev.next = b;
+}
+
+
+harness void reverseHarness() {
+//Empty
+LinkedList l = newList();
+reverse(l);
+assert l.header == null;
+
+//insert 1
+Node one = addFirst(l,1);
+reverse(l);
+assert l.header == one;
+assert one.next ==null;
+
+//insert 2;
+Node two = addFirst(l,2);
+reverse(l);
+assert l.header == one;
+assert one.next ==two;
+assert two.next ==null;
+
+//insert 3;
+Node three = addFirst(l,3);
+reverse(l);
+assert l.header == one;
+assert one.next ==two;
+assert two.next ==three;
+assert three.next == null;
+
+}
+
+harness void addFirstHarness() {
+
+}
+
+harness void addLastHarness() {
+
+}
+
+harness void deleteFirstHarness() {
+
+}
+
+harness void deleteLastHarness() {
+
+}
+harness void findLastHarness() {
+
+}
+
+harness void swapHeadTailHarness() {
+
+}
+harness void swapTwoNodeHarness() {
+
+}
+
+

@@ -1,0 +1,106 @@
+struct List{
+    Node head;
+    Node tail;
+}
+
+List newList() {
+    List l = new List();
+    l.head = null;
+    l.tail = null;
+    return l;
+}
+
+struct Node{
+    int val;
+    Node next;
+    Node prev;
+}
+
+Node newNode(int v){
+    Node n = new Node();
+    n.val = v;
+    n.prev = null;
+    n.next = null;
+    return n;
+}
+void insertFront(List l, Node n) {
+    update(l, n);
+}
+generator void update(List l, Node n) {
+    loop(??) {
+        if (condition(l)) {
+            {| (l.head | l.tail | n (.next | .prev)) (.next | .prev)? |} = {| l.head | l.tail | n | null |}; 
+        }
+    }       
+}
+
+generator bit condition(List l) {
+    Node a = {| l.head | l.tail |};
+    Node b = {| null |};    
+    return {| a == b | a != b | true |};
+}
+
+void repOk(List l) {
+    // head and tail should be either both null or both non-null
+    if (l.head == null) {
+        assert l.tail == null;                        
+    } else {
+        assert l.tail != null;
+        Node n = l.head;
+        // head node should have no predecessor
+        assert n.prev == null;
+        // tail node should have no successor
+        assert l.tail.next == null;
+
+        // check two consecutive nodes in the list for correct pointers
+        Node cur = n.next;
+        Node prev = n;
+        while (cur != null) {
+            assert cur.prev == prev;
+            assert prev.next == cur;
+            prev = cur;
+            cur = cur.next;        
+        }
+        // last node should be tail
+        assert prev == l.tail;
+    }
+}
+
+harness void insertFrontHarness() {
+    int length = 4;
+    List l = newList();
+    for (int i = 0; i < length; i++) {
+        Node n = newNode(i);
+        insertFront(l, n);
+        repOk(l);
+    }
+
+    Node cur = l.head;
+    for (int i = 0; i < length; i++) {
+        assert cur.val == length - i - 1;
+        cur = cur.next;
+    }
+    assert cur == null;   
+}
+
+void insertBack(List l, Node n) {
+    update(l, n);
+}
+
+harness void insertBackHarness() {
+    int length = 4;
+    List l = newList();
+    for (int i = 0; i < length; i++) {
+        Node n = newNode(i);
+        insertBack(l, n);
+        repOk(l);
+    }
+
+    Node cur = l.head;
+    for (int i = 0; i < length; i++) {
+        assert cur.val == i;
+        cur = cur.next;
+    }
+    assert cur == null;
+}
+

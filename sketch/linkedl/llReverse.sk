@@ -1,0 +1,73 @@
+struct Node {
+Node next;
+int value;
+}
+
+struct LinkedList {
+Node header;
+}
+
+Node newNode() {
+Node n = new Node();
+n.next = null;
+return n;
+}
+
+LinkedList newList() {
+LinkedList l = new LinkedList();
+l.header=null;
+return l;
+}
+
+void reverse(LinkedList l) {
+Node a =null;
+Node b = null;
+ while (cond(a,b, l)) {
+ minrepeat{
+{|(l.header|a|b)(.next)?|} =  {|(l.header|a|b)(.next)?|null|}  ;
+ }
+ }
+}
+
+Node addFirst (LinkedList l, int val) {
+Node n = newNode();
+n.value = val;
+n.next = l.header;
+l.header = n;
+return n;
+}
+
+bit  cond(Node a, Node b, LinkedList l) {
+Node p = {|(l.header|a|b)(.next)?|};
+Node q = {|(l.header|a|b)(.next)?|null|} ;
+return {|p==q|p!=q|true|};
+}
+
+harness void reverseTestHarness() {
+//Empty
+LinkedList l = newList();
+reverse(l);
+assert l.header == null;
+
+//insert 1
+Node one = addFirst(l,1);
+reverse(l);
+assert l.header == one;
+assert one.next ==null;
+
+//insert 2;
+Node two = addFirst(l,2);
+reverse(l);
+assert l.header == one;
+assert one.next ==two;
+assert two.next ==null;
+
+//insert 3;
+Node three = addFirst(l,3);
+reverse(l);
+assert l.header == one;
+assert one.next ==two;
+assert two.next ==three;
+assert three.next == null;assert three.next == null;
+
+}

@@ -1,0 +1,57 @@
+struct node{
+    int val;
+    node prev;
+    node next;
+   
+}
+
+struct list{
+    node head;    
+}
+
+node newNode(int val){ 
+    node n = new node();
+    n.val = val;
+    n.prev = null;
+    n.next = null;
+    return n;   
+}
+
+void addFirst (list l, int o) {
+node n = newNode(o);
+if (l.head == null) {
+ l.head=n;
+}
+if (l.head != null) {
+n.next = l.head;
+l.head.prev = {| n | l.head |};
+l.head = n;
+}
+}
+
+    harness void test() {
+    list l = new list();
+    int i=0;
+    node n = l.head;
+    while (i<4) {
+    addFirst(l, i);
+i = i+1;
+    }
+    }
+     
+    //complete spec- 
+    harness void repOK(list l) {
+        node prev = l.head;
+        if (prev == null) return;
+      //   assert prev.prev == null;
+       node cur = prev.next;
+
+    while (cur != null) {
+           assert cur != prev;
+            assert cur.prev == prev;
+            assert prev.next == cur;
+            prev = cur;
+            cur = cur.next;        
+        }
+            }
+     

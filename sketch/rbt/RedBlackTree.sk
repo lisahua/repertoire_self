@@ -1,0 +1,66 @@
+struct Entry {
+    int key;
+    Entry left;
+    Entry right;
+    bit color;
+}
+
+Entry newEntry() {
+    Entry n = new Entry();
+    n.left = null;
+    n.right = null;
+    color = 0;//0 means black
+    return n;
+}
+
+struct RBTree {
+    Entry root;
+    int size;
+}
+
+RBTree newTree() {
+    RBTree t = new RBTree();
+    t.root = null;
+    t.size =0;
+}
+
+struct Stack  {
+    Entry[] list;
+    Entry top;
+}
+
+Stack newStack() {
+    Entry[100] list = new Entry[100];
+    
+}
+void push (Stack s, Entry e) {
+
+}
+int getBlackHeight(Entry e) {
+
+}
+
+
+void repOK(RBTree t) {
+    Entry root = t.root;
+    //5. root is black
+    if (root!=null)
+    assert root.color =0;
+    
+    while (root!=null) {
+    
+    //2. leaf is black
+    if (root.left ==null&& root.right==null)
+        assert root.color=0;
+        
+    //3. node red, both left and right are black
+    if (root.color==1) {
+        if (root.left!=null)
+            root.left.color =0;
+        if (root.right !=null)
+            root.right.color =0;
+    }
+    
+    
+}
+}
