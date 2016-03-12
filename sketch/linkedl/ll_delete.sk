@@ -22,8 +22,7 @@ return l;
 Node addFirst (LinkedList l, int val) {
 Node n = newNode();
 n.value = val;
-Node first = l.header.next;
-n.next = first;
+n.next = l.header.next;
 l.header.next = n;
 return n;
 }
@@ -42,7 +41,7 @@ Node deleteLast(LinkedList l) {
 Node n = l.header.next;
     if (n ==null)
     return n;
-    Node prev = null;
+    Node prev = l.header;
     while (n.next!=null) {
         prev=n;
         n= n.next;

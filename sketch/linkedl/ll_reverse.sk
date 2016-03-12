@@ -19,6 +19,16 @@ l.header = newNode();
 return l;
 }
 
+
+Node addFirst (LinkedList l, int val) {
+Node n = newNode();
+n.value = val;
+n.next = l.header.next;
+l.header.next = n;
+return n;
+}
+
+
 void reverse(LinkedList l) {
 Node a =l.header.next;
 if (a==null || a.next==null)
@@ -32,103 +42,8 @@ a.next =null;
     c = b.next;
     b.next = a;
     a = b;
-    b = b.next;
+    b = c;
  }
-}
-
-Node addFirst (LinkedList l, int val) {
-Node n = newNode();
-n.value = val;
-Node first = l.header.next;
-n.next = first;
-l.header.next = n;
-return n;
-}
-
-
-Node addLast (LinkedList l, int val) {
-Node n = newNode();
-n.value = val;
-Node prev = l.header.next;
-if (prev ==null) {
-l.header.next = n;
-}
-while (prev.next!=null) {
-prev = prev.next;
-}
-prev.next = n;
-return n;
-}
-
-
-Node deleteFirst(LinkedList l) {
-Node n = l.header.next;
-if (n!=null) {
-l.header.next = n.next;
-}
-return n;
-}
-
-
-Node deleteLast(LinkedList l) {
-Node n = l.header.next;
-    if (n ==null)
-    return n;
-    Node prev = null;
-    while (n.next!=null) {
-        prev=n;
-        n= n.next;
-    }
-    prev.next = null;
-    return n;
-}
-
-Node findLast(LinkedList l) {
-    Node n = l.header.next;
-    Node prev = null;
-    while (n!= null) {
-    prev = n;
-    n = n.next;
-    }
-    return prev;
-}
-
-void swapHeadTail(LinkedList l) {
-    Node n = l.header.next;
-    Node prev = null;
-    if (n ==null)
-        return;
-    while (n.next!= null) {
-        prev = n;
-        n = n.next;
-    }
-   if ( prev !=null) {
-prev.next = l.header.next;
-n.next = l.header.next.next;
-l.header.next = n;
-prev.next.next = null;
-   }
-}
-
-void swapTwoNodes (LinkedList l, Node a, Node b) {
-if (a==null|| b==null || (a.val ==b.val&& a.next ==b.next)) 
-return;
-Node tmp = l.header;
-Node a_prev = null;
-Node b_prev =null;
-
-while (tmp!=null && (a_prev ==null || b.prev ==null)) {
-if (tmp.next.val == a.val && tmp.next.next = a.next)
-a_prev =tmp;
-if (tmp.next.val == b.val && tmp.next.next = b.next)
-b_prev =tmp;
-}
-if (a_prev ==null || b.prev ==null) return;
-Node a_next = a.next;
-a.next = b.next;
-b_prev.next = a;
-b.next = a_next;
-a_prev.next = b;
 }
 
 harness void reverseHarness() {
@@ -144,340 +59,24 @@ assert l.header.next == one;
 assert one.next ==null;
 
 //insert 2;
+l = newList();
+one = addFirst(l,1);
 Node two = addFirst(l,2);
 reverse(l);
-assert l.header.next == two;
-assert two.next ==one;
-assert one.next ==null;
+
+assert l.header.next == one;
+assert one.next ==two;
+assert two.next ==null;
 
 //insert 3;
+l = newList();
+one = addFirst(l,1);
+two = addFirst(l,2);
 Node three = addFirst(l,3);
 reverse(l);
-assert l.header.next == three;
-assert three.next ==two;
-assert two.next ==one;
-assert one.next == null;
-
-}
-
-harness void addFirstHarness() {
-//Empty
-LinkedList l = newList();
-assert l.header.next == null;
-
-//insert 1
-Node one = addFirst(l,1);
-assert l.header.next == one;
-assert one.next ==null;
-
-//insert 2;
-Node two = addFirst(l,2);
-assert l.header.next == two;
-assert one.next ==two;
-assert two.next ==null;
-
-//insert 3;
-Node three = addFirst(l,3);
-assert l.header.next == one;
-assert one.next ==two;
-assert two.next ==three;
-assert three.next == null;
-}
-
-harness void addLastHarness() {
-//Empty
-LinkedList l = newList();
-assert l.header.next == null;
-
-//insert 1
-Node one = addLast(l,1);
-assert l.header.next == one;
-assert one.next ==null;
-
-//insert 2;
-Node two = addLast(l,2);
-assert l.header.next == one;
-assert one.next ==two;
-assert two.next ==null;
-
-//insert 3;
-Node three = addLast(l,3);
-assert l.header.next == one;
-assert one.next ==two;
-assert two.next ==three;
-assert three.next == null;
-}
-
-harness void deleteFirstHarness() {
-//Empty
-LinkedList l = newList();
-Node n = deleteFirst(l);
-assert n == null;
-assert l.header.next == null;
-
-//insert 1
- l = newList();
-Node one = addFirst(l,1);
-n = deleteFirst(l);
-assert n == one;
-assert l.header.next ==null;
-
-//insert 2;
- l = newList();
-one = addFirst(l,1);
-Node two = addFirst(l,2);
-n = deleteFirst(l);
-assert l.header.next == one;
-assert two ==n;
-assert one.next == null;
-
-//insert 3;
- l = newList();
-one = addFirst(l,1);
-two = addFirst(l,2);
-Node three = addFirst(l,3);
-
-n = deleteFirst(l);
-assert l.header.next == two;
-assert two.next ==one;
-assert three ==n;
-}
-
-harness void deleteLastHarness() {
-//Empty
-LinkedList l = newList();
-Node n = deleteLast(l);
-assert n == null;
-assert l.header.next == null;
-
-//insert 1
- l = newList();
-Node one = addFirst(l,1);
-n = deleteLast(l);
-assert n == one;
-assert l.header.next ==null;
-
-//insert 2;
- l = newList();
-one = addFirst(l,1);
-Node two = addFirst(l,2);
-n = deleteLast(l);
-assert l.header.next == two;
-assert two.next ==null;
-assert n == one;
-
-//insert 3;
- l = newList();
-one = addFirst(l,1);
-two = addFirst(l,2);
-Node three = addFirst(l,3);
-
-n = deleteLast(l);
-assert l.header.next == three;
-assert three.next ==two;
-assert two.next ==null;
-assert one == n;
-}
-
-harness void findLastHarness() {
-//Empty
-LinkedList l = newList();
-Node n = findLast(l);
-assert l.header.next == null;
-assert n == null;
-
-//insert 1
-l = newList();
-Node one = addFirst(l,1);
-n = findLast(l);
-assert l.header.next == one;
-assert one == n;
-
-//insert 2;
-l = newList();
-one = addFirst(l,1);
-Node two = addFirst(l,2);
-n = findLast(l);
-assert l.header.next == two;
-assert two.next ==one;
-assert one == n;
-assert one.next ==null;
-
-//insert 3;
-l = newList();
-one = addFirst(l,1);
-two = addFirst(l,2);
-Node three = addLast(l,3);
-n = findLast(l);
-assert l.header.next == three;
-assert three.next ==two;
-assert two.next ==one;
-assert one.next == null;
-assert one == n;
-}
-
-harness void swapHeadTailHarness() {
-//Empty
-LinkedList l = newList();
- swapHeadTail(l);
-assert l.header.next == null;
-
-//insert 1
-l = newList();
-Node one = addFirst(l,1);
- swapHeadTail(l);
-assert l.header.next == one;
-
-//insert 2;
-l = newList();
-one = addFirst(l,1);
-Node two = addFirst(l,2);
-swapHeadTail(l);
-assert l.header.next == one;
-assert one.next == two;
-assert two.next == null;
-
-//insert 3;
-l = newList();
-one = addFirst(l,1);
-two = addFirst(l,2);
-Node three = addFirst(l,3);
-swapHeadTail(l);
 assert l.header.next == one;
 assert one.next ==two;
 assert two.next ==three;
 assert three.next == null;
 
-//insert 4;
-l = newList();
-one = addFirst(l,1);
-two = addFirst(l,2);
-three = addFirst(l,3);
-Node four = addFirst(l,4);
-swapHeadTail(l);
-assert l.header.next == one;
-assert one.next ==three;
-assert three.next ==two;
-assert two.next == four;
-assert four.next == null;
 }
-
-harness void swapTwoNodeHarness() {
-//Empty
-LinkedList l = newList();
- swapTwoNode(l,null,null);
-assert l.header.next == null;
-
-//insert 1
-l = newList();
-Node one = addFirst(l,1);
- swapTwoNode(l,null,null);
-assert l.header.next == one;
-
-//insert 2;
-l = newList();
-one = addFirst(l,1);
-Node two = addFirst(l,2);
- swapTwoNode(l,one, null);
-assert l.header.next == two;
-assert two.next ==one;
-assert one.next ==null;
-
- swapTwoNode(l, null,one);
-assert l.header.next == two;
-assert two.next ==one;
-assert one.next ==null;
-
- swapTwoNode(l,two, null);
-assert l.header.next == two;
-assert two.next ==one;
-assert one.next ==null;
-
- swapTwoNode(l, null,two);
-assert l.header.next == two;
-assert two.next ==one;
-assert one.next ==null;
-
- swapTwoNode(l, one,two);
-assert l.header.next == one;
-assert one.next ==two;
-assert two.next ==null;
-
- swapTwoNode(l, two,one);
-assert l.header.next == one;
-assert one.next ==two;
-assert two.next ==null;
-
-//insert 3;
-l = newList();
-one = addFirst(l,1);
-two = addFirst(l,2);
-Node three = addFirst(l,3);
-
- swapTwoNode(l,one,two);
-assert l.header.next == three;
-assert three.next ==one;
-assert one.next ==two;
-assert two.next == null;
-
- swapTwoNode(l,three,two);
-assert l.header.next == two;
-assert two.next ==one;
-assert one.next ==three;
-assert three.next == null;
-
-
- swapTwoNode(l,one,three);
-assert l.header.next == two;
-assert two.next ==one;
-assert one.next ==three;
-assert three.next == null;
-
-//insert 4;
-l = newList();
-one = addFirst(l,1);
-two = addFirst(l,2);
-three = addFirst(l,3);
-Node four = addFirst(l,4);
-
- swapTwoNode(l,three, two);
-assert l.header.next == four;
-assert four.next ==two;
-assert two.next ==three;
-assert three.next == one;
-assert one.next == null;
-
- swapTwoNode(l,four, three);
-assert l.header.next == three;
-assert three.next ==two;
-assert two.next ==four;
-assert four.next == one;
-assert one.next == null;
-
- swapTwoNode(l,three, one);
-assert l.header.next == one;
-assert one.next ==two;
-assert two.next ==four;
-assert four.next == three;
-assert three.next == null;
-
- swapTwoNode(l,one, two);
-assert l.header.next == one;
-assert one.next ==two;
-assert two.next ==four;
-assert four.next == three;
-assert three.next == null;
-
- swapTwoNode(l,two, three);
-assert l.header.next == one;
-assert one.next ==three;
-assert three.next ==four;
-assert four.next == two;
-assert two.next == null;
-
-}
-
-
-}
-
-

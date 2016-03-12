@@ -22,8 +22,7 @@ return l;
 Node addFirst (LinkedList l, int val) {
 Node n = newNode();
 n.value = val;
-Node first = l.header.next;
-n.next = first;
+n.next = l.header.next;
 l.header.next = n;
 return n;
 }
@@ -45,24 +44,40 @@ prev.next.next = null;
    }
 }
 
-void swapTwoNodes (LinkedList l, Node a, Node b) {
-if (a==null|| b==null || (a.val ==b.val&& a.next ==b.next)) 
+void swapTwoNode (LinkedList l, Node a, Node b) {
+if (a==null|| b==null || (a.value ==b.value && a.next ==b.next)) 
 return;
 Node tmp = l.header;
 Node a_prev = null;
 Node b_prev =null;
 
-while (tmp!=null && (a_prev ==null || b.prev ==null)) {
-if (tmp.next.val == a.val && tmp.next.next = a.next)
+while (tmp.next!= null && (a_prev ==null || b_prev ==null)) {
+if (tmp.next.value == a.value && tmp.next.next == a.next)
 a_prev =tmp;
-if (tmp.next.val == b.val && tmp.next.next = b.next)
+if (tmp.next.value == b.value && tmp.next.next == b.next)
 b_prev =tmp;
+tmp = tmp.next;
 }
-if (a_prev ==null || b.prev ==null) return;
+
+if (a_prev ==null || b_prev ==null) return;
+
+if (a_prev ==b){
+b.next = a.next;
+b_prev.next = a;
+a.next = b;
+return;
+}
+ if (b_prev ==a){
+a.next = b.next;
+b.next = a;
+a_prev.next =b;
+return;
+}
 Node a_next = a.next;
 a.next = b.next;
 b_prev.next = a;
 b.next = a_next;
+if (a_prev !=b)
 a_prev.next = b;
 }
 
@@ -150,13 +165,13 @@ assert one.next ==null;
 
  swapTwoNode(l, one,two);
 assert l.header.next == one;
-assert one.next ==two;
-assert two.next ==null;
+assert one.next == two;
+assert two.next == null;
 
  swapTwoNode(l, two,one);
-assert l.header.next == one;
-assert one.next ==two;
-assert two.next ==null;
+assert l.header.next == two;
+assert two.next ==one;
+assert one.next ==null;
 
 //insert 3;
 l = newList();
@@ -179,9 +194,9 @@ assert three.next == null;
 
  swapTwoNode(l,one,three);
 assert l.header.next == two;
-assert two.next ==one;
-assert one.next ==three;
-assert three.next == null;
+assert two.next ==three;
+assert three.next ==one;
+assert one.next == null;
 
 //insert 4;
 l = newList();
@@ -212,16 +227,16 @@ assert four.next == three;
 assert three.next == null;
 
  swapTwoNode(l,one, two);
-assert l.header.next == one;
-assert one.next ==two;
-assert two.next ==four;
+assert l.header.next ==two;
+assert two.next ==one;
+assert one.next ==four;
 assert four.next == three;
 assert three.next == null;
 
  swapTwoNode(l,two, three);
-assert l.header.next == one;
-assert one.next ==three;
-assert three.next ==four;
+assert l.header.next == three;
+assert three.next ==one;
+assert one.next ==four;
 assert four.next == two;
 assert two.next == null;
 

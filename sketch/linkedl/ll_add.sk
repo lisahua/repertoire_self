@@ -22,8 +22,7 @@ return l;
 Node addFirst (LinkedList l, int val) {
 Node n = newNode();
 n.value = val;
-Node first = l.header.next;
-n.next = first;
+n.next = l.header.next;
 l.header.next = n;
 return n;
 }
@@ -34,22 +33,13 @@ n.value = val;
 Node prev = l.header.next;
 if (prev ==null) {
 l.header.next = n;
+return n;
 }
 while (prev.next!=null) {
 prev = prev.next;
 }
 prev.next = n;
 return n;
-}
-
-Node findLast(LinkedList l) {
-    Node n = l.header.next;
-    Node prev = null;
-    while (n!= null) {
-    prev = n;
-    n = n.next;
-    }
-    return prev;
 }
 
 harness void addFirstHarness() {
@@ -65,15 +55,15 @@ assert one.next ==null;
 //insert 2;
 Node two = addFirst(l,2);
 assert l.header.next == two;
-assert one.next ==two;
-assert two.next ==null;
+assert two.next ==one;
+assert one.next ==null;
 
 //insert 3;
 Node three = addFirst(l,3);
-assert l.header.next == one;
-assert one.next ==two;
-assert two.next ==three;
-assert three.next == null;
+assert l.header.next == three;
+assert three.next ==two;
+assert two.next ==one;
+assert one.next == null;
 }
 
 harness void addLastHarness() {
@@ -98,42 +88,5 @@ assert l.header.next == one;
 assert one.next ==two;
 assert two.next ==three;
 assert three.next == null;
-}
-
-harness void findLastHarness() {
-//Empty
-LinkedList l = newList();
-Node n = findLast(l);
-assert l.header.next == null;
-assert n == null;
-
-//insert 1
-l = newList();
-Node one = addFirst(l,1);
-n = findLast(l);
-assert l.header.next == one;
-assert one == n;
-
-//insert 2;
-l = newList();
-one = addFirst(l,1);
-Node two = addFirst(l,2);
-n = findLast(l);
-assert l.header.next == two;
-assert two.next ==one;
-assert one == n;
-assert one.next ==null;
-
-//insert 3;
-l = newList();
-one = addFirst(l,1);
-two = addFirst(l,2);
-Node three = addLast(l,3);
-n = findLast(l);
-assert l.header.next == three;
-assert three.next ==two;
-assert two.next ==one;
-assert one.next == null;
-assert one == n;
 }
 
