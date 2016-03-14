@@ -5,6 +5,7 @@ int value;
 
 struct LinkedList {
 Node header;
+int size;
 }
 
 Node newNode() {
@@ -16,6 +17,7 @@ return n;
 LinkedList newList() {
 LinkedList l = new LinkedList();
 l.header = newNode();
+l.size =0;
 return l;
 }
 
@@ -24,18 +26,18 @@ Node n = newNode();
 n.value = val;
 n.next = l.header.next;
 l.header.next = n;
+l.size = l.size+1;
 return n;
 }
-
 
 Node deleteFirst(LinkedList l) {
 Node n = l.header.next;
 if (n!=null) {
 l.header.next = n.next;
+l.size = l.size -1;
 }
 return n;
 }
-
 
 Node deleteLast(LinkedList l) {
 Node n = l.header.next;
@@ -47,8 +49,25 @@ Node n = l.header.next;
         n= n.next;
     }
     prev.next = null;
+    l.size = l.size -1;
     return n;
 }
+
+
+Node deleteNode(LinkedList l,Node n) {
+Node tmp = l.header;
+while (tmp.next!=null && (tmp.next.value !=n.value || tmp.next.next !=n.next )) 
+tmp = tmp.next;
+
+if (tmp.next!=null) {
+Node ret = tmp.next;
+tmp.next = tmp.next.next;
+l.size = l.size -1;
+return ret;
+}
+return null;
+}
+
 
 harness void deleteFirstHarness() {
 //Empty
@@ -56,6 +75,7 @@ LinkedList l = newList();
 Node n = deleteFirst(l);
 assert n == null;
 assert l.header.next == null;
+assert l.size ==0;
 
 //insert 1
  l = newList();
@@ -63,6 +83,7 @@ Node one = addFirst(l,1);
 n = deleteFirst(l);
 assert n == one;
 assert l.header.next ==null;
+assert l.size ==0;
 
 //insert 2;
  l = newList();
@@ -72,6 +93,7 @@ n = deleteFirst(l);
 assert l.header.next == one;
 assert two ==n;
 assert one.next == null;
+assert l.size ==1;
 
 //insert 3;
  l = newList();
@@ -83,6 +105,7 @@ n = deleteFirst(l);
 assert l.header.next == two;
 assert two.next ==one;
 assert three ==n;
+assert l.size ==2;
 }
 
 harness void deleteLastHarness() {
@@ -91,6 +114,7 @@ LinkedList l = newList();
 Node n = deleteLast(l);
 assert n == null;
 assert l.header.next == null;
+assert l.size ==0;
 
 //insert 1
  l = newList();
@@ -98,6 +122,7 @@ Node one = addFirst(l,1);
 n = deleteLast(l);
 assert n == one;
 assert l.header.next ==null;
+assert l.size ==0;
 
 //insert 2;
  l = newList();
@@ -107,6 +132,7 @@ n = deleteLast(l);
 assert l.header.next == two;
 assert two.next ==null;
 assert n == one;
+assert l.size ==1;
 
 //insert 3;
  l = newList();
@@ -119,4 +145,69 @@ assert l.header.next == three;
 assert three.next ==two;
 assert two.next ==null;
 assert one == n;
+assert l.size ==2;
+}
+
+
+
+harness void deleteNodeHarness() {
+//Empty
+LinkedList l = newList();
+Node test  = newNode();
+test.value =12;
+Node n = deleteNode(l,test);
+assert n == null;
+assert l.header.next == null;
+assert l.size ==0;
+
+//insert 1
+ l = newList();
+Node one = addFirst(l,1);
+n = deleteNode(l,test);
+assert n == null;
+assert l.header.next == one;
+assert l.size ==1;
+
+n = deleteNode(l,one);
+assert n == one;
+assert l.header.next ==null;
+assert l.size ==0;
+assert n==one;
+
+//insert 2;
+ l = newList();
+one = addFirst(l,1);
+Node two = addFirst(l,2);
+n = deleteNode(l,two);
+assert l.header.next == one;
+assert one.next ==null;
+assert n == two;
+assert l.size ==1;
+
+//insert 3;
+ l = newList();
+one = addFirst(l,1);
+two = addFirst(l,2);
+Node three = addFirst(l,3);
+
+n = deleteNode(l,test);
+assert l.header.next == three;
+assert three.next ==two;
+assert two.next ==one;
+assert one.next == null;
+assert l.size ==3;
+assert n==null;
+
+n = deleteNode(l,two);
+assert l.header.next == three;
+assert three.next ==one;
+assert one.next ==null;
+assert l.size ==2;
+assert n==two;
+
+n = deleteNode(l,one);
+assert l.header.next == three;
+assert three.next ==null;
+assert n==one;
+assert l.size ==1;
 }

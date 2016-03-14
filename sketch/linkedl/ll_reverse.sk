@@ -5,6 +5,7 @@ int value;
 
 struct LinkedList {
 Node header;
+int size;
 }
 
 Node newNode() {
@@ -16,15 +17,16 @@ return n;
 LinkedList newList() {
 LinkedList l = new LinkedList();
 l.header = newNode();
+l.size =0;
 return l;
 }
-
 
 Node addFirst (LinkedList l, int val) {
 Node n = newNode();
 n.value = val;
 n.next = l.header.next;
 l.header.next = n;
+l.size = l.size+1;
 return n;
 }
 
@@ -51,12 +53,14 @@ harness void reverseHarness() {
 LinkedList l = newList();
 reverse(l);
 assert l.header.next == null;
+assert l.size ==0;
 
 //insert 1
 Node one = addFirst(l,1);
 reverse(l);
 assert l.header.next == one;
 assert one.next ==null;
+assert l.size ==1;
 
 //insert 2;
 l = newList();
@@ -67,6 +71,7 @@ reverse(l);
 assert l.header.next == one;
 assert one.next ==two;
 assert two.next ==null;
+assert l.size ==2;
 
 //insert 3;
 l = newList();
@@ -78,5 +83,6 @@ assert l.header.next == one;
 assert one.next ==two;
 assert two.next ==three;
 assert three.next == null;
+assert l.size ==3;
 
 }

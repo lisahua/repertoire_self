@@ -1,0 +1,254 @@
+struct Entry{
+    int element;
+    Entry next;
+    Entry previous;
+}
+
+Entry newEntry(){
+    Entry n = new Entry();
+    n.previous = null;
+    n.next = null;
+    return n;
+}
+
+struct LinkedList{
+    Entry header;
+    int size;
+}
+
+LinkedList newList() {
+    LinkedList l = new LinkedList();
+    l.header = newEntry();
+    l.header.next = l.header;
+    l.header.previous = l.header;
+    l.size = 0;
+    return l;
+}
+
+Entry addFirst(LinkedList l, int o) {
+    Entry t = l.header.next;
+    Entry e = newEntry();
+    e.element = o;
+    l.header.next = e;
+    e.previous = l.header;
+    e.next = t;
+    if (t != l.header)
+    t.previous = e;
+   l.size = l.size+1;
+   return e;
+}
+
+Entry deleteFirst(LinkedList l) {
+    Entry n = l.header;
+    if (n.next == l.header)   
+        return null;
+    Entry res = n.next;
+    n.next = n.next.next;
+    res.next.previous = n;
+    l.size = l.size -1;
+    return res;
+}
+
+Entry deleteLast(LinkedList l) {
+    Entry n = l.header.next;
+    while (n.next != l.header) {
+        n = n.next;
+    }
+    if (n.previous ==n) return null;
+   
+    n.previous.next = n.next;
+    l.size = l.size -1;
+    return n;
+}
+
+Entry deleteEntry(LinkedList l,Entry e) {
+    Entry n = l.header.next;
+    while (n != l.header && (e.element != n.element && e.next != n.next && e.previous != n.previous)) {
+        n = n.next;
+    }
+    if (n == l.header) {
+        return null;
+    }
+    l.size = l.size -1;
+    n.previous.next = n.next;
+    n.next.previous = n.previous;
+    return n;
+}
+
+harness void deleteFrontHarness() {
+     //Empty
+     LinkedList l = newList();
+     Entry n = deleteFirst(l);
+     assert l.size ==0;
+     assert l.header.next == l.header;
+     assert l.header.previous == l.header;
+     assert n ==null;
+     
+     //insert 1
+     l = newList();
+     Entry one= addFirst(l,1);
+     n=deleteFirst(l);
+     assert l.header.next ==l.header;
+     assert l.header.previous == l.header;
+     assert one ==n;
+     assert l.size ==0;
+     
+     //insert 2
+     l = newList();
+     one= addFirst(l,1);
+     Entry two= addFirst(l,2);
+     n= deleteFirst(l);
+     assert l.header.next ==one;
+     assert l.header.previous == l.header;
+     assert one.next == l.header;
+     assert one.previous == l.header;
+     assert n ==two;
+     assert l.size ==1;
+     
+     //insert 3
+     l = newList();
+     one= addFirst(l,1);
+     two= addFirst(l,2);
+     Entry three= addFirst(l,3);
+     n= deleteFirst(l);
+     assert l.header.next ==two;
+     assert l.header.previous == l.header;
+     assert two.next == one;
+     assert two.previous == l.header;
+     assert one.next == l.header;
+     assert one.previous == two;
+     assert n==three;
+     assert l.size ==2;
+}
+
+harness void deleteEndHarness() {
+     //Empty
+     LinkedList l = newList();
+     Entry n = deleteLast(l);
+     assert l.size ==0;
+     assert l.header.next == l.header;
+     assert l.header.previous == l.header;
+     assert n ==null;
+     
+     //insert 1
+     l = newList();
+     Entry one= addFirst(l,1);
+     n= deleteLast(l);
+     assert l.header.next ==l.header;
+     assert l.header.previous == l.header;
+     assert n ==one;
+     assert l.size ==0;
+     
+     //insert 2
+     l = newList();
+     one= addFirst(l,1);
+     Entry two= addFirst(l,2);
+     n= deleteLast(l);
+     assert l.header.next ==two;
+     assert l.header.previous == l.header;
+     assert two.next == l.header;
+     assert two.previous == l.header;
+     assert n==one;
+     assert l.size ==1;
+     
+     //insert 3
+     l = newList();
+     one= addFirst(l,1);
+     two= addFirst(l,2);
+     Entry three= addFirst(l,3);
+     n = deleteLast(l);
+     assert l.header.next ==three;
+     assert l.header.previous == l.header;
+     assert three.next == two;
+     assert three.previous == l.header;
+     assert two.next == l.header;
+     assert two.previous == three;
+     assert n ==one;
+     assert l.size ==2;
+}
+
+harness void deleteEntryHarness() {
+     //Empty
+     LinkedList l = newList();
+     Entry test = newEntry();
+     test.element = -12;
+     Entry n = deleteEntry(l,test);
+     assert l.size ==0;
+     assert l.header.next == l.header;
+     assert l.header.previous == l.header;
+     assert n ==null;
+     
+     //insert 1
+     l = newList();
+     Entry one= addFirst(l,1);
+     
+     n = deleteEntry(l,test);
+     assert l.size == 1;
+     assert l.header.next == one;
+     assert l.header.previous == l.header;
+     assert one.next == l.header;
+     assert one.previous == l.header;
+     assert n ==null;
+     
+     n = deleteEntry(l,one);
+     assert l.header.next == l.header;
+     assert l.header.previous == l.header;
+     assert one == n;
+     assert l.size == 0;
+     
+     //insert 2
+     l = newList();
+     one = addFirst(l,1);
+     Entry two = addFirst(l,2);
+     
+     n = deleteEntry(l,test);
+     assert l.header.next == two;
+     assert l.header.previous == l.header;
+     assert two.next == one;
+     assert two.previous == l.header;
+     assert one.next == l.header;
+     assert one.previous == two;
+     assert n == null;
+     assert l.size == 2;
+     
+     n = deleteEntry(l,two);
+     assert l.header.next == one;
+     assert l.header.previous == l.header;
+     assert one.next == l.header;
+     assert one.previous == l.header;
+     assert n == two;
+     assert l.size == 1;
+        
+      
+     //insert 3
+     l = newList();
+     one = addFirst(l,1);
+     two = addFirst(l,2);
+     Entry three = addFirst(l,3);
+     
+     n = deleteEntry(l,two);
+     assert l.header.next == three;
+     assert l.header.previous == l.header;
+     assert three.next == one;
+     assert three.previous == l.header;
+     assert one.next == l.header;
+     assert one.previous == three;
+     assert n == two;
+     assert l.size == 2;
+     
+     n= deleteEntry(l,three);
+     assert l.header.next ==one;
+     assert l.header.previous == l.header;
+     assert one.next == l.header;
+     assert one.previous == l.header;
+     assert n == three;
+     assert l.size == 1; 
+     
+     n= deleteEntry(l,one);
+     assert l.header.next ==l.header;
+     assert l.header.previous == l.header;
+     assert n == one;
+     assert l.size == 0; 
+
+}
+

@@ -5,6 +5,7 @@ int value;
 
 struct LinkedList {
 Node header;
+int size;
 }
 
 Node newNode() {
@@ -16,6 +17,7 @@ return n;
 LinkedList newList() {
 LinkedList l = new LinkedList();
 l.header = newNode();
+l.size =0;
 return l;
 }
 
@@ -24,6 +26,7 @@ Node n = newNode();
 n.value = val;
 n.next = l.header.next;
 l.header.next = n;
+l.size = l.size+1;
 return n;
 }
 
@@ -86,12 +89,14 @@ harness void swapHeadTailHarness() {
 LinkedList l = newList();
  swapHeadTail(l);
 assert l.header.next == null;
+assert l.size ==0;
 
 //insert 1
 l = newList();
 Node one = addFirst(l,1);
  swapHeadTail(l);
 assert l.header.next == one;
+assert l.size ==1;
 
 //insert 2;
 l = newList();
@@ -101,6 +106,7 @@ swapHeadTail(l);
 assert l.header.next == one;
 assert one.next == two;
 assert two.next == null;
+assert l.size ==2;
 
 //insert 3;
 l = newList();
@@ -112,6 +118,7 @@ assert l.header.next == one;
 assert one.next ==two;
 assert two.next ==three;
 assert three.next == null;
+assert l.size ==3;
 
 //insert 4;
 l = newList();
@@ -125,6 +132,7 @@ assert one.next ==three;
 assert three.next ==two;
 assert two.next == four;
 assert four.next == null;
+assert l.size ==4;
 }
 
 harness void swapTwoNodeHarness() {
@@ -132,12 +140,14 @@ harness void swapTwoNodeHarness() {
 LinkedList l = newList();
  swapTwoNode(l,null,null);
 assert l.header.next == null;
+assert l.size ==0;
 
 //insert 1
 l = newList();
 Node one = addFirst(l,1);
  swapTwoNode(l,null,null);
 assert l.header.next == one;
+assert l.size ==1;
 
 //insert 2;
 l = newList();
@@ -172,6 +182,7 @@ assert two.next == null;
 assert l.header.next == two;
 assert two.next ==one;
 assert one.next ==null;
+assert l.size ==2;
 
 //insert 3;
 l = newList();
@@ -197,6 +208,7 @@ assert l.header.next == two;
 assert two.next ==three;
 assert three.next ==one;
 assert one.next == null;
+assert l.size ==3;
 
 //insert 4;
 l = newList();
@@ -239,6 +251,7 @@ assert three.next ==one;
 assert one.next ==four;
 assert four.next == two;
 assert two.next == null;
+assert l.size ==4;
 
 }
 

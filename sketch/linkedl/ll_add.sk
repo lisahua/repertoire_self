@@ -5,6 +5,7 @@ int value;
 
 struct LinkedList {
 Node header;
+int size;
 }
 
 Node newNode() {
@@ -16,6 +17,7 @@ return n;
 LinkedList newList() {
 LinkedList l = new LinkedList();
 l.header = newNode();
+l.size =0;
 return l;
 }
 
@@ -24,6 +26,7 @@ Node n = newNode();
 n.value = val;
 n.next = l.header.next;
 l.header.next = n;
+l.size = l.size+1;
 return n;
 }
 
@@ -31,6 +34,7 @@ Node addLast (LinkedList l, int val) {
 Node n = newNode();
 n.value = val;
 Node prev = l.header.next;
+l.size = l.size+1;
 if (prev ==null) {
 l.header.next = n;
 return n;
@@ -46,17 +50,20 @@ harness void addFirstHarness() {
 //Empty
 LinkedList l = newList();
 assert l.header.next == null;
+assert l.size ==0;
 
 //insert 1
 Node one = addFirst(l,1);
 assert l.header.next == one;
 assert one.next ==null;
+assert l.size ==1;
 
 //insert 2;
 Node two = addFirst(l,2);
 assert l.header.next == two;
 assert two.next ==one;
 assert one.next ==null;
+assert l.size ==2;
 
 //insert 3;
 Node three = addFirst(l,3);
@@ -64,23 +71,27 @@ assert l.header.next == three;
 assert three.next ==two;
 assert two.next ==one;
 assert one.next == null;
+assert l.size ==3;
 }
 
 harness void addLastHarness() {
 //Empty
 LinkedList l = newList();
 assert l.header.next == null;
+assert l.size ==0;
 
 //insert 1
 Node one = addLast(l,1);
 assert l.header.next == one;
 assert one.next ==null;
+assert l.size ==1;
 
 //insert 2;
 Node two = addLast(l,2);
 assert l.header.next == one;
 assert one.next ==two;
 assert two.next ==null;
+assert l.size ==2;
 
 //insert 3;
 Node three = addLast(l,3);
@@ -88,5 +99,6 @@ assert l.header.next == one;
 assert one.next ==two;
 assert two.next ==three;
 assert three.next == null;
+assert l.size ==3;
 }
 
