@@ -63,7 +63,7 @@ Entry deleteLast(LinkedList l) {
 
 Entry deleteEntry(LinkedList l,Entry e) {
     Entry n = l.header.next;
-    while (n != l.header && (e.element != n.element && e.next != n.next && e.previous != n.previous)) {
+    while (n != l.header && (e.element != n.element || e.next != n.next || e.previous != n.previous)) {
         n = n.next;
     }
     if (n == l.header) {
@@ -171,7 +171,7 @@ harness void deleteEntryHarness() {
      //Empty
      LinkedList l = newList();
      Entry test = newEntry();
-     test.element = -12;
+     test.element = 1;
      Entry n = deleteEntry(l,test);
      assert l.size ==0;
      assert l.header.next == l.header;

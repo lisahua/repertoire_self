@@ -34,26 +34,88 @@ Entry addFirst(LinkedList l, int o) {
     e.next = t;
     if (t != l.header)
     t.previous = e;
-   l.size = l.size+1;
-   return e;
-}
-
-Entry addLast(LinkedList l, int o) {
-    Entry t = l.header.next;
-    Entry e = newEntry();
-    e.element = o;
-    while (t.next!=l.header)
-    t = t.next;
-    
-    t.next = e;
-    e.previous = t;
-    e.next = l.header;
     l.size = l.size+1;
     return e;
 }
 
+void swapHeadTail(LinkedList l) {
+    Entry t = l.header;
+    while (t.next !=l.header){
+    t = t.next;
+    }
+    if (t.previous == l.header) return ;
+    Entry h_next = l.header.next;
+   
+   if (h_next.next ==t) {
+    l.header.next = t;
+    t.next = h_next;
+    t.previous = l.header;
+    h_next.next = l.header;
+    h_next.previous = t;
+    return;
+    }
+    
+    l.header.next = t;
+    h_next.previous = t.previous;
+    t.next = h_next.next;
+    t.previous = l.header;
+    h_next.next = l.header;
+    
+}
 
-harness void addFrontHarness() {
+void swapTwoEntries(LinkedList l, Entry a, Entry b) {
+    Entry t = l.header.next;
+    if (a==null||b==null|| a==b) return ;
+    if (l.header.next.next ==l.header) return;
+    
+    Entry d_a = null;
+    Entry d_b =null;
+    
+    while (t!=l.header && d_a!=null && d_b !=null) {
+    if (t.element ==a.element && t.previous == a.previous && t.next == a.next)
+        d_a = t;
+    if (t.element ==b.element && t.previous == b.previous && t.next == b.next)
+        d_b  = t;
+    }
+    
+    if (d_a==null|| d_b==null) return;
+    
+    if (d_a.next ==d_b|| d_b.next==d_a) {
+        Entry t1 = null;
+        Entry t2 = null;
+        if (d_a.next==d_b){
+            t1=d_a;
+            t2=d_b;
+        }
+        if (d_b.next==d_a){
+            t1=d_b;
+            t2=d_a;
+        }
+        t1.next = t2.next;
+        t2.previous = t1.previous;
+        t1.previous.next = t2;
+        t1.previous = t2.previous;
+        t1.next.previous = t1;
+        t2.next = t1;
+        t1.previous = t2;
+        return;
+    }
+    Entry p_a = a.previous;Entry p_b = b.previous;
+    Entry n_a = a.next; Entry n_b = b.next;
+    
+    d_a.previous.next = d_b;
+    d_b.next.previous = d_a;
+    d_a.next.previous = d_b;
+    d_b.previous.next = d_a;
+    
+    d_a.previous = p_b;
+    d_a.next = n_b;
+    d_b.previous = p_a;
+    d_b.next = n_a;
+}
+
+
+harness void swapHeadTailHarness() {
      //Empty
      LinkedList l = newList();
      assert l.size ==0;
@@ -91,7 +153,7 @@ harness void addFrontHarness() {
         assert l.size ==3;
 }
 
-harness void addLastHarness() {
+harness void swapTwoEntriesHarness() {
      //Empty
      LinkedList l = newList();
      assert l.size ==0;

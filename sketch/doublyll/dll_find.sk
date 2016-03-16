@@ -38,38 +38,52 @@ Entry addFirst(LinkedList l, int o) {
    return e;
 }
 
-Entry addLast(LinkedList l, int o) {
-    Entry t = l.header.next;
-    Entry e = newEntry();
-    e.element = o;
-    while (t.next!=l.header)
-    t = t.next;
-    
-    t.next = e;
-    e.previous = t;
-    e.next = l.header;
-    l.size = l.size+1;
-    return e;
+Entry findLast(LinkedList l) {
+    Entry n = l.header;
+    while (n.next!=l.header) {
+    n = n.next;
+    }
+    if (n==l.header) return null;
+    return n;
+}
+Entry findEntry(LinkedList l, Entry e) {
+    Entry n = l.header.next;
+    while (n!=l.header && (n.element != e.element || n.previous != e.previous || n.next != e.next )) {
+        n = n.next;
+    }
+    if (n==l.header) return null;
+    return n;
 }
 
 
-harness void addFrontHarness() {
+harness void findLastHarness() {
      //Empty
      LinkedList l = newList();
+     Entry test = newEntry();
+     test.element = 1;
+     
+     Entry n = findLast(l);
+     assert n==null;
      assert l.size ==0;
      assert l.header.next == l.header;
      assert l.header.previous == l.header;
      
      //insert 1
-    Entry one= addFirst(l,1);
-     assert l.header.next ==one;
+     l = newList();
+     Entry one= addFirst(l,1);
+    
+     n = findLast(l);
+    assert l.header.next == one;
     assert l.header.previous == l.header;
-     assert one.next == l.header;
-     assert one.previous == l.header;
+    assert one.next == l.header;
+    assert one.previous == l.header;
     assert l.size ==1;
+    assert n==one;
      
+ 
      //insert 2
      Entry two= addFirst(l,2);
+     n = findLast(l);
      assert l.header.next ==two;
       assert l.header.previous == l.header;
      assert two.next == one;
@@ -77,9 +91,11 @@ harness void addFrontHarness() {
      assert one.next == l.header;
      assert one.previous == two;
         assert l.size ==2;
+        assert n ==one;
      
           //insert 3
      Entry three= addFirst(l,3);
+      n = findLast(l);
      assert l.header.next ==three;
       assert l.header.previous == l.header;
      assert three.next == two;
@@ -89,42 +105,70 @@ harness void addFrontHarness() {
      assert one.next == l.header;
      assert one.previous == two;
         assert l.size ==3;
+        assert n ==one;
 }
 
-harness void addLastHarness() {
-     //Empty
+harness void findEntryHarness() {
+      //Empty
      LinkedList l = newList();
+     Entry test = newEntry();
+     test.element = 1;
+     
+     Entry n = findEntry(l,test);
+     assert n==null;
      assert l.size ==0;
      assert l.header.next == l.header;
      assert l.header.previous == l.header;
      
      //insert 1
-    Entry one= addLast(l,1);
-     assert l.header.next ==one;
+     Entry one= addFirst(l,1);
+     n = findEntry(l,test);
+     assert l.header.next == one;
+     assert l.header.previous == l.header;
      assert one.next == l.header;
      assert one.previous == l.header;
-        assert l.size ==1;
+     assert l.size ==1;
+     assert n==null;
+    
+     n = findEntry(l,one);
+     assert n==one;
      
      //insert 2
-     Entry two= addLast(l,2);
-     assert l.header.next ==one;
+     Entry two= addFirst(l,2);
+     n = findEntry(l,test);
+     assert l.header.next ==two;
      assert l.header.previous == l.header;
-     assert one.next ==two;
-     assert one.previous == l.header;
-     assert two.next == l.header;
-     assert two.previous == one;
-        assert l.size ==2;
+     assert two.next == one;
+     assert two.previous == l.header;
+     assert one.next == l.header;
+     assert one.previous == two;
+     assert l.size ==2;
+     assert n == null;
+        
+     n = findEntry(l,two);
+     assert n==two;
+    
+     n = findEntry(l,one);
+     assert n==one;
      
      //insert 3
-     Entry three= addLast(l,3);
-     assert l.header.next ==one;
+     Entry three= addFirst(l,3);
+     n = findEntry(l,test);
+     assert l.header.next ==three;
      assert l.header.previous == l.header;
-     assert one.next == two;
-     assert one.previous == l.header;
-     assert two.next == three;
-     assert two.previous == one;
-     assert three.next == l.header;
-     assert three.previous == two;
-        assert l.size ==3;
-     
+     assert three.next == two;
+     assert three.previous == l.header;
+     assert two.next == one;
+     assert two.previous == three;
+     assert one.next == l.header;
+     assert one.previous == two;
+     assert l.size ==3;
+     assert n ==null;
+        
+     n = findEntry(l,two);
+     assert n ==two;
+     n = findEntry(l,three);
+     assert n ==three;
+     n = findEntry(l,one);
+     assert n ==one;
 }
