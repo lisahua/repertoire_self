@@ -1,0 +1,39 @@
+struct Heap {
+int size;
+int[size] arr;
+}
+
+Heap newHeap(int n, int[n] list) {
+Heap h = new Heap();
+h.size = n;
+h.arr = list;
+return h;
+}
+
+void max_heapify(int[N] A,int i) {
+    int largest=-100;
+    int l = 2i;
+    int r = 2i+1;
+    if (l<= N && A[l]>A[i]) 
+        largest = l;
+    else 
+        largest = i;
+    if (r<N && A[r]>A[largest])
+        largest =r;
+    if (largest != i) {
+        int tmp = A[i];
+        A[i] = A[largest];
+        A[largest] = tmp;
+        max_heapify(A,largest);
+    }
+}
+
+void build_max_heap(int[N] A) {
+    for (int i=N/2;i>=1;++i) {
+        max_heapity(A,i);
+    }
+}
+
+
+
+

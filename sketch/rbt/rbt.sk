@@ -8,31 +8,34 @@ struct Node {
 
 struct RBT {
     Node root;
+    Node nil;
 }
 
 Node newNode(int val) {
     Node n = new Node();
     n.key = val;
-    n.left = null;
-    n.right = null;
-    n.p = null;
+    n.left = new Node();
+    n.right = new Node();
+    n.p = new Node();
     n.color = 0;
     return n;
 }
 
 BST newBST() {
     BST bst = new BST();
-    bst.root = null;
+     nil = new Node();
+    bst.root = nil;
+   
 }
 
 void left_rotate(RBT T, Node x) {
-    y = x.right;
+     Node y = x.right;
     x.right = y.left;
-    if (y.left!=null)
+    if (y.left!=T.nil)
         y.left.p = x;
     y.p = x.p;
-    if (x.p ==null)
-        x.p.left = y;
+    if (x.p ==T.nil)
+         T.root = y;
     else if (x == x.p.left)
         x.p.left = y;
     else 
@@ -42,13 +45,13 @@ void left_rotate(RBT T, Node x) {
 }
 
 void right_rotate(RBT T, Node x) {
-    y = x.left;
+     Node y = x.left;
     x.left = y.right;
-    if (y.right!=null)
+    if (y.right!=T.nil)
         y.right.p = x;
     y.p = x.p;
-    if (x.p ==null)
-        x.p.right = y;
+    if (x.p ==T.nil)
+        T.root = y;
     else if (x == x.p.right)
         x.p.right = y;
     else 
@@ -57,10 +60,10 @@ void right_rotate(RBT T, Node x) {
     x.p = y;
 }
 
-void insert(RBT T, Node z) {
-    y = null;
-    x = T.root;
-    while (x!= null) {
+void insert_rbt (RBT T, Node z) {
+    Node y = T.nil;
+     Node x = T.root;
+    while (x!= T.nil) {
         y=x;
         if (z.key < x.key)
             x = x.left;
@@ -68,89 +71,93 @@ void insert(RBT T, Node z) {
             x = x.right;
     }
     z.p = y;
-    if (y==null)
+    if (y==T.nil)
         T.root = z;
     else if (z.key < y.key)
         y.left = z;
     else 
-        y.right z;
-    z.left = null;
-    z.right = null;
+        y.right = z;
+    z.left = T.nil;
+    z.right = T.nil;
     z.color = 1; //red
     insert_fixup(T,z);
 }
 
 void insert_fixup(RBT T, Node z) {
-    while (z.p.color ==1) {
+Node y = T.nil;
+    while (z.p!=T.nil && z.p.p!=T.nil && z.p.color ==1) {
         if (z.p == z.p.p.left) {
             y = z.p.p.right;
             if (y.color ==1) {
                 z.p.color = 0;
-                y.color 0;
+                y.color = 0;
                 z.p.p.color = 1;
                 z = z.p.p;
             }
             else if (z==z.p.right) {
                 z = z.p;
-                left_rorate(T,z);
-            }
+                left_rotate(T,z);
+            
             z.p.color = 0;
             z.p.p.color =1;
-            right_rotate(T,z.p,z);
+            right_rotate(T,z.p.p);
+        }
         }
         
         else {
             y = z.p.p.left;
-            if (y.color ==1) {
+            if (y!=T.nil && y.color ==1) {
                 z.p.color = 0;
-                y.color 0;
+                y.color = 0;
                 z.p.p.color = 1;
                 z = z.p.p;
             }
             else if (z==z.p.left) {
                 z = z.p;
-                right_rorate(T,z);
-            }
+                right_rotate(T,z);
+            
             z.p.color = 0;
             z.p.p.color =1;
-            left_rotate(T,z.p,z);
+            left_rotate(T,z.p.p);
+        }
         }
     }
     T.root.color = 0;  
 }
 
 void transplant(RBT T, Node u, Node v) {
-    if (u.p==null)
+if (v==null) return;
+    if (u.p==T.nil)
         T.root =v;
-    else if (u = u.p.left)
+    else if (u == u.p.left)
         u.p.left = v;
     else 
-        u.p.right =v;
+        u.p.right = v;
     v.p = u.p;  
 }
 
 void delete(RBT T,Node z) {
     Node y=z;
-    Node x=null;
+    Node x=T.nil;
     bit y_color = y.color;
-    if (z.left == null) {
+    if (z.left == T.nil) {
         x = z.right;
         transplant(T,z,z.right);
     }
-    else if (z.right ==null) {
+    else if (z.right ==T.nil) {
         x = z.left;
         transplant(T,z,z.left);
     }
     else {
-        y = minimum(z.right);
+        y = minimum(T, z.right);
         y_color = y.color;
         x = y.right;
         if (y.p==z)
             x.p = y;
         else {
             transplant(T,y,y.right);
-        y.right = z.right;
-        y.right.p = y;
+            y.right = z.right;
+            y.right.p = y;
         }
         transplant(T,z,y);
         y.left = z.left;
@@ -162,7 +169,8 @@ void delete(RBT T,Node z) {
 }
 
 void delete_fixup(RBT T,Node z) {
-    while (x !=T.root && x.color ==0) {
+    Node x = T.nil;
+    while (x!=null && x !=T.root && x.color ==0) {
         if (x==x.p.left) {
             Node w = x.p.left;
             if (w.color == 1) {
@@ -213,6 +221,13 @@ void delete_fixup(RBT T,Node z) {
                 x = T.root;
             }
         }
-        x.color = 0;
     }
+    if (x!=null)
+       x.color = 0;
+}
+
+Node minimum(RBT T, Node x) {
+    while (x.left !=T.nil)
+        x = x.left;
+    return x;
 }

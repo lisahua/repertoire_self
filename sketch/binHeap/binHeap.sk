@@ -3,35 +3,54 @@ int size;
 int[size] arr;
 }
 
-Heap newHeap(int n, int[n] list) {
-Heap h = new Heap();
-h.size = n;
-h.arr = list;
-return h;
+Heap newHeap(int n, int[10] list) {
+    Heap h = new Heap();
+    h.size = n;
+    h.arr = list;
+    return h;
 }
 
-void max_heapify(int[N] A,int i) {
+int[10] max_heapify(int[10] A, int i) {
+int N=10;
     int largest=-100;
-    int l = 2i;
-    int r = 2i+1;
-    if (l<= N && A[l]>A[i]) 
+    int l = 2*i;
+    int r = 2*i + 1;
+    if (l< N && A[l] > A[i]) 
         largest = l;
     else 
         largest = i;
-    if (r<N && A[r]>A[largest])
+    if (r < N && A[r] > A[largest])
         largest =r;
     if (largest != i) {
         int tmp = A[i];
         A[i] = A[largest];
         A[largest] = tmp;
-        max_heapify(A,largest);
+        A=max_heapify(A, largest);
     }
+    return A;
 }
 
-void build_max_heap(int[N] A) {
-    for (int i=N/2;i>=1;++i) {
-        max_heapity(A,i);
+int[10] build_max_heap(int[10] A) {
+    for (int i=4; i > -1; --i) {
+       A= max_heapify(A,i);
     }
+    return A;
+}
+
+harness void findMaxHarness() {
+    int[10] arr = {2,4,1,8,7,14,9,3,10,16};
+    arr = build_max_heap(arr);
+    assert arr[0]==16;
+assert arr[1]==14;
+assert arr[2]==10;
+assert arr[3]==9;
+assert arr[4]==7;
+assert arr[5]==4;
+assert arr[6]==8;
+assert arr[7]==3;
+assert arr[8]==1;
+assert arr[9]==2;
+
 }
 
 
