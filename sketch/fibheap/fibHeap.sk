@@ -1,9 +1,9 @@
-struct Node{
+struct Node {
     int key;
     int degree;
     Node p;
     List child;
-    bit mark = 1;
+    bit mark ;
     Node next;//next root
     }
     
@@ -17,15 +17,31 @@ struct List {
     Node root;
 }
 
-void consolidate(FHeap H,Node x) {
+Node newNode(int val) {
+Node n = new Node();
+n.key = val;
+n.child = new List();
+n.degree = 0;
+n.mark = 0;
+return n;
+}
+
+FHeap newHeap() {
+FHeap h = new FHeap();
+h.roots = new List();
+h.n = 0;
+return h;
+}
+void consolidate(FHeap H) {
+    H.n = 14;
     Node x = null;
     Node y = null;
-    Node[H.size] A = new Node[H.size];
+    Node[14] A;
     Node root = H.roots.root;
-   while (root !=null) {
+    while (root !=null) {
         x = root;
         root = root.next;
-        d = x.degree;
+        int d = x.degree;
         while (A[d] !=null) {
             y = A[d];
             if (x.key > y.key) {
@@ -40,23 +56,14 @@ void consolidate(FHeap H,Node x) {
         A[d] = x;
     }
     H.min = null;
-    for (int i=0;i<H.size) {
-        if (A[i] !=null) {
-            if (H.min = null) {
-                Node root = H.roots.root;
-                if (root ==null)
-                    root = A[i];
-                else {
-                    while (root !=null) {
-                        root = root.next;
-                    }
-                    root.next = A[i];
-                }
+    for (int i=0; i<14; ++i) {
+        if (A[i] != null) {
+            if (H.min == null) {
+                insert_last_root(H,A[i]);
                 H.min = A[i];
             }
             else {
-                H.A[size] = A[i];
-                H.size = H.size +1;
+                insert_last_root(H,A[i]);
                 if (A[i].key < H.min.key)
                     H.min = A[i];
             }
@@ -69,11 +76,12 @@ void heap_link(FHeap H, Node y, Node x) {
     remove_fromList(H,y);
     // make y a child of x, increment x.degree
     y.mark = 0;
-    y.next =   y.H.child.root;
-    y.H.child.root = y;
+    y.next = x.child.root;
+    x.child.root = y;
+    x.degree = x.degree +1;
 }
 
-void insert(FHeap h, Node x) {
+void insert_fib (FHeap H, Node x) {
     x.degree = 0;
     x.p = null;
     x.child = null;
@@ -94,7 +102,7 @@ void insert(FHeap h, Node x) {
     H.n = H.n + 1;    
 }
 
-void heap_union(FHeap H1, FHeap H2) {
+FHeap heap_union (FHeap H1, FHeap H2) {
     FHeap H = new FHeap();
     H.min = H1.min;
     H.roots = H1.roots;
@@ -102,7 +110,7 @@ void heap_union(FHeap H1, FHeap H2) {
     while (root.next !=null) {
         root = root.next;
     }
-    root = H2.roots.root;
+    root.next = H2.roots.root;
     if (H1.min ==null || (H2.min != null && H2.min.key < H1.min.key)) {
         H.min = H2.min;
     }
@@ -111,32 +119,29 @@ void heap_union(FHeap H1, FHeap H2) {
 }
 
 
-void heap_min(FHeap H) {
+Node heap_min(FHeap H) {
     Node z = H.min;
-    if (z != null) {
+    if (z == null) 
+        return z;
+    if (z.child !=null) {
         Node x = z.child.root;
-        Node root_last = H.roots.root;
-        while (root_last !=null && root_last.next !=null) 
-            root_last = root_last.next;
         while (x !=null) { 
-            if (root_last ==null)
-                H.roots.root = x;
-            else 
-                root_last.next = x;
-                x.p = null;
-            child = child.next;
+            H = insert_last_root(H,x);
+            x.p = null;
+            x = x.next;
         }
+    }
         //remove z from root list of H
         remove_fromList(H,z);
-        root_last = H.roots.root;
+        Node root_last = H.roots.root;
         if (root_last==null) 
             H.min = null;
         else {
-        H.min = root.last.next;
+        H.min = root_last;
         consolidate(H);
         }
         H.n = H.n -1;   
-    }
+    return z;
 }
 
 void remove_fromList(FHeap H, Node y) {
@@ -151,7 +156,15 @@ void remove_fromList(FHeap H, Node y) {
     }
 }
 
-
+FHeap insert_last_root(FHeap h,Node n) {
+    Node root = h.roots.root;
+    if (root ==null) 
+        h.roots.root =n;
+    while (root.next !=null)
+        root = root.next;
+    root.next = n;
+    return h;
+}
 
 
 

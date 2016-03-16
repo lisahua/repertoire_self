@@ -1,162 +1,110 @@
-struct Node{
-    int key;
-    int degree;
-    Node p;
-    List child;
-    bit mark = 1;
-    Node next;//next root
-    }
+include "fibHeap.sk";
+
+harness void insertHarness() {
+    FHeap h = newHeap();
+
+    Node three = newNode(3);
+    Node eighteen = newNode(18);
+    Node thirtyNine = newNode(39);
+    Node fiftyTwo = newNode(52);
+    Node thirtyEight = newNode(38);
+    Node fourtyOne = newNode(41);
+    Node seventeen = newNode(17);
+    Node thirty = newNode(30);
+
+    eighteen.next = fiftyTwo;
+    fiftyTwo.next = thirtyEight;
+    three.child.root = eighteen;
+    eighteen.child.root = thirtyNine;
+    thirtyEight.child.root = fourtyOne;
+    seventeen.child.root = thirty;
     
-struct FHeap {
-    List roots;
-    int n;
-    Node min;
-}
+    three.degree = 3;
+    eighteen.degree = 1;
+    thirtyEight.degree = 1;
+    seventeen.degree = 1;
+    
+    Node twentyOne = newNode(21);
+    insert_fib(h,three);
+    assert h.roots.root == three;
+    insert_fib(h,seventeen);
+    assert three.next == seventeen;
+    insert_fib(h,twentyOne);
+    assert seventeen.next == twentyOne;
+    
 
-struct List {
-    Node root;
-}
-
-void consolidate(FHeap H,Node x) {
-    Node x = null;
-    Node y = null;
-    Node[H.size] A = new Node[H.size];
-    Node root = H.roots.root;
-   while (root !=null) {
-        x = root;
-        root = root.next;
-        d = x.degree;
-        while (A[d] !=null) {
-            y = A[d];
-            if (x.key > y.key) {
-                Node tmp = x;
-                x = y;
-                y = tmp;
-            }
-            heap_link(H,y,x);
-            A[d] = null;
-            d = d+1;
-        }
-        A[d] = x;
-    }
-    H.min = null;
-    for (int i=0;i<H.size) {
-        if (A[i] !=null) {
-            if (H.min = null) {
-                Node root = H.roots.root;
-                if (root ==null)
-                    root = A[i];
-                else {
-                    while (root !=null) {
-                        root = root.next;
-                    }
-                    root.next = A[i];
-                }
-                H.min = A[i];
-            }
-            else {
-                H.A[size] = A[i];
-                H.size = H.size +1;
-                if (A[i].key < H.min.key)
-                    H.min = A[i];
-            }
-        } 
-    }
-}
-
-void heap_link(FHeap H, Node y, Node x) {
-    //remove y from the root list of H
-    remove_fromList(H,y);
-    // make y a child of x, increment x.degree
-    y.mark = 0;
-    y.next =   y.H.child.root;
-    y.H.child.root = y;
-}
-
-void insert(FHeap h, Node x) {
-    x.degree = 0;
-    x.p = null;
-    x.child = null;
-    x.mark = 0;
-    if (H.min ==null) {
-        H.roots.root = x;
-        H.min = x;
-    }
-    else {
-        //insert x into H's root list
-        Node root = H.roots.root;
-        while (root.next !=null) 
-            root = root.next;
-        root.next = x;
-        if (x.key < H.min.key)
-            H.min = x;
-    }
-    H.n = H.n + 1;    
-}
-
-void heap_union(FHeap H1, FHeap H2) {
-    FHeap H = new FHeap();
-    H.min = H1.min;
-    H.roots = H1.roots;
-    Node root = H.roots.root;
-    while (root.next !=null) {
-        root = root.next;
-    }
-    root = H2.roots.root;
-    if (H1.min ==null || (H2.min != null && H2.min.key < H1.min.key)) {
-        H.min = H2.min;
-    }
-    H.n = H1.n + H2.n;
-    return H;
 }
 
 
-void heap_min(FHeap H) {
-    Node z = H.min;
-    if (z != null) {
-        Node x = z.child.root;
-        Node root_last = H.roots.root;
-        while (root_last !=null && root_last.next !=null) 
-            root_last = root_last.next;
-        while (x !=null) { 
-            if (root_last ==null)
-                H.roots.root = x;
-            else 
-                root_last.next = x;
-                x.p = null;
-            child = child.next;
-        }
-        //remove z from root list of H
-        remove_fromList(H,z);
-        root_last = H.roots.root;
-        if (root_last==null) 
-            H.min = null;
-        else {
-        H.min = root.last.next;
-        consolidate(H);
-        }
-        H.n = H.n -1;   
-    }
-}
+harness void unionHarness() {
+    Node three = newNode(3);
+    Node eighteen = newNode(18);
+    Node thirtyNine = newNode(39);
+    Node fiftyTwo = newNode(52);
+    Node thirtyEight = newNode(38);
+    Node fourtyOne = newNode(41);
+    Node seventeen = newNode(17);
+    Node thirty = newNode(30);
 
-void remove_fromList(FHeap H, Node y) {
-    Node root = H.roots.root;
-    if (root == y)
-        H.roots.root = root.next;
-    else {
-        while (root.next != y) 
-            root = root.next;
-        if (root !=null) 
-            root.next = root.next.next;
-    }
+    eighteen.next = fiftyTwo;
+    fiftyTwo.next = thirtyEight;
+    three.child.root = eighteen;
+    eighteen.child.root = thirtyNine;
+    thirtyEight.child.root = fourtyOne;
+    seventeen.child.root = thirty;
+    
+    three.degree = 3;
+    eighteen.degree = 1;
+    thirtyEight.degree = 1;
+    seventeen.degree = 1;
+    
+     FHeap h1 = newHeap();
+    Node twentyOne = newNode(21);
+    insert_fib(h1,three);
+    insert_fib(h1,twentyOne);
+    
+     FHeap h2 = newHeap();
+    insert_fib(h2,seventeen);
+
+    FHeap h = heap_union(h1,h2);
+    assert twentyOne.next == seventeen;
+    assert h.roots.root == three;
+
 }
 
 
+harness void minHarness() {
+    FHeap h = newHeap();
 
+    Node three = newNode(3);
+    Node eighteen = newNode(18);
+    Node thirtyNine = newNode(39);
+    Node fiftyTwo = newNode(52);
+    Node thirtyEight = newNode(38);
+    Node fourtyOne = newNode(41);
+    Node seventeen = newNode(17);
+    Node thirty = newNode(30);
 
-
-
-
-
+    eighteen.next = fiftyTwo;
+    fiftyTwo.next = thirtyEight;
+    three.child.root = eighteen;
+    eighteen.child.root = thirtyNine;
+    thirtyEight.child.root = fourtyOne;
+    seventeen.child.root = thirty;
+    
+    three.degree = 3;
+    eighteen.degree = 1;
+    thirtyEight.degree = 1;
+    seventeen.degree = 1;
+    
+    insert_fib(h,three);
+    insert_fib(h,seventeen);
+    Node n = heap_min(h);
+    assert n == three;
+    assert h.roots.root == seventeen;
+  //  assert seventeen.next == null;//BUG 
+    assert eighteen.next == fiftyTwo;
+    assert fiftyTwo.next == thirtyEight;
+}
 
 
