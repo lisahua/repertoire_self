@@ -1,0 +1,316 @@
+include "bst.sk";
+
+harness void insertHarness() {
+    BST bst = newBST();
+    //insert 12
+    Node twelve = newNode(12);
+    insert_bst (bst, twelve);
+    assert bst.root == twelve;
+    assert bst.root.left == null;
+    assert bst.root.right ==null;
+    //insert 18
+    Node eighteen = newNode(18);
+    insert_bst (bst, eighteen);
+    assert bst.root == twelve;
+    assert bst.root.right == eighteen;
+    
+        //insert 15
+    Node fifteen = newNode(15);
+    insert_bst (bst, fifteen);
+    assert bst.root == twelve;
+    assert bst.root.right == eighteen;
+    assert eighteen.left == fifteen;
+    
+        //insert 5
+    Node five = newNode(5);
+        insert_bst (bst, five);
+    assert bst.root == twelve;
+    assert bst.root.left == five;
+    
+        //insert 9
+    Node nine = newNode(9);
+        insert_bst (bst, nine);
+    assert bst.root == twelve;
+    assert bst.root.left == five;
+    assert five.right ==nine;
+    
+    
+    //insert 19
+    Node nineteen = newNode(19);
+    insert_bst (bst, nineteen);
+    assert bst.root == twelve;
+    assert bst.root.right == eighteen;
+    assert eighteen.right ==nineteen;
+    //insert 13
+    Node thirteen = newNode(13);
+      insert_bst (bst, thirteen);
+    assert bst.root.right == eighteen;
+    assert eighteen.left == fifteen;
+    assert fifteen.left == thirteen;
+    
+        //insert 2
+    Node two = newNode(2);
+        insert_bst (bst, two);
+    assert bst.root.left == five;
+    assert five.left == two;
+    
+        //insert 17
+    Node seventeen = newNode(17);
+       insert_bst (bst, seventeen);
+    assert bst.root.right == eighteen;
+    assert eighteen.left == fifteen;
+    assert fifteen.right == seventeen;
+    
+}
+
+
+
+harness void deleteHarness() {
+ BST bst = newBST();
+    //insert 12
+    Node twelve = newNode(12);
+    insert_bst (bst, twelve);
+    //insert 18
+    Node eighteen = newNode(18);
+    insert_bst (bst, eighteen);
+        //insert 15
+    Node fifteen = newNode(15);
+    insert_bst (bst, fifteen);
+        //insert 5
+    Node five = newNode(5);
+        insert_bst (bst, five);
+        //insert 9
+    Node nine = newNode(9);
+        insert_bst (bst, nine);
+    //insert 19
+    Node nineteen = newNode(19);
+    insert_bst (bst, nineteen);
+    //insert 13
+    Node thirteen = newNode(13);
+      insert_bst (bst, thirteen);
+        //insert 2
+    Node two = newNode(2);
+        insert_bst (bst, two);
+        //insert 17
+    Node seventeen = newNode(17);
+       insert_bst (bst, seventeen); 
+    
+delete (bst,  fifteen);
+assert bst.root==twelve;
+assert bst.root.right==eighteen;
+assert eighteen.left==seventeen;
+assert seventeen.left==thirteen;
+
+
+delete (bst,  twelve);
+assert bst.root==thirteen;
+assert bst.root.right==eighteen;
+assert eighteen.left==seventeen;
+assert seventeen.left==null;
+
+delete (bst,  five);
+assert bst.root==thirteen;
+assert bst.root.left==nine;
+assert nine.left==two;
+assert nine.right==null;   
+       
+}
+
+harness void searchHarness() {
+ BST bst = newBST();
+    //insert 12
+    Node twelve = newNode(12);
+    insert_bst (bst, twelve);
+    //insert 18
+    Node eighteen = newNode(18);
+    insert_bst (bst, eighteen);
+        //insert 15
+    Node fifteen = newNode(15);
+    insert_bst (bst, fifteen);
+        //insert 5
+    Node five = newNode(5);
+        insert_bst (bst, five);
+        //insert 9
+    Node nine = newNode(9);
+        insert_bst (bst, nine);
+    //insert 19
+    Node nineteen = newNode(19);
+    insert_bst (bst, nineteen);
+    //insert 13
+    Node thirteen = newNode(13);
+      insert_bst (bst, thirteen);
+        //insert 2
+    Node two = newNode(2);
+        insert_bst (bst, two);
+        //insert 17
+    Node seventeen = newNode(17);
+       insert_bst (bst, seventeen); 
+      
+      Node n = search(bst,15);
+      assert n==fifteen;
+      n = search(bst,16);
+      assert n==null;
+         n = search(bst,12);
+         assert n==twelve;
+           n = search(bst,9);
+           assert n==nine;
+}
+
+
+harness void successorHarness() {
+ BST bst = newBST();
+    //insert 12
+    Node twelve = newNode(12);
+    insert_bst (bst, twelve);
+    //insert 18
+    Node eighteen = newNode(18);
+    insert_bst (bst, eighteen);
+        //insert 15
+    Node fifteen = newNode(15);
+    insert_bst (bst, fifteen);
+        //insert 5
+    Node five = newNode(5);
+        insert_bst (bst, five);
+        //insert 9
+    Node nine = newNode(9);
+        insert_bst (bst, nine);
+    //insert 19
+    Node nineteen = newNode(19);
+    insert_bst (bst, nineteen);
+    //insert 13
+    Node thirteen = newNode(13);
+      insert_bst (bst, thirteen);
+        //insert 2
+    Node two = newNode(2);
+        insert_bst (bst, two);
+        //insert 17
+    Node seventeen = newNode(17);
+       insert_bst (bst, seventeen); 
+
+Node n = successor(twelve);
+assert n == thirteen;
+n = successor(nineteen);
+assert n == null;
+n = successor(fifteen);
+assert n==seventeen;
+n = successor(five);
+assert n== nine;
+}
+
+
+harness void minHarness() {
+ BST bst = newBST();
+    //insert 12
+    Node twelve = newNode(12);
+    insert_bst (bst, twelve);
+    //insert 18
+    Node eighteen = newNode(18);
+    insert_bst (bst, eighteen);
+        //insert 15
+    Node fifteen = newNode(15);
+    insert_bst (bst, fifteen);
+        //insert 5
+    Node five = newNode(5);
+        insert_bst (bst, five);
+        //insert 9
+    Node nine = newNode(9);
+        insert_bst (bst, nine);
+    //insert 19
+    Node nineteen = newNode(19);
+    insert_bst (bst, nineteen);
+    //insert 13
+    Node thirteen = newNode(13);
+      insert_bst (bst, thirteen);
+        //insert 2
+    Node two = newNode(2);
+        insert_bst (bst, two);
+        //insert 17
+    Node seventeen = newNode(17);
+       insert_bst (bst, seventeen); 
+
+Node n = minimum(twelve);
+assert n==two;
+n = minimum(thirteen);
+assert n == thirteen;
+n = minimum(nineteen);
+assert n == nineteen;
+}
+
+
+harness void maxHarness() {
+ BST bst = newBST();
+    //insert 12
+    Node twelve = newNode(12);
+    insert_bst (bst, twelve);
+    //insert 18
+    Node eighteen = newNode(18);
+    insert_bst (bst, eighteen);
+        //insert 15
+    Node fifteen = newNode(15);
+    insert_bst (bst, fifteen);
+        //insert 5
+    Node five = newNode(5);
+        insert_bst (bst, five);
+        //insert 9
+    Node nine = newNode(9);
+        insert_bst (bst, nine);
+    //insert 19
+    Node nineteen = newNode(19);
+    insert_bst (bst, nineteen);
+    //insert 13
+    Node thirteen = newNode(13);
+      insert_bst (bst, thirteen);
+        //insert 2
+    Node two = newNode(2);
+        insert_bst (bst, two);
+        //insert 17
+    Node seventeen = newNode(17);
+       insert_bst (bst, seventeen); 
+
+Node n = maximum(twelve);
+assert n==nineteen;
+n = maximum(five);
+assert n == nine;
+n = maximum(thirteen);
+assert n == thirteen;
+
+}
+
+BST insertTestHelper() {
+     BST bst = newBST();
+    //insert 12
+    Node twelve = newNode(12);
+    insert_bst (bst, twelve);
+    //insert 18
+    Node eighteen = newNode(18);
+    insert_bst (bst, eighteen);
+        //insert 15
+    Node fifteen = newNode(15);
+    insert_bst (bst, fifteen);
+        //insert 5
+    Node five = newNode(5);
+        insert_bst (bst, five);
+        //insert 9
+    Node nine = newNode(9);
+        insert_bst (bst, nine);
+    //insert 19
+    Node nineteen = newNode(19);
+    insert_bst (bst, nineteen);
+    //insert 13
+    Node thirteen = newNode(13);
+      insert_bst (bst, thirteen);
+        //insert 2
+    Node two = newNode(2);
+        insert_bst (bst, two);
+        //insert 17
+    Node seventeen = newNode(17);
+       insert_bst (bst, seventeen); 
+       
+ return bst;
+}
+
+void delete_helper(BST T, int val) {
+    Node y = null;
+    Node z = search(T,val);
+    delete(T,z);
+}
