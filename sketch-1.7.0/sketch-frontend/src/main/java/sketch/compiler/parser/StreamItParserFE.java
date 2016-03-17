@@ -1059,7 +1059,11 @@ inputState.guessing--;
 		Token  t2 = null;
 		Token  t3 = null;
 		Token  t4 = null;
-		s = null; List<String> bindingsInOrder = new ArrayList<String>(); Map<String, Expression> set = new HashMap<String, Expression>(); Expression preCond = null; List<Expression> asserts = new ArrayList<Expression>(); Expression x;
+		s = null;
+		List<String> bindingsInOrder = new ArrayList<String>();
+		Map<String, Expression> set = new HashMap<String, Expression>();
+		Expression preCond = null;
+		List<Expression> asserts = new ArrayList<Expression>(); Expression x;
 		
 		try {      // for error handling
 			switch ( LA(1)) {

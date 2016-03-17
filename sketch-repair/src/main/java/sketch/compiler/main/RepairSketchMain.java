@@ -3,7 +3,6 @@
  */
 package sketch.compiler.main;
 
-import java.io.File;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,21 +10,60 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import sketch.compiler.ast.core.Program;
 import sketch.compiler.main.cmdline.SketchOptions;
 import sketch.compiler.main.other.ErrorHandling;
+import sketch.compiler.main.passes.CleanupFinalCode;
+import sketch.compiler.main.passes.SubstituteSolution;
 import sketch.compiler.main.seq.SequentialSketchMain;
+import sketch.compiler.main.seq.SequentialSketchMain.SynthesisResult;
+import sketch.util.exceptions.ProgramParseException;
 import sketch.util.exceptions.SketchException;
 
 public class RepairSketchMain extends SequentialSketchMain {
-
-	public RepairSketchMain(SketchOptions options) {
-		super(options);
-	}
+	static Program prog = null;
+	 public RepairSketchMain(String[] args) {
+	        super(new SketchOptions(args));
+	    }
+		/** for subclasses */
+	    public RepairSketchMain(SketchOptions options) {
+	        super(options);
+	    }
 
 	public void run() {
-		super.run();
-	}
+		this.log(1, "Benchmark = " + this.benchmarkName());
+//		Program prog = null;
+		try {
+			prog = parseProgram();
+			// System.out.println(prog);
+		} catch (SketchException se) {
+			throw se;
+		} catch (IllegalArgumentException ia) {
+			throw ia;
+		} catch (RuntimeException re) {
+			throw new ProgramParseException("Sketch failed to parse: " + re.getMessage());
+		}
 
+		prog = this.preprocAndSemanticCheck(prog);
+
+		SynthesisResult synthResult = this.partialEvalAndSolve(prog);
+		prog = synthResult.lowered.result;
+		
+		Program finalCleaned = synthResult.lowered.highLevelC;
+		Program substituted;
+		if (synthResult.solution != null) {
+			substituted = (new SubstituteSolution(varGen, options, synthResult.solution)).visitProgram(finalCleaned);
+		} else {
+			substituted = finalCleaned;
+		}
+
+		Program substitutedCleaned = (new CleanupFinalCode(varGen, options, visibleRControl(finalCleaned)))
+				.visitProgram(substituted);
+
+		generateCode(substitutedCleaned);
+		this.log(1, "[SKETCH] DONE");
+	}
+	
 	public static void main(String[] args) {
 		System.out.println("Repair Sketch Main");
 		System.out.println("SKETCH version " + PlatformLocalization.getLocalization().version);
@@ -57,28 +95,18 @@ public class RepairSketchMain extends SequentialSketchMain {
 				}
 			} else { // normal run
 				// System.out.println("Running");
-				sketchmain.run();
+				new RepairSketchMain(options).run();
 				// System.out.println("End run");
 			}
 		} catch (SketchException e) {
 			e.print();
-			File tmp = RepairBugLocalizer.handleSketchException(e, options.sketchFile);
-			if (tmp != null) {
-				options.sketchFile = tmp;
-				if (!prevError.equals(e.getMessage())) {
-					prevError = e.getMessage();
-					System.out.println("First Repair try:");
-					try {
-						sketchmain.run();
-					} catch (SketchException e2) {
-
-					}
-				}
-			}
 			if (isTest) {
 				throw e;
 			} else {
 				// e.printStackTrace();
+				//TODO recursion starts here
+				RepairCandidateGenerator repair = new RepairCandidateGenerator();
+				repair.generateCandidaite(prog, e, options.sketchFile);
 				exitCode = 1;
 			}
 		} catch (java.lang.Error e) {
