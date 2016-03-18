@@ -9,22 +9,17 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import sketch.compiler.ast.core.FieldDecl;
 import sketch.compiler.ast.core.exprs.Expression;
 import sketch.compiler.ast.core.stmts.StmtSpAssert;
-import sketch.compiler.ast.core.typs.StructDef;
 
 public class AssertionLocator {
-	private StructDef type;
-	private FieldDecl field;
+
 
 	public String findBuggyAssertion(String message, File sketchFile) {
-		int index2 = message.indexOf(":");
+		int index2 = message.indexOf("at");
 		int index3 = message.indexOf("(");
-		int line = Integer.parseInt(message.substring(index2 + 1, index3).trim());
-		String field = locateAssertionField(sketchFile, line);
-		System.out.println("Buggy assertion: " + field);
-		return field;
+		String context= message.substring(index2 + 3, index3);
+		return context.trim();
 	}
 
 	private String locateAssertionField(File file, int line) {
@@ -56,7 +51,6 @@ public class AssertionLocator {
 			}
 			System.out.println("");
 		}
-
 	}
 
 	private List<StmtSpAssert> mapToAssertion(List<StmtSpAssert> assertions, String failAssert) {

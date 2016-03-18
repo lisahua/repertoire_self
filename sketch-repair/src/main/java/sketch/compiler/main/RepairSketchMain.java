@@ -3,6 +3,7 @@
  */
 package sketch.compiler.main;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,12 +12,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import sketch.compiler.ast.core.Program;
+import sketch.compiler.ast.core.stmts.StmtAssert;
+import sketch.compiler.bugLocator.RepairFEVisitor;
 import sketch.compiler.main.cmdline.SketchOptions;
 import sketch.compiler.main.other.ErrorHandling;
 import sketch.compiler.main.passes.CleanupFinalCode;
 import sketch.compiler.main.passes.SubstituteSolution;
 import sketch.compiler.main.seq.SequentialSketchMain;
-import sketch.compiler.main.seq.SequentialSketchMain.SynthesisResult;
 import sketch.util.exceptions.ProgramParseException;
 import sketch.util.exceptions.SketchException;
 
@@ -34,8 +36,13 @@ public class RepairSketchMain extends SequentialSketchMain {
 		this.log(1, "Benchmark = " + this.benchmarkName());
 //		Program prog = null;
 		try {
+//			prog = (new RepairProgramStage(varGen, options)).visitProgram(null);
 			prog = parseProgram();
-			// System.out.println(prog);
+//			RepairCandidateGenerator repair = new RepairCandidateGenerator();
+//			repair.generateCandidaite(prog, e, options.sketchFile);
+//			SuspiciousVisitor visitor = new SuspiciousVisitor();
+//			prog.accept(visitor);
+			
 		} catch (SketchException se) {
 			throw se;
 		} catch (IllegalArgumentException ia) {
@@ -45,7 +52,8 @@ public class RepairSketchMain extends SequentialSketchMain {
 		}
 
 		prog = this.preprocAndSemanticCheck(prog);
-
+		
+//		 System.out.println("=========After semantic check ======="+prog);
 		SynthesisResult synthResult = this.partialEvalAndSolve(prog);
 		prog = synthResult.lowered.result;
 		
@@ -65,7 +73,7 @@ public class RepairSketchMain extends SequentialSketchMain {
 	}
 	
 	public static void main(String[] args) {
-		System.out.println("Repair Sketch Main");
+		
 		System.out.println("SKETCH version " + PlatformLocalization.getLocalization().version);
 		long beg = System.currentTimeMillis();
 		String prevError = "";
