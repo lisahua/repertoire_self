@@ -13,7 +13,7 @@ import java.util.concurrent.TimeoutException;
 
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.stmts.StmtAssert;
-import sketch.compiler.bugLocator.RepairFEVisitor;
+import sketch.compiler.bugLocator.RepairFEFuncVisitor;
 import sketch.compiler.main.cmdline.SketchOptions;
 import sketch.compiler.main.other.ErrorHandling;
 import sketch.compiler.main.passes.CleanupFinalCode;

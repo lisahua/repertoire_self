@@ -17,16 +17,12 @@ import sketch.compiler.ast.core.stmts.StmtVarDecl;
 import sketch.compiler.ast.core.typs.StructDef;
 import sketch.compiler.ast.core.typs.Type;
 import sketch.compiler.bugLocator.AssertionLocator;
-import sketch.compiler.bugLocator.RepairFEVisitor;
+import sketch.compiler.bugLocator.RepairFEFuncVisitor;
 import sketch.util.datastructures.ImmutableTypedHashMap;
 import sketch.util.exceptions.SketchException;
 import sketch.util.exceptions.SketchNotResolvedException;
 
 public class RepairCandidateGenerator {
-	private List<Function> functs = new ArrayList<Function>();
-	private List<StmtAssert> assertions = new ArrayList<StmtAssert>();
-	private List<StmtAssert> failAsserts = new ArrayList<StmtAssert>();
-	private List<Function> failFunc = new ArrayList<Function>();
 
 	public void generateCandidaite(Program prog, SketchException se, File file) {
 		if (!(se instanceof SketchNotResolvedException)) {
@@ -42,41 +38,9 @@ public class RepairCandidateGenerator {
 	}
 
 	private void parseProgram(Program prog, String failAssList) {
-		for (Package pkg : prog.getPackages()) {
-			functs.addAll(pkg.getFuncs());
-		}
-		StmtAssert failAss = null;// TODO take out for recursion later
-		RepairFEVisitor visitor = new RepairFEVisitor();
-		prog.accept(visitor);
-		for (Function func : functs) {
-			// RepairFEVisitor visitor = new RepairFEVisitor();
-			func.accept(visitor);
-			System.out.println("=======Function " + func.getFullName() + "=============");
-
-			ArrayList<StmtAssert> asserts = visitor.getAsserts();
-			ArrayList<StmtVarDecl> varDecl = visitor.getVars();
-			ArrayList<StructDef> structDef = visitor.getStructDef();
-			for (StmtAssert ass : asserts) {
-				if ((ass.getCx().toString().trim()).equals(failAssList)) {
-					System.out.println("====Failure found at =====");
-					System.out.println(ass.getMsg() + "," + ass.getCx() + "," + ass.toString());
-					failAss = ass;
-				}
-			}
-			for (StmtVarDecl ass : varDecl) {
-				System.out.println(ass.getName(0) + "," + ass.getType(0) + "," + ass.getCx() + ","
-						+ ass.getOrigin().toString() + "," + ass.toString());
-
-			}
-
-			for (StructDef ass : structDef) {
-				System.out.println("======Struct " + ass.getName() + "==========");
-				ImmutableTypedHashMap<String, Type> fieldMap = ass.getFieldTypMap();
-				for (String s : fieldMap.keySet())
-					System.out.println(s + "," + fieldMap.get(s));
-
-			}
-		}
+		FailAssertHandler failAssertHandler  = new FailAssertHandler();
+		
+		failAssertHandler.generateNewSketch(prog,failAssList);
 	}
 
 	private String findSuspicious(String msg, File file) {
