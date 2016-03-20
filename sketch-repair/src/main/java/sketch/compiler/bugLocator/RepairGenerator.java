@@ -9,9 +9,9 @@ import sketch.compiler.ast.core.Program;
 import sketch.util.exceptions.SketchException;
 import sketch.util.exceptions.SketchNotResolvedException;
 
-public class RepairCandidateGenerator {
+public class RepairGenerator {
 
-	public void generateCandidaite(Program prog, SketchException se, File file) {
+	public void startRepair(Program prog, SketchException se, File file) {
 		if (!(se instanceof SketchNotResolvedException)) {
 			System.out.println("Repair-Sketch requires a SketchNotResolvedException to start with");
 			return;

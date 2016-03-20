@@ -7,8 +7,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import sketch.compiler.ProgramLocator.SketchHoleGenerator;
+import sketch.compiler.ProgramLocator.SuspiciousFieldLocator;
+import sketch.compiler.assertionLocator.AssertionLocator;
+import sketch.compiler.assertionLocator.FailAssertHandler;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.Package;
+import sketch.compiler.ast.core.Parameter;
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.exprs.ExprFunCall;
 import sketch.compiler.ast.core.stmts.StmtAssert;
@@ -22,7 +27,9 @@ public class RepairProgramUtility {
 
 	private HashMap<String, StructDef> structMap = new HashMap<String, StructDef>();
 	private HashMap<String, Function> funcMap = new HashMap<String, Function>();
-//	private HashMap<StructDef, ImmutableTypedHashMap<String, Type>> structFieldType = new HashMap<StructDef, ImmutableTypedHashMap<String, Type>>();
+	// private HashMap<StructDef, ImmutableTypedHashMap<String, Type>>
+	// structFieldType = new HashMap<StructDef, ImmutableTypedHashMap<String,
+	// Type>>();
 	private HashMap<Function, HashMap<String, Type>> funcVarType = new HashMap<Function, HashMap<String, Type>>();
 	private HashMap<Function, List<StmtAssert>> funcAssertMap = new HashMap<Function, List<StmtAssert>>();
 	private HashMap<Function, List<ExprFunCall>> funcCallMap = new HashMap<Function, List<ExprFunCall>>();
@@ -39,10 +46,9 @@ public class RepairProgramUtility {
 				funcMap.put(func.getName(), func);
 			for (StructDef struct : pkg.getStructs()) {
 				structMap.put(struct.getName(), struct);
-//				structFieldType.put(struct, struct.getFieldTypMap());
+				// structFieldType.put(struct, struct.getFieldTypMap());
 			}
 		}
-
 
 		for (Function func : funcMap.values()) {
 			// RepairFEVisitor visitor = new RepairFEVisitor();
@@ -55,8 +61,9 @@ public class RepairProgramUtility {
 			for (StmtVarDecl var : visitor.getVarDecl()) {
 				varTypeMap.put(var.getName(0), var.getType(0));
 			}
+			for (Parameter para : visitor.getParameter())
+				varTypeMap.put(para.getName(), para.getType());
 			funcVarType.put(func, varTypeMap);
-
 			assignMap.put(func, visitor.getStmtAssign());
 
 		}
@@ -74,32 +81,57 @@ public class RepairProgramUtility {
 		List<StmtAssert> asserts = assertLocator.findAllAsserts(failHandler.getFailField());
 
 		SuspiciousFieldLocator suspLocator = new SuspiciousFieldLocator(this);
-		List<StmtAssign> assigns = suspLocator.findAllFieldsInMethod(failHandler.getFailField(), failHandler.getBuggyHarness());
+		suspLocator.findAllFieldsInMethod(failHandler.getFailField(), failHandler.getBuggyHarness());
 
-		
+		SketchHoleGenerator holeGenerator = new SketchHoleGenerator(this);
+		holeGenerator.createCandidate(suspLocator.getSuspciousAssign());
+
 	}
 
-	public List<String> resolveFieldChain(Function func, String string) {
+	public List<FieldWrapper> resolveFieldChain(Function func, String string) {
 		HashMap<String, Type> varType = funcVarType.get(func);
 		String[] token = string.split("\\.");
 		Type current = null;
 		String tmp = "";
-		List<String> fieldType = new ArrayList<String>();
+		String fieldName = "";
+		List<FieldWrapper> fields = new ArrayList<FieldWrapper>();
+		for (String t : token) {
+			t = t.trim();
+			if (t.length() == 0)
+				continue;
+			if (current == null) {
+				current = varType.get(t);
+			} else {
+				current = getType(current.toString(), t);
+				varType.put(tmp + "." + t, current);
+				fieldName = tmp + "." + t;
+			}
+			tmp = current.toString();
+			if (tmp.contains("@"))
+				tmp = tmp.substring(0, tmp.indexOf("@"));
+			fields.add(new FieldWrapper(fieldName, current));
+		}
+		return fields;
+	}
+
+	public Type resolveFieldType(Function func, String string) {
+		HashMap<String, Type> varType = funcVarType.get(func);
+		String[] token = string.split("\\.");
+		Type current = null;
 
 		for (String t : token) {
 			if (current == null) {
 				current = varType.get(t);
 			} else {
 				current = getType(current.toString(), t);
-				varType.put(tmp + "." + t, current);
 			}
-			tmp = current.toString();
-			fieldType.add(tmp);
 		}
-		return fieldType;
+		return current;
 	}
 
-	private  Type getType(String type, String field) {
+	private Type getType(String type, String field) {
+		if (type.contains("@"))
+			type = type.substring(0, type.indexOf("@"));
 		StructDef strt = structMap.get(type);
 		ImmutableTypedHashMap<String, Type> fieldMap = strt.getFieldTypMap();
 		return fieldMap.get(field);
@@ -113,7 +145,6 @@ public class RepairProgramUtility {
 		return funcMap;
 	}
 
-	
 	public HashMap<Function, HashMap<String, Type>> getFuncVarType() {
 		return funcVarType;
 	}

@@ -1,7 +1,7 @@
 /**
  * @author Lisa Mar 9, 2016 RepairBugLocalizer.java 
  */
-package sketch.compiler.bugLocator;
+package sketch.compiler.assertionLocator;
 
 import java.io.BufferedReader;
 import java.io.File;
