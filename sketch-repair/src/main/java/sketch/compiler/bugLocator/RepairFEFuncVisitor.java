@@ -17,7 +17,7 @@ public class RepairFEFuncVisitor extends FEReplacer {
 	ArrayList<StmtAssert> asserts = new ArrayList<StmtAssert>();
 	ArrayList<StmtVarDecl> varDecl = new ArrayList<StmtVarDecl>();
 	ArrayList<ExprFunCall> funCall = new ArrayList<ExprFunCall>();
-
+	ArrayList<StmtAssign> stmtAssign = new ArrayList<StmtAssign>();
 	public Object visitStmtAssert(StmtAssert stmt) {
 		asserts.add(stmt);
 		return super.visitStmtAssert(stmt);
@@ -34,7 +34,7 @@ public class RepairFEFuncVisitor extends FEReplacer {
 	}
 
 	public Object visitStmtAssign(StmtAssign stmt) {
-//		System.out.println("===StmtAssign ==="+stmt+","+stmt.getOrigin());
+		stmtAssign.add(stmt);
 		return super.visitStmtAssign(stmt);
 	}
 
@@ -46,14 +46,14 @@ public class RepairFEFuncVisitor extends FEReplacer {
 //	}
 
 	public Object visitStmtExpr(StmtExpr stmt) {
-//		System.out.println("===StmtExpr ==="+stmt+","+stmt.getOrigin());
+		System.out.println("===StmtExpr ==="+stmt+","+stmt.getOrigin());
 		return super.visitStmtExpr(stmt);
 	}
 	
 
 	
 	public Object visitExprFunCall(ExprFunCall exp) {
-//		System.out.println("===ExprFuncCall ==="+exp);
+		System.out.println("===ExprFuncCall ==="+exp+","+exp.getOrigin());
 		funCall.add(exp);
 		return super.visitExprFunCall(exp);
 	}
@@ -70,7 +70,9 @@ public class RepairFEFuncVisitor extends FEReplacer {
 	public ArrayList<ExprFunCall> getFunCall() {
 		return funCall;
 	}
-	
+	public ArrayList<StmtAssign> getStmtAssign() {
+		return stmtAssign;
+	}
 	
 	
 }
