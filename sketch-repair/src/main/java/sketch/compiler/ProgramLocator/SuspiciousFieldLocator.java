@@ -8,10 +8,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import sketch.compiler.assertionLocator.FieldWrapper;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.exprs.ExprFunCall;
 import sketch.compiler.ast.core.stmts.StmtAssign;
-import sketch.compiler.bugLocator.FieldWrapper;
 import sketch.compiler.bugLocator.RepairProgramUtility;
 
 public class SuspiciousFieldLocator {

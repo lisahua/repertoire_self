@@ -6,7 +6,6 @@ package sketch.compiler.assertionLocator;
 import java.util.List;
 
 import sketch.compiler.ast.core.stmts.StmtAssert;
-import sketch.compiler.bugLocator.FieldWrapper;
 
 public class AssertionLocator {
 

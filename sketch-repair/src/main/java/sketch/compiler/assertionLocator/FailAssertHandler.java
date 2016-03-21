@@ -11,7 +11,6 @@ import java.util.Map;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.stmts.StmtAssert;
 import sketch.compiler.ast.core.typs.Type;
-import sketch.compiler.bugLocator.FieldWrapper;
 import sketch.compiler.bugLocator.RepairProgramUtility;
 
 public class FailAssertHandler {
@@ -33,6 +32,7 @@ public class FailAssertHandler {
 		System.out.println("=====fail assert ====" + context);
 		return findFailAssert(context.trim());
 	}
+	
 
 	public Function getBuggyHarness() {
 		return buggyHarness;
