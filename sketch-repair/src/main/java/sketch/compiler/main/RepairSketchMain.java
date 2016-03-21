@@ -14,12 +14,12 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import sketch.compiler.ProgramLocator.SketchEqTranfer;
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.bugLocator.RepairGenerator;
 import sketch.compiler.main.cmdline.SketchOptions;
 import sketch.compiler.main.other.ErrorHandling;
 import sketch.compiler.main.passes.CleanupFinalCode;
+import sketch.compiler.main.passes.OutputCCode;
 import sketch.compiler.main.passes.SubstituteSolution;
 import sketch.compiler.main.seq.SequentialSketchMain;
 import sketch.compiler.passes.cleanup.EliminateAliasesInRefParams;
@@ -30,8 +30,9 @@ import sketch.util.exceptions.SketchException;
 public class RepairSketchMain extends SequentialSketchMain {
 	static Program prog = null;
 
+	// static String file = "";
 	public RepairSketchMain(String[] args) {
-		super(new SketchOptions(args));
+		super(new RepairSketchOptions(args));
 	}
 
 	/** for subclasses */
@@ -72,6 +73,7 @@ public class RepairSketchMain extends SequentialSketchMain {
 
 		this.log(1, "[SKETCH] DONE");
 	}
+
 
 	public static void main(String[] args) {
 		System.out.println("SKETCH version " + PlatformLocalization.getLocalization().version);
@@ -122,6 +124,7 @@ public class RepairSketchMain extends SequentialSketchMain {
 					for (String f : files) {
 						fix = repair.getFixPerFile().get(f);
 						String file = f.substring(0, f.indexOf(".")) + ".sk2";
+
 						String[] arg_re = args;
 						arg_re[0] = f;
 						if (status == REPAIR_STATUS.ONGOING) {
@@ -129,17 +132,15 @@ public class RepairSketchMain extends SequentialSketchMain {
 								System.out.println("====Repair start: test " + fix + ", " + options.sketchFile.getName()
 										+ "=======");
 								new RepairSketchMain(arg_re).run();
-								prog.accept(new SimpleSketchFilePrinter(file));
-								
-								String repairF = repair.transferEqSketch(f);
-								System.out.println("====Repair End: repair file at : " + repairF + "==============");
+								System.out.println("====Repair End: repair file at : " + file + "==============");
+								break;
 							} catch (Exception repair_e) {
 								try {
 									new File(f).delete();
 								} catch (Exception x) {
 								}
-
 							}
+
 						}
 					}
 
@@ -166,6 +167,7 @@ public class RepairSketchMain extends SequentialSketchMain {
 			}
 		} finally {
 			System.out.println("Total time = " + (System.currentTimeMillis() - beg));
+
 		}
 		if (exitCode != 0) {
 			System.exit(exitCode);
@@ -173,6 +175,7 @@ public class RepairSketchMain extends SequentialSketchMain {
 
 	}
 
+	//
 	public void generateCode(Program prog) {
 		// rename main function so it's not the C main
 		Map<String, String> rm = new HashMap<String, String>();
@@ -180,8 +183,9 @@ public class RepairSketchMain extends SequentialSketchMain {
 		prog = (Program) prog.accept(new MethodRename(rm));
 		prog = (Program) prog.accept(new EliminateAliasesInRefParams(varGen));
 
-		// (new OutputCCode(varGen, options)).visitProgram(prog);
+		(new OutputSketchCode(varGen, options)).visitProgram(prog);
 
+		// new SimpleSketchFilePrinter(file).visitProgram(prog)
 	}
 
 }

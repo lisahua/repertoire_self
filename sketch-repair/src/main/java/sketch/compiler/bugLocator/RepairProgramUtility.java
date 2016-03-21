@@ -9,11 +9,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import sketch.compiler.ProgramLocator.SketchHoleGenerator;
-import sketch.compiler.ProgramLocator.SuspiciousFieldLocator;
+import sketch.compiler.ProgramLocator.SuspiciousFieldCollector;
 import sketch.compiler.assertionLocator.AssertionLocator;
 import sketch.compiler.assertionLocator.FailAssertHandler;
 import sketch.compiler.assertionLocator.FieldWrapper;
 import sketch.compiler.ast.core.Function;
+import sketch.compiler.ast.core.NameResolver;
 import sketch.compiler.ast.core.Package;
 import sketch.compiler.ast.core.Parameter;
 import sketch.compiler.ast.core.Program;
@@ -38,10 +39,11 @@ public class RepairProgramUtility {
 	private HashMap<Function, List<StmtAssign>> assignMap = new HashMap<Function, List<StmtAssign>>();
 	private String outputFile = "";
 	private HashMap<String, String> fileFixMap = null;
-
+private NameResolver nRes;
 	public RepairProgramUtility(Program prog, String message) {
 		// TODO Auto-generated constructor stub
 		initProgram(prog);
+		nRes = new NameResolver(prog);
 	}
 
 	private void initProgram(Program prog) {
@@ -84,7 +86,7 @@ public class RepairProgramUtility {
 		AssertionLocator assertLocator = new AssertionLocator(failHandler.getAllAsserts());
 		List<StmtAssert> asserts = assertLocator.findAllAsserts(failHandler.getFailField());
 
-		SuspiciousFieldLocator suspLocator = new SuspiciousFieldLocator(this);
+		SuspiciousFieldCollector suspLocator = new SuspiciousFieldCollector(this);
 		suspLocator.findAllFieldsInMethod(failHandler.getFailField(), failHandler.getBuggyHarness());
 
 		SketchHoleGenerator holeGenerator = new SketchHoleGenerator(this);
@@ -145,14 +147,19 @@ public class RepairProgramUtility {
 		return fieldMap.get(field);
 	}
 
-	public HashMap<String, StructDef> getStructMap() {
-		return structMap;
-	}
+//	public HashMap<String, StructDef> getStructMap() {
+//		return structMap;
+//	}
+//
+//	public HashMap<String, Function> getFuncMap() {
+//		return funcMap;
+//	}
 
-	public HashMap<String, Function> getFuncMap() {
-		return funcMap;
+	
+	public Function getFuncMap(String name) {
+		return nRes.getFun(name);
 	}
-
+		
 	public HashMap<Function, HashMap<String, Type>> getFuncVarType() {
 		return funcVarType;
 	}
