@@ -3,16 +3,34 @@
  */
 package sketch.compiler.ProgramLocator;
 
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileReader;
+
+import sketch.compiler.ast.core.Program;
 
 public class SketchEqTranfer {
 	
-	public SketchEqTranfer (File origin, File dest) {
-		
+private String origin = "";
+private Program  prog = null;
+	public SketchEqTranfer (String origin, Program prog) {
+		this.origin = origin;
+		this.prog = prog;
 	}
 
-	public void transferSketch(String fix) {
-		
+	public String transferSketch(String fix) {
+		try {
+			BufferedReader oReader = new BufferedReader(new FileReader(origin));
+			
+			//I need 
+			
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	
+		//TODO delete dest file 
+		return "";
 	}
 	
 }
