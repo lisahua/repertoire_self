@@ -24,6 +24,7 @@ import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
 import sketch.compiler.ast.core.typs.StructDef;
 import sketch.compiler.ast.core.typs.Type;
+import sketch.compiler.main.RepairSketchOptions;
 import sketch.util.datastructures.ImmutableTypedHashMap;
 
 public class RepairProgramUtility {
@@ -39,11 +40,14 @@ public class RepairProgramUtility {
 	private HashMap<Function, List<StmtAssign>> assignMap = new HashMap<Function, List<StmtAssign>>();
 	private String outputFile = "";
 	private HashMap<String, String> fileFixMap = null;
-private NameResolver nRes;
-	public RepairProgramUtility(Program prog, String message) {
+	private NameResolver nRes;
+	private RepairSketchOptions options;
+
+	public RepairProgramUtility(Program prog, final RepairSketchOptions options) {
 		// TODO Auto-generated constructor stub
 		initProgram(prog);
 		nRes = new NameResolver(prog);
+		this.options = options;
 	}
 
 	private void initProgram(Program prog) {
@@ -75,14 +79,17 @@ private NameResolver nRes;
 		}
 	}
 
-	public List<String> startRepair(String message, File file) {
+	public List<String> startRepair(String message) {
 		FailAssertHandler failHandler = new FailAssertHandler(this);
 		StmtAssert failAssert = failHandler.findBuggyAssertion(message);
 		if (failAssert == null) {
 			System.out.println("Cannot identify failing assertion! Repair stop.");
 			return null;
 		}
-		outputFile = file.getAbsolutePath() + ".tmp";
+		// File file = options.sketchFile;
+		// outputFile = (options.repairOptions.repairSketch == null) ?
+		// file.getAbsolutePath() + ".tmp"
+		// : options.repairOptions.repairSketch;
 		AssertionLocator assertLocator = new AssertionLocator(failHandler.getAllAsserts());
 		List<StmtAssert> asserts = assertLocator.findAllAsserts(failHandler.getFailField());
 
@@ -90,11 +97,11 @@ private NameResolver nRes;
 		suspLocator.findAllFieldsInMethod(failHandler.getFailField(), failHandler.getBuggyHarness());
 
 		SketchHoleGenerator holeGenerator = new SketchHoleGenerator(this);
-		List<String> files = holeGenerator.runSketch(suspLocator.getSuspciousAssign(), file);
-		
+		List<String> files = holeGenerator.runSketch(suspLocator.getSuspciousAssign());
+
 		fileFixMap = holeGenerator.getFixPerFile();
-//		for (String key : fileFixMap.keySet())
-//			System.out.println("Utility "+key + "," + fileFixMap.get(key));
+		// for (String key : fileFixMap.keySet())
+		// System.out.println("Utility "+key + "," + fileFixMap.get(key));
 		return files;
 	}
 
@@ -147,19 +154,10 @@ private NameResolver nRes;
 		return fieldMap.get(field);
 	}
 
-//	public HashMap<String, StructDef> getStructMap() {
-//		return structMap;
-//	}
-//
-//	public HashMap<String, Function> getFuncMap() {
-//		return funcMap;
-//	}
-
-	
 	public Function getFuncMap(String name) {
 		return nRes.getFun(name);
 	}
-		
+
 	public HashMap<Function, HashMap<String, Type>> getFuncVarType() {
 		return funcVarType;
 	}
@@ -176,12 +174,13 @@ private NameResolver nRes;
 		return assignMap;
 	}
 
-	public String getOutputFile() {
-		return outputFile;
-	}
-
 	public HashMap<String, String> getFixPerFile() {
 		return fileFixMap;
+	}
+
+	public String getSketchFile() {
+		return (options.repairOptions.repairSketch == null) ? options.sketchFile.getAbsolutePath().toString() + ".tmp"
+				: options.repairOptions.repairSketch;
 	}
 
 }

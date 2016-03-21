@@ -3,34 +3,22 @@
  */
 package sketch.compiler.bugLocator;
 
-import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 
 import sketch.compiler.ast.core.Program;
-import sketch.util.exceptions.SketchException;
-import sketch.util.exceptions.SketchNotResolvedException;
+import sketch.compiler.main.RepairSketchOptions;
 
 public class RepairGenerator {
 	HashMap<String, String> fileFixMap = null;
+	Program prog;
+	RepairSketchOptions options;
 
-	public List<String> startRepair(Program prog, SketchException se, File file) {
-		if (!(se instanceof SketchNotResolvedException)) {
-			System.out.println("Repair-Sketch requires a SketchNotResolvedException to start with");
-			return null;
-		}
-		RepairProgramUtility utility = new RepairProgramUtility(prog, se.getMessage());
-		List<String> candFiles = utility.startRepair(se.getMessage(), file);
-		fileFixMap = utility.getFixPerFile();
-		return candFiles;
+	public RepairGenerator(Program prog, RepairSketchOptions options) {
+		this.prog = prog;
+		this.options = options;
 	}
 
-	public HashMap<String, String> getFixPerFile() {
-		return fileFixMap;
-	}
+	
 
-	public String transferEqSketch(String file) {
-		
-		return null;
-	}
+	
 }

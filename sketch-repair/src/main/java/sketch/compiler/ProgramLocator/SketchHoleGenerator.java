@@ -40,18 +40,18 @@ public class SketchHoleGenerator {
 		return assignCandidate;
 	}
 
-	public List<String> runSketch(HashMap<Function, List<StmtAssign>> bugAssign, File file) {
+	public List<String> runSketch(HashMap<Function, List<StmtAssign>> bugAssign) {
 
 		List<AssignReplaceWrapper> assignLine = createCandidate(bugAssign);
 		int index = 0;
 		List<String> files = new ArrayList<String>();
-		String path = utility.getOutputFile();
+		String path = utility.getSketchFile();
 		for (AssignReplaceWrapper replace : assignLine) {
 			try {
 				String f = path + index++;
 				files.add(f);
 				PrintWriter writer = new PrintWriter(f);
-				BufferedReader reader = new BufferedReader(new FileReader(file));
+				BufferedReader reader = new BufferedReader(new FileReader(utility.getSketchFile()));
 				String msg = replace.getAssign().getCx().toString();
 				msg = msg.substring(msg.lastIndexOf(":") + 1).trim();
 				int id = Integer.parseInt(msg);

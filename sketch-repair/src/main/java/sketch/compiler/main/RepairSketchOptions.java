@@ -3,22 +3,27 @@
  */
 package sketch.compiler.main;
 
-import java.io.File;
-import java.util.Arrays;
-
 import sketch.compiler.main.cmdline.SketchOptions;
 import sketch.util.cli.SketchCliParser;
 
 public class RepairSketchOptions extends SketchOptions {
-	RepairOptions repairOptions = new RepairOptions();
+	public RepairOptions repairOptions = new RepairOptions();
+	private static RepairSketchOptions _singleton;
+
+	public static RepairSketchOptions getSingleton() {
+		return _singleton;
+	}
+
 	public RepairSketchOptions(String[] inArgs) {
 		super(inArgs);
-		// TODO Auto-generated constructor stub
+		_singleton = this;
 	}
-	
+
 	public void parseCommandline(SketchCliParser parser) {
-        super.parseCommandline(parser);
-        repairOptions.parse(parser);
-    }
+		super.parseCommandline(parser);
+		repairOptions = new RepairOptions();
+//		System.out.println("who is null?" + repairOptions+","+parser);
+		repairOptions.parse(parser);
+	}
 
 }
