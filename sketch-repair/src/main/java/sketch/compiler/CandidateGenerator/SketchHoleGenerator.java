@@ -15,13 +15,13 @@ import sketch.compiler.ProgramLocator.AssignReplaceWrapper;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.typs.Type;
-import sketch.compiler.bugLocator.RepairProgramUtility;
+import sketch.compiler.bugLocator.RepairProgramController;
 
 public class SketchHoleGenerator {
-	private RepairProgramUtility utility = null;
+	private RepairProgramController utility = null;
 	private HashMap<String, String> fileFixMap = new HashMap<String, String>();
 
-	public SketchHoleGenerator(RepairProgramUtility repairProgramUtility) {
+	public SketchHoleGenerator(RepairProgramController repairProgramUtility) {
 		utility = repairProgramUtility;
 	}
 

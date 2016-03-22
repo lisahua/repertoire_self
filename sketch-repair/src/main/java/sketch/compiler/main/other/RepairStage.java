@@ -7,12 +7,13 @@ import java.util.HashMap;
 import java.util.List;
 
 import sketch.compiler.ast.core.Program;
-import sketch.compiler.bugLocator.RepairProgramUtility;
+import sketch.compiler.bugLocator.RepairProgramController;
 
 public class RepairStage {
 	static String se = "";
 	RepairSketchOptions options = null;
-HashMap<String,String> map = null;
+	HashMap<String, String> map = null;
+
 	public RepairStage(RepairSketchOptions options) {
 		this.options = options;
 	}
@@ -23,13 +24,13 @@ HashMap<String,String> map = null;
 			se = err;
 			return null;
 		}
-		RepairProgramUtility utility = new RepairProgramUtility(prog, options);
+		RepairProgramController utility = new RepairProgramController(prog, options);
 		List<String> candFiles = utility.startRepair(err);
 		map = utility.getFixPerFile();
-	
+
 		return candFiles;
 	}
-	
+
 	public String getFixPerFile(String file) {
 		return map.get(file);
 	}

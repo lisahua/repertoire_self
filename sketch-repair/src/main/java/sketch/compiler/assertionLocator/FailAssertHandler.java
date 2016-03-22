@@ -11,17 +11,17 @@ import java.util.Map;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.stmts.StmtAssert;
 import sketch.compiler.ast.core.typs.Type;
-import sketch.compiler.bugLocator.RepairProgramUtility;
+import sketch.compiler.bugLocator.RepairProgramController;
 
 public class FailAssertHandler {
 
-	private RepairProgramUtility utility;
+	private RepairProgramController utility;
 	private Function buggyHarness = null;
 	private StmtAssert failAssert = null;
 
 	private List<FieldWrapper> fields = new ArrayList<FieldWrapper>();
 
-	public FailAssertHandler(final RepairProgramUtility utility) {
+	public FailAssertHandler(final RepairProgramController utility) {
 		this.utility = utility;
 	}
 
@@ -69,12 +69,8 @@ public class FailAssertHandler {
 		return failAssert;
 	}
 
-	private HashMap<String, Type> findFailField(StmtAssert ass) {
+	private void findFailField(StmtAssert ass) {
 		String[] token = ass.toString().replace("assert", "").split("==");
-		HashMap<String, Type> varType = utility.getFuncVarType().get(buggyHarness);
-//		for (String key: varType.keySet()) {
-//			System.out.println("key "+key+","+varType.get(key));
-//		}
 		String lhs = token[0].replace("(", "").replace(")", "").trim();
 		String rhs = token[1].replace("(", "").replace(")", "").trim();
 		if (lhs.contains(".")) {
@@ -82,7 +78,6 @@ public class FailAssertHandler {
 		}
 		if (rhs.contains("."))
 			fields.addAll(utility.resolveFieldChain(buggyHarness, rhs));
-		return varType;
 	}
 
 }

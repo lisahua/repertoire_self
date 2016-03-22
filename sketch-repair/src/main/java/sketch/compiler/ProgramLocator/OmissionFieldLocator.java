@@ -9,13 +9,13 @@ import java.util.List;
 import sketch.compiler.assertionLocator.FieldWrapper;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.stmts.StmtAssign;
-import sketch.compiler.bugLocator.RepairProgramUtility;
+import sketch.compiler.bugLocator.RepairProgramController;
 
 public class OmissionFieldLocator extends SuspiciousStmtLocator {
-	private RepairProgramUtility utility;
+	private RepairProgramController utility;
 	private String summary = "";
 
-	public OmissionFieldLocator(RepairProgramUtility utility) {
+	public OmissionFieldLocator(RepairProgramController utility) {
 		super(utility);
 		this.utility = utility;
 	}

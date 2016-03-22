@@ -27,7 +27,7 @@ import sketch.compiler.ast.core.typs.Type;
 import sketch.compiler.main.other.RepairSketchOptions;
 import sketch.util.datastructures.ImmutableTypedHashMap;
 
-public class RepairProgramUtility {
+public class RepairProgramController {
 	private HashMap<Function, HashMap<String, Type>> funcVarType = new HashMap<Function, HashMap<String, Type>>();
 	private HashMap<Function, List<StmtAssert>> funcAssertMap = new HashMap<Function, List<StmtAssert>>();
 	private HashMap<Function, List<ExprFunCall>> funcCallMap = new HashMap<Function, List<ExprFunCall>>();
@@ -36,7 +36,7 @@ public class RepairProgramUtility {
 	private NameResolver nRes;
 	private RepairSketchOptions options;
 
-	public RepairProgramUtility(Program prog, final RepairSketchOptions options) {
+	public RepairProgramController(Program prog, final RepairSketchOptions options) {
 		initProgram(prog);
 		nRes = new NameResolver(prog);
 		this.options = options;
@@ -45,21 +45,21 @@ public class RepairProgramUtility {
 	private void initProgram(Program prog) {
 		for (Package pkg : prog.getPackages()) {
 
-		for (Function func : pkg.getFuncs()) {
-			RepairFEFuncVisitor visitor = new RepairFEFuncVisitor();
-			func.accept(visitor);
-			funcAssertMap.put(func, visitor.getAsserts());
-			funcCallMap.put(func, visitor.getFunCall());
+			for (Function func : pkg.getFuncs()) {
+				RepairFEFuncVisitor visitor = new RepairFEFuncVisitor();
+				func.accept(visitor);
+				funcAssertMap.put(func, visitor.getAsserts());
+				funcCallMap.put(func, visitor.getFunCall());
 
-			HashMap<String, Type> varTypeMap = new HashMap<String, Type>();
-			for (StmtVarDecl var : visitor.getVarDecl()) {
-				varTypeMap.put(var.getName(0), var.getType(0));
+				HashMap<String, Type> varTypeMap = new HashMap<String, Type>();
+				for (StmtVarDecl var : visitor.getVarDecl()) {
+					varTypeMap.put(var.getName(0), var.getType(0));
+				}
+				for (Parameter para : visitor.getParameter())
+					varTypeMap.put(para.getName(), para.getType());
+				funcVarType.put(func, varTypeMap);
+				assignMap.put(func, visitor.getStmtAssign());
 			}
-			for (Parameter para : visitor.getParameter())
-				varTypeMap.put(para.getName(), para.getType());
-			funcVarType.put(func, varTypeMap);
-			assignMap.put(func, visitor.getStmtAssign());
-		}
 		}
 	}
 
@@ -125,20 +125,16 @@ public class RepairProgramUtility {
 	}
 
 	private Type getType(String type, String field) {
-//		if (type.contains("@"))
-//			type = type.substring(0, type.indexOf("@"));
+		// if (type.contains("@"))
+		// type = type.substring(0, type.indexOf("@"));
 		StructDef strt = nRes.getStruct(type);
-//		StructDef strt = structMap.get(type);
+		// StructDef strt = structMap.get(type);
 		ImmutableTypedHashMap<String, Type> fieldMap = strt.getFieldTypMap();
 		return fieldMap.get(field);
 	}
 
 	public Function getFuncMap(String name) {
 		return nRes.getFun(name);
-	}
-
-	public HashMap<Function, HashMap<String, Type>> getFuncVarType() {
-		return funcVarType;
 	}
 
 	public HashMap<Function, List<StmtAssert>> getFuncAssertMap() {
@@ -161,4 +157,10 @@ public class RepairProgramUtility {
 		return options.args[0];
 	}
 
+	public int getRepairBound() {
+		int bound = options.repairOptions.bound;
+		if (bound == 0)
+			bound = 3;
+		return bound;
+	}
 }

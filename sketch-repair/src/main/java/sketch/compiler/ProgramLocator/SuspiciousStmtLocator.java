@@ -11,13 +11,13 @@ import sketch.compiler.assertionLocator.FieldWrapper;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.exprs.ExprFunCall;
 import sketch.compiler.ast.core.stmts.StmtAssign;
-import sketch.compiler.bugLocator.RepairProgramUtility;
+import sketch.compiler.bugLocator.RepairProgramController;
 
 public abstract class SuspiciousStmtLocator {
-	private RepairProgramUtility utility = null;
+	private RepairProgramController utility = null;
 //	private HashMap<Function, List<StmtAssign>> suspAssign = new HashMap<Function, List<StmtAssign>>();
 
-	public SuspiciousStmtLocator(RepairProgramUtility utility) {
+	public SuspiciousStmtLocator(RepairProgramController utility) {
 		this.utility = utility;
 	}
 

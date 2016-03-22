@@ -12,15 +12,15 @@ import sketch.compiler.assertionLocator.FieldWrapper;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.exprs.ExprFunCall;
 import sketch.compiler.ast.core.stmts.StmtAssign;
-import sketch.compiler.bugLocator.RepairProgramUtility;
+import sketch.compiler.bugLocator.RepairProgramController;
 
 public class SuspiciousFieldCollector {
 	// private HashMap<String, Type> varTypeMap = new HashMap<String, Type>();
-	private RepairProgramUtility utility = null;
+	private RepairProgramController utility = null;
 	private HashMap<Function, List<StmtAssign>> suspAssign = new HashMap<Function, List<StmtAssign>>();
 	private List<SuspiciousStmtLocator> locatorList = new ArrayList<SuspiciousStmtLocator>();
 
-	public SuspiciousFieldCollector(RepairProgramUtility utility) {
+	public SuspiciousFieldCollector(RepairProgramController utility) {
 		this.utility = utility;
 		locatorList.add(new AssignFieldLocator(utility));
 		locatorList.add(new OmissionFieldLocator(utility));
