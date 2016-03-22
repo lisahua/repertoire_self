@@ -3,6 +3,7 @@
  */
 package sketch.compiler.main;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,9 +12,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import sketch.compiler.ast.core.Program;
-import sketch.compiler.main.cmdline.SketchOptions;
 import sketch.compiler.main.other.ErrorHandling;
 import sketch.compiler.main.passes.CleanupFinalCode;
+import sketch.compiler.main.passes.ParseProgramStage;
 import sketch.compiler.main.passes.SubstituteSolution;
 import sketch.compiler.main.seq.SequentialSketchMain;
 import sketch.util.exceptions.ProgramParseException;
@@ -38,14 +39,19 @@ public class RepairSketchMain extends SequentialSketchMain {
 
 	public void run() {
 		this.log(1, "Benchmark = " + this.benchmarkName());
+		recurRun();
+		this.log(1, "[SKETCH] DONE");
+	}
+
+	private boolean recurRun() {
 		Program prog = null;
 		try {
 			prog = parseProgram();
+			prog = this.preprocAndSemanticCheck(prog);
 		} catch (RuntimeException re) {
 			throw new ProgramParseException("Sketch failed to parse: " + re.getMessage());
 		}
-		prog = this.preprocAndSemanticCheck(prog);
-		try { 
+		try {
 			SynthesisResult synthResult = this.partialEvalAndSolve(prog);
 			prog = synthResult.lowered.result;
 			Program finalCleaned = synthResult.lowered.highLevelC;
@@ -59,124 +65,95 @@ public class RepairSketchMain extends SequentialSketchMain {
 			Program substitutedCleaned = (new CleanupFinalCode(varGen, options, visibleRControl(finalCleaned)))
 					.visitProgram(substituted);
 			generateCode(substitutedCleaned);
+			return true;
 		} catch (SketchException se) {
 			System.out.println("========Repair starts: " + se.getMessage() + "==========");
-			parseProgram(prog,se.getMessage());
-			System.out.println("========Repair End: ==========");
+			if (status == RPSTATUS.NULL) {
+				status = RPSTATUS.ONGOING;
+				parseProgram(prog, se.getMessage());
+			}
 		}
-		this.log(1, "[SKETCH] DONE");
+		return false;
 	}
+
 	public static void main(String[] args) {
-        System.out.println("SKETCH version " +
-                PlatformLocalization.getLocalization().version);
-        long beg = System.currentTimeMillis();
-        ErrorHandling.checkJavaVersion(1, 6);
-        // TODO -- change class names so this is clear
-        final RepairSketchMain sketchmain = new RepairSketchMain(args);
-        PlatformLocalization.getLocalization().setTempDirs();
-        int exitCode = 0;
-        try {
-            RepairSketchOptions options = RepairSketchOptions.getSingleton();
-            if (options.feOpts.timeout > 0) {
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                Future<?> f = executor.submit(sketchmain);
-                try {
-                    f.get((long) options.feOpts.timeout, TimeUnit.MINUTES);
-                } catch (TimeoutException e) {
-                    System.out.println("Sketch front-end timed out");
-                    exitCode = 1;
-                } catch (ExecutionException e) {
-                    ErrorHandling.handleErr(e);
-                    exitCode = 1;
-                } catch (InterruptedException e) {
-                    ErrorHandling.handleErr(e);
-                    exitCode = 1;
-                } finally {
-                    executor.shutdown();
-                }
-            } else { // normal run
-            // System.out.println("Running");
-                sketchmain.run();
-                // System.out.println("End run");
-            }
-        }  catch (java.lang.Error e) {
-            ErrorHandling.handleErr(e);
-            // necessary for unit tests, etc.
-            if (isTest) {
-                throw e;
-            } else {
-                exitCode = 1;
-            }
-        } catch (RuntimeException e) {
-            ErrorHandling.handleErr(e);
-            if (isTest) {
-                throw e;
-            } else {
-                if (sketchmain.options.debugOpts.verbosity > 3) {
-                    e.printStackTrace();
-                }
-                exitCode = 1;
-            }
-        } finally {
-            System.out.println("Total time = " + (System.currentTimeMillis() - beg));
-        }
-        if (exitCode != 0) {
-            System.exit(exitCode);
-        }
-    }
-	//
-	// public void generateCode(Program prog) {
-	// // rename main function so it's not the C main
-	// Map<String, String> rm = new HashMap<String, String>();
-	// rm.put("main", "_main");
-	// prog = (Program) prog.accept(new MethodRename(rm));
-	// prog = (Program) prog.accept(new EliminateAliasesInRefParams(varGen));
-	//
-	// (new OutputSketchCode(varGen, options)).visitProgram(prog);
-	//
-	// // new SimpleSketchFilePrinter(file).visitProgram(prog)
-	// }
-
-	// TODO recursion starts here
-	// if (status == REPAIR_STATUS.NULL) {
-	// status = REPAIR_STATUS.ONGOING;
-	// RepairGenerator repair = new RepairGenerator(prog,options);
-	// List<String> files = repair.startRepair(e);
-	// for (String f : files) {
-	// fix = repair.getFixPerFile().get(f);
-	// String file = (options.repairOptions.outputRepair == null)
-	// ? f.substring(0, f.indexOf(".")) + ".sk2" :
-	// options.repairOptions.outputRepair;
-	//
-	// String[] arg_re = args;
-	// arg_re[0] = f;
-	// if (status == REPAIR_STATUS.ONGOING) {
-	// try {
-	// System.out.println("====Repair start: test " + fix + ", " +
-	// options.sketchFile.getName()
-	// + "=======");
-	// new RepairSketchMain(arg_re).run();
-	// System.out.println("====Repair End: repair file at : " + file +
-	// "==============");
-	// break;
-	// } catch (Exception repair_e) {
-	// try {
-	// new File(f).delete();
-	// } catch (Exception x) {
-	// }
-	// }
-	//
-	// }
-	// }
-	//
-	// // exitCode = 1;
-	// }
-
-	protected Program parseProgram(Program prog, String e) {
-
-		return (new RepairStage(varGen, options, e)).visitProgramInner(prog);
-
+		System.out.println("SKETCH version " + PlatformLocalization.getLocalization().version);
+		long beg = System.currentTimeMillis();
+		ErrorHandling.checkJavaVersion(1, 6);
+		// TODO -- change class names so this is clear
+		final RepairSketchMain sketchmain = new RepairSketchMain(args);
+		PlatformLocalization.getLocalization().setTempDirs();
+		int exitCode = 0;
+		try {
+			RepairSketchOptions options = RepairSketchOptions.getSingleton();
+			if (options.feOpts.timeout > 0) {
+				ExecutorService executor = Executors.newSingleThreadExecutor();
+				Future<?> f = executor.submit(sketchmain);
+				try {
+					f.get((long) options.feOpts.timeout, TimeUnit.MINUTES);
+				} catch (TimeoutException e) {
+					System.out.println("Sketch front-end timed out");
+					exitCode = 1;
+				} catch (ExecutionException e) {
+					ErrorHandling.handleErr(e);
+					exitCode = 1;
+				} catch (InterruptedException e) {
+					ErrorHandling.handleErr(e);
+					exitCode = 1;
+				} finally {
+					executor.shutdown();
+				}
+			} else { // normal run
+				// System.out.println("Running");
+				sketchmain.run();
+				// System.out.println("End run");
+			}
+		} catch (java.lang.Error e) {
+			ErrorHandling.handleErr(e);
+			// necessary for unit tests, etc.
+			if (isTest) {
+				throw e;
+			} else {
+				exitCode = 1;
+			}
+		} catch (RuntimeException e) {
+			ErrorHandling.handleErr(e);
+			if (isTest) {
+				throw e;
+			} else {
+				if (sketchmain.options.debugOpts.verbosity > 3) {
+					e.printStackTrace();
+				}
+				exitCode = 1;
+			}
+		} finally {
+			System.out.println("Total time = " + (System.currentTimeMillis() - beg));
+		}
+		if (exitCode != 0) {
+			System.exit(exitCode);
+		}
 	}
+
+	protected void parseProgram(Program prog, String e) {
+		RepairStage rStage = new RepairStage(options);
+		List<String> files = rStage.startRepair(prog, e);
+		if (files == null || files.size() == 0)
+			return;
+
+		for (String f : files) {
+			String[] new_arg = options.args;
+			System.out.println("======DEBUG===" + new_arg[0] + "," + f);
+			new_arg[0] = f;
+			options = new RepairSketchOptions(new_arg);
+			if (recurRun()) {
+				System.out.println("======Repair End===" + f + "," + rStage.getFixPerFile(f));
+				break;
+			}
+		}
+	}
+	 protected Program parseProgram() {
+	        return (new ParseProgramStage(varGen, options)).visitProgram(null);
+	    }
 }
 
 enum RPSTATUS {

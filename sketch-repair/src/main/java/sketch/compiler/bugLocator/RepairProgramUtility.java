@@ -179,8 +179,9 @@ public class RepairProgramUtility {
 	}
 
 	public String getSketchFile() {
-		return (options.repairOptions.repairSketch == null) ? options.sketchFile.getAbsolutePath().toString() + ".tmp"
-				: options.repairOptions.repairSketch;
+		return options.args[0];
+//		return (options.repairOptions.repairSketch == null) ? options.sketchFile.getAbsolutePath().toString() + ".tmp"
+//				: options.repairOptions.repairSketch;
 	}
 
 }
