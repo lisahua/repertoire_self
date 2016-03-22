@@ -29,11 +29,13 @@ public class SuspiciousFieldCollector {
 
 	public HashMap<String, List<StmtAssign>> findAllFieldsInMethod(List<VarDeclEntry> sField, String suspFunc) {
 		HashSet<String> funSet = findAllSuspiciousMethod(suspFunc);
-		List<StmtAssign> assigns = new ArrayList<StmtAssign>();
+		
 		for (String func : funSet) {
-			for (SuspiciousStmtLocator locator : locatorList)
+			List<StmtAssign> assigns = new ArrayList<StmtAssign>();
+			for (SuspiciousStmtLocator locator : locatorList) {
 				assigns.addAll(locator.findSuspiciousStmtInMethod(sField, func));
-//			System.out.println("Suspicios fields "+func.getName()+","+assigns.size());
+//			System.out.println("Suspicios fields "+func+","+assign.toString());
+			}
 			suspAssign.put(func, assigns);
 			for (ExprFunCall funCall : utility.getFuncCallMap().get(func)) {
 			}

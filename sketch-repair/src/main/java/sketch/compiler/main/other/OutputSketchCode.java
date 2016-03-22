@@ -21,6 +21,7 @@ import sketch.compiler.codegenerators.NodesToSuperH;
 import sketch.compiler.main.passes.OutputCCode;
 import sketch.compiler.main.seq.SequentialSketchMain;
 import sketch.compiler.passes.lowering.EliminateMultiDimArrays;
+import sketch.compiler.passes.printers.SimpleCodePrinter;
 import sketch.compiler.passes.spmd.ChangeGlobalStateType;
 import sketch.compiler.passes.structure.ContainsCudaCode;
 
@@ -54,6 +55,7 @@ public class OutputSketchCode extends OutputCCode {
 		if (!options.feOpts.outputCode && !options.feOpts.noOutputPrint) {
 			try {
 				prog.accept(new SimpleSketchFilePrinter(file));
+				
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

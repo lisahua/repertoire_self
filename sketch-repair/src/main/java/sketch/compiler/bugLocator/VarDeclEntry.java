@@ -35,7 +35,7 @@ public class VarDeclEntry {
 	public int getBound() {
 		return bound;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -50,6 +50,10 @@ public class VarDeclEntry {
 
 	public String getTypeS() {
 		return type.getName();
+	}
+
+	public String toString() {
+		return "[" + func + "] [" + type + "] [" + origin + "] [" + name + "]  [" + bound + "]";
 	}
 
 }

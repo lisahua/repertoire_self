@@ -22,6 +22,7 @@ import sketch.compiler.ast.core.stmts.StmtAssert;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
 import sketch.compiler.main.other.RepairSketchOptions;
+import sketch.compiler.passes.printers.SimpleCodePrinter;
 
 public class RepairProgramController {
 	private HashMap<String, List<StmtAssert>> funcAssertMap = new HashMap<String, List<StmtAssert>>();
@@ -33,9 +34,10 @@ public class RepairProgramController {
 	private LocalVariableResolver resolver;
 
 	public RepairProgramController(Program prog, final RepairSketchOptions options) {
-		initProgram(prog);
 		resolver = new LocalVariableResolver(prog);
+		initProgram(prog);
 		this.options = options;
+		prog.accept(new  SimpleCodePrinter());
 	}
 
 	private void initProgram(Program prog) {
@@ -85,7 +87,7 @@ public class RepairProgramController {
 		String[] token = string.split("\\.");
 		VarDeclEntry current = null;
 		List<VarDeclEntry> fields = new ArrayList<VarDeclEntry>();
-		System.out.println("===DEBUG ===resolveFieldChain "+func+","+string);
+		System.out.println("===resolveFieldChain "+func+","+string);
 		for (String t : token) {
 			t = t.trim();
 			if (t.length() == 0)
@@ -96,6 +98,7 @@ public class RepairProgramController {
 				current = resolver.getFieldTypeInStruct(current, t);
 			}
 			fields.add(current);
+			System.out.println(current);
 		}
 		return fields;
 	}

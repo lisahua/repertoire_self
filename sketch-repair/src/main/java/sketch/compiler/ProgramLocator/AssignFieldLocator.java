@@ -27,6 +27,7 @@ public class AssignFieldLocator extends SuspiciousStmtLocator {
 			VarDeclEntry suspField = sField.get(sField.size() - 1);
 			// FIXME now I only consider last field;
 			// FIXME now I only consider LHS
+//			System.out.println("===DEBUG ===lhsField "+lhsField.size()+" suspField "+suspField+" "+sField.size());
 			if (lhsField.get(lhsField.size() - 1).getName().equals(suspField.getName())) {
 				assigns.add(assign);
 				summary = func + ":" + assign.toString();
