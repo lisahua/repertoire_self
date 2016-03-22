@@ -49,9 +49,10 @@ public class RepairProgramController {
 				funcAssertMap.put(func.getName(), visitor.getAsserts());
 				funcCallMap.put(func.getName(), visitor.getFunCall());
 
-				for (Parameter para : visitor.getParameter())
+				for (Parameter para : visitor.getParameter()) {
 					resolver.add(para.getName(), resolver.getStruct(para.getType().toString()), func.getName());
-				for (StmtVarDecl var : visitor.getVarDecl()) {
+				}
+					for (StmtVarDecl var : visitor.getVarDecl()) {
 					Iterator<StmtVarDecl.VarDeclEntry> iterator = var.iterator();
 					while (iterator.hasNext()) {
 						StmtVarDecl.VarDeclEntry entry = iterator.next();
@@ -84,23 +85,7 @@ public class RepairProgramController {
 	}
 
 	public List<VarDeclEntry> resolveFieldChain(String func, String string) {
-		String[] token = string.split("\\.");
-		VarDeclEntry current = null;
-		List<VarDeclEntry> fields = new ArrayList<VarDeclEntry>();
-		System.out.println("===resolveFieldChain "+func+","+string);
-		for (String t : token) {
-			t = t.trim();
-			if (t.length() == 0)
-				continue;
-			if (current == null) {
-				current = resolver.getVarTypeInFunc(func, t);
-			} else {
-				current = resolver.getFieldTypeInStruct(current, t);
-			}
-			fields.add(current);
-			System.out.println(current);
-		}
-		return fields;
+		return resolver.resolveFieldChain(func, string);
 	}
 
 	public Function getFuncMap(String name) {
@@ -134,11 +119,4 @@ public class RepairProgramController {
 		return bound;
 	}
 
-	// public NameResolver getNameResolver() {
-	// return resolver;
-	// }
-
-	// public HashMap<String, Type> getAllVarInMethod(Function func) {
-	// return funcVarType.get(func);
-	// }
 }

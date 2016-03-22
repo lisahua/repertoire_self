@@ -34,7 +34,6 @@ public class SuspiciousFieldCollector {
 			List<StmtAssign> assigns = new ArrayList<StmtAssign>();
 			for (SuspiciousStmtLocator locator : locatorList) {
 				assigns.addAll(locator.findSuspiciousStmtInMethod(sField, func));
-//			System.out.println("Suspicios fields "+func+","+assign.toString());
 			}
 			suspAssign.put(func, assigns);
 			for (ExprFunCall funCall : utility.getFuncCallMap().get(func)) {

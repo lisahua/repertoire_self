@@ -3,7 +3,6 @@
  */
 package sketch.compiler.bugLocator;
 
-import sketch.compiler.ast.core.stmts.StmtVarDecl;
 import sketch.compiler.ast.core.typs.StructDef;
 
 public class VarDeclEntry {
@@ -11,14 +10,12 @@ public class VarDeclEntry {
 	private String name;
 	private String func;
 	private StructDef type;
-	private int bound;
+	private int bound=0;
 	private String origin;
 
 	public VarDeclEntry(String name, StructDef type, String func) {
-		this.name = name;
-		this.func = func;
-		this.type = type;
-		this.origin = name;
+		this(name,name,type,func);
+		
 	}
 
 	public VarDeclEntry(String name, String origin, StructDef type, String func) {
@@ -26,6 +23,10 @@ public class VarDeclEntry {
 		this.func = func;
 		this.type = type;
 		this.origin = origin;
+		for (char a: origin.toCharArray()) {
+			if (a=='.')
+				bound++;
+		}
 	}
 
 	public String getOrigin() {

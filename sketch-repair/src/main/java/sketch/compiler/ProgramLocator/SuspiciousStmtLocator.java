@@ -11,8 +11,6 @@ import sketch.compiler.bugLocator.VarDeclEntry;
 
 public abstract class SuspiciousStmtLocator {
 	private RepairProgramController utility = null;
-//	private HashMap<Function, List<StmtAssign>> suspAssign = new HashMap<Function, List<StmtAssign>>();
-
 	public SuspiciousStmtLocator(RepairProgramController utility) {
 		this.utility = utility;
 	}
