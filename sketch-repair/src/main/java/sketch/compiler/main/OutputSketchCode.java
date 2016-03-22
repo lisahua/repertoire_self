@@ -18,7 +18,6 @@ import sketch.compiler.codegenerators.NodesToCUDA;
 import sketch.compiler.codegenerators.NodesToSuperCTest;
 import sketch.compiler.codegenerators.NodesToSuperCpp;
 import sketch.compiler.codegenerators.NodesToSuperH;
-import sketch.compiler.main.cmdline.SketchOptions;
 import sketch.compiler.main.passes.OutputCCode;
 import sketch.compiler.main.seq.SequentialSketchMain;
 import sketch.compiler.passes.lowering.EliminateMultiDimArrays;
@@ -28,10 +27,15 @@ import sketch.compiler.passes.structure.ContainsCudaCode;
 public class OutputSketchCode extends OutputCCode {
 	private String file = "";
 
-	public OutputSketchCode(TempVarGen varGen, SketchOptions options) {
+	public OutputSketchCode(TempVarGen varGen, RepairSketchOptions options) {
 		super(varGen, options);
-//		RepairSketchOptions re_options = (RepairSketchOptions) options;
-		file = options.sketchName + ".repair";
+		String file = options.repairOptions.outputRepair;
+		if (file == null) {
+			file = options.sketchName;
+			file = file.substring(0, file.indexOf(".")) + ".repair";
+			options.repairOptions.outputRepair = file;
+		}
+		this.file = file;
 	}
 
 	@Override

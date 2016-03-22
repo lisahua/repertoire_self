@@ -33,7 +33,7 @@ Entry addFirst(LinkedList l, int o) {
     e.previous = l.header;
     e.next = t;
     if (t != l.header)
-    t.previous = e;
+    t.previous = l.header;
    l.size = l.size+1;
    return e;
 }

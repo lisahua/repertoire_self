@@ -1,0 +1,24 @@
+struct Node {
+    int value;
+    int color;//record visited later
+    }
+    
+struct DAG {
+Node[M][M] nodes;
+int size;
+}
+
+DAG newDAG() {
+DAG dag = new DAG();
+return dag;
+}
+
+Node newNode(int val) {
+    Node n = new Node();
+    n.value = val;
+    n.color =0;//white, non-visited
+}
+
+void minPath() {
+
+}

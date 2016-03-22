@@ -3,6 +3,8 @@
  */
 package sketch.compiler.main;
 
+import static sketch.util.DebugOut.printError;
+
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -14,6 +16,7 @@ import java.util.concurrent.TimeoutException;
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.main.other.ErrorHandling;
 import sketch.compiler.main.passes.CleanupFinalCode;
+import sketch.compiler.main.passes.OutputCCode;
 import sketch.compiler.main.passes.ParseProgramStage;
 import sketch.compiler.main.passes.SubstituteSolution;
 import sketch.compiler.main.seq.SequentialSketchMain;
@@ -146,14 +149,26 @@ public class RepairSketchMain extends SequentialSketchMain {
 			new_arg[0] = f;
 			options = new RepairSketchOptions(new_arg);
 			if (recurRun()) {
-				System.out.println("======Repair End===" + f + "," + rStage.getFixPerFile(f));
+				System.out.println(
+						"======Repair End===" + options.repairOptions.outputRepair + "," + rStage.getFixPerFile(f));
 				break;
 			}
 		}
 	}
-	 protected Program parseProgram() {
-	        return (new ParseProgramStage(varGen, options)).visitProgram(null);
-	    }
+
+	protected Program parseProgram() {
+		return (new ParseProgramStage(varGen, options)).visitProgram(null);
+	}
+
+	protected void outputCCode(Program prog) {
+		if (prog == null) {
+			printError("Final code generation encountered error, skipping output");
+			return;
+		}
+
+		(new OutputSketchCode(varGen, options)).visitProgram(prog);
+	}
+
 }
 
 enum RPSTATUS {
