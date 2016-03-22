@@ -28,23 +28,15 @@ import sketch.compiler.main.other.RepairSketchOptions;
 import sketch.util.datastructures.ImmutableTypedHashMap;
 
 public class RepairProgramUtility {
-
-	private HashMap<String, StructDef> structMap = new HashMap<String, StructDef>();
-	private HashMap<String, Function> funcMap = new HashMap<String, Function>();
-	// private HashMap<StructDef, ImmutableTypedHashMap<String, Type>>
-	// structFieldType = new HashMap<StructDef, ImmutableTypedHashMap<String,
-	// Type>>();
 	private HashMap<Function, HashMap<String, Type>> funcVarType = new HashMap<Function, HashMap<String, Type>>();
 	private HashMap<Function, List<StmtAssert>> funcAssertMap = new HashMap<Function, List<StmtAssert>>();
 	private HashMap<Function, List<ExprFunCall>> funcCallMap = new HashMap<Function, List<ExprFunCall>>();
 	private HashMap<Function, List<StmtAssign>> assignMap = new HashMap<Function, List<StmtAssign>>();
-	private String outputFile = "";
 	private HashMap<String, String> fileFixMap = null;
 	private NameResolver nRes;
 	private RepairSketchOptions options;
 
 	public RepairProgramUtility(Program prog, final RepairSketchOptions options) {
-		// TODO Auto-generated constructor stub
 		initProgram(prog);
 		nRes = new NameResolver(prog);
 		this.options = options;
@@ -52,16 +44,8 @@ public class RepairProgramUtility {
 
 	private void initProgram(Program prog) {
 		for (Package pkg : prog.getPackages()) {
-			for (Function func : pkg.getFuncs())
-				funcMap.put(func.getName(), func);
-			for (StructDef struct : pkg.getStructs()) {
-				structMap.put(struct.getName(), struct);
-				// structFieldType.put(struct, struct.getFieldTypMap());
-			}
-		}
 
-		for (Function func : funcMap.values()) {
-			// RepairFEVisitor visitor = new RepairFEVisitor();
+		for (Function func : pkg.getFuncs()) {
 			RepairFEFuncVisitor visitor = new RepairFEFuncVisitor();
 			func.accept(visitor);
 			funcAssertMap.put(func, visitor.getAsserts());
@@ -75,7 +59,7 @@ public class RepairProgramUtility {
 				varTypeMap.put(para.getName(), para.getType());
 			funcVarType.put(func, varTypeMap);
 			assignMap.put(func, visitor.getStmtAssign());
-
+		}
 		}
 	}
 
@@ -86,10 +70,6 @@ public class RepairProgramUtility {
 			System.out.println("Cannot identify failing assertion! Repair stop.");
 			return null;
 		}
-		// File file = options.sketchFile;
-		// outputFile = (options.repairOptions.repairSketch == null) ?
-		// file.getAbsolutePath() + ".tmp"
-		// : options.repairOptions.repairSketch;
 		AssertionLocator assertLocator = new AssertionLocator(failHandler.getAllAsserts());
 		List<StmtAssert> asserts = assertLocator.findAllAsserts(failHandler.getFailField());
 
@@ -100,8 +80,6 @@ public class RepairProgramUtility {
 		List<String> files = holeGenerator.runSketch(suspLocator.getSuspciousAssign());
 
 		fileFixMap = holeGenerator.getFixPerFile();
-		// for (String key : fileFixMap.keySet())
-		// System.out.println("Utility "+key + "," + fileFixMap.get(key));
 		return files;
 	}
 
@@ -147,9 +125,10 @@ public class RepairProgramUtility {
 	}
 
 	private Type getType(String type, String field) {
-		if (type.contains("@"))
-			type = type.substring(0, type.indexOf("@"));
-		StructDef strt = structMap.get(type);
+//		if (type.contains("@"))
+//			type = type.substring(0, type.indexOf("@"));
+		StructDef strt = nRes.getStruct(type);
+//		StructDef strt = structMap.get(type);
 		ImmutableTypedHashMap<String, Type> fieldMap = strt.getFieldTypMap();
 		return fieldMap.get(field);
 	}
@@ -180,8 +159,6 @@ public class RepairProgramUtility {
 
 	public String getSketchFile() {
 		return options.args[0];
-//		return (options.repairOptions.repairSketch == null) ? options.sketchFile.getAbsolutePath().toString() + ".tmp"
-//				: options.repairOptions.repairSketch;
 	}
 
 }

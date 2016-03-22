@@ -3,9 +3,11 @@
  */
 package sketch.compiler.CandidateGenerator;
 
+import sketch.compiler.ast.core.typs.Type;
+
 public class LocalVariableResolver {
 
-	public void extractCandidate() {
+	public void extractCandidate(Type type) {
 		
 	}
 }
