@@ -4,7 +4,6 @@
 package sketch.compiler.CandidateGenerator;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -14,8 +13,8 @@ import java.util.List;
 import sketch.compiler.ProgramLocator.AssignReplaceWrapper;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.stmts.StmtAssign;
-import sketch.compiler.ast.core.typs.Type;
 import sketch.compiler.bugLocator.RepairProgramController;
+import sketch.compiler.bugLocator.VarDeclEntry;
 
 public class SketchHoleGenerator {
 	private RepairProgramController utility = null;
@@ -25,14 +24,15 @@ public class SketchHoleGenerator {
 		utility = repairProgramUtility;
 	}
 
-	private List<AssignReplaceWrapper> createCandidate(HashMap<Function, List<StmtAssign>> bugAssign) {
+	private List<AssignReplaceWrapper> createCandidate(HashMap<String, List<StmtAssign>> bugAssign) {
 		// TODO based on schema
 		List<AssignReplaceWrapper> assignCandidate = new ArrayList<AssignReplaceWrapper>();
-		for (Function func : bugAssign.keySet()) {
+		for (String func : bugAssign.keySet()) {
 			for (StmtAssign assign : bugAssign.get(func)) {
-				Type candType = utility.resolveFieldType(func, assign.getLHS().toString());
+				List<VarDeclEntry> candType = utility.resolveFieldChain(func, assign.getLHS().toString());
 				if (candType != null) {
-					String candidate = "$(" + candType.toString() + ");";
+					VarDeclEntry decl = candType.get(candType.size()-1);
+					String candidate = "$(" + decl.getTypeS() + ");";
 					assignCandidate.add(new AssignReplaceWrapper(candidate, assign, func));
 				}
 			}
@@ -41,7 +41,7 @@ public class SketchHoleGenerator {
 		return assignCandidate;
 	}
 
-	public List<String> runSketch(HashMap<Function, List<StmtAssign>> bugAssign) {
+	public List<String> runSketch(HashMap<String, List<StmtAssign>> bugAssign) {
 
 		List<AssignReplaceWrapper> assignLine = createCandidate(bugAssign);
 		int index = 0;

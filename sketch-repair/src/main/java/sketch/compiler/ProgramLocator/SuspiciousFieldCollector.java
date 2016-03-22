@@ -8,16 +8,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import sketch.compiler.assertionLocator.FieldWrapper;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.exprs.ExprFunCall;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.bugLocator.RepairProgramController;
+import sketch.compiler.bugLocator.VarDeclEntry;
 
 public class SuspiciousFieldCollector {
 	// private HashMap<String, Type> varTypeMap = new HashMap<String, Type>();
 	private RepairProgramController utility = null;
-	private HashMap<Function, List<StmtAssign>> suspAssign = new HashMap<Function, List<StmtAssign>>();
+	private HashMap<String, List<StmtAssign>> suspAssign = new HashMap<String, List<StmtAssign>>();
 	private List<SuspiciousStmtLocator> locatorList = new ArrayList<SuspiciousStmtLocator>();
 
 	public SuspiciousFieldCollector(RepairProgramController utility) {
@@ -27,10 +27,10 @@ public class SuspiciousFieldCollector {
 
 	}
 
-	public HashMap<Function, List<StmtAssign>> findAllFieldsInMethod(List<FieldWrapper> sField, Function suspFunc) {
-		HashSet<Function> funSet = findAllSuspiciousMethod(suspFunc);
+	public HashMap<String, List<StmtAssign>> findAllFieldsInMethod(List<VarDeclEntry> sField, String suspFunc) {
+		HashSet<String> funSet = findAllSuspiciousMethod(suspFunc);
 		List<StmtAssign> assigns = new ArrayList<StmtAssign>();
-		for (Function func : funSet) {
+		for (String func : funSet) {
 			for (SuspiciousStmtLocator locator : locatorList)
 				assigns.addAll(locator.findSuspiciousStmtInMethod(sField, func));
 //			System.out.println("Suspicios fields "+func.getName()+","+assigns.size());
@@ -43,18 +43,18 @@ public class SuspiciousFieldCollector {
 	}
 
 
-	private HashSet<Function> findAllSuspiciousMethod(Function suspFunc) {
+	private HashSet<String> findAllSuspiciousMethod(String suspFunc) {
 		List<ExprFunCall> funCall = utility.getFuncCallMap().get(suspFunc);
-		HashSet<Function> funSet = new HashSet<Function>();
+		HashSet<String> funSet = new HashSet<String>();
 		for (ExprFunCall call : funCall) {
 			Function func = utility.getFuncMap(call.getName());
 			if (func != null)
-				funSet.add(func);
+				funSet.add(func.getName());
 		}
 		return funSet;
 	}
 
-	public HashMap<Function, List<StmtAssign>> getSuspciousAssign() {
+	public HashMap<String, List<StmtAssign>> getSuspciousAssign() {
 		return suspAssign;
 	}
 }

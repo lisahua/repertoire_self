@@ -3,18 +3,17 @@
  */
 package sketch.compiler.bugLocator;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
+import sketch.compiler.CandidateGenerator.LocalVariableResolver;
 import sketch.compiler.CandidateGenerator.SketchHoleGenerator;
 import sketch.compiler.ProgramLocator.SuspiciousFieldCollector;
 import sketch.compiler.assertionLocator.AssertionLocator;
 import sketch.compiler.assertionLocator.FailAssertHandler;
-import sketch.compiler.assertionLocator.FieldWrapper;
 import sketch.compiler.ast.core.Function;
-import sketch.compiler.ast.core.NameResolver;
 import sketch.compiler.ast.core.Package;
 import sketch.compiler.ast.core.Parameter;
 import sketch.compiler.ast.core.Program;
@@ -22,23 +21,20 @@ import sketch.compiler.ast.core.exprs.ExprFunCall;
 import sketch.compiler.ast.core.stmts.StmtAssert;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
-import sketch.compiler.ast.core.typs.StructDef;
-import sketch.compiler.ast.core.typs.Type;
 import sketch.compiler.main.other.RepairSketchOptions;
-import sketch.util.datastructures.ImmutableTypedHashMap;
 
 public class RepairProgramController {
-	private HashMap<Function, HashMap<String, Type>> funcVarType = new HashMap<Function, HashMap<String, Type>>();
-	private HashMap<Function, List<StmtAssert>> funcAssertMap = new HashMap<Function, List<StmtAssert>>();
-	private HashMap<Function, List<ExprFunCall>> funcCallMap = new HashMap<Function, List<ExprFunCall>>();
-	private HashMap<Function, List<StmtAssign>> assignMap = new HashMap<Function, List<StmtAssign>>();
+	private HashMap<String, List<StmtAssert>> funcAssertMap = new HashMap<String, List<StmtAssert>>();
+	private HashMap<String, List<ExprFunCall>> funcCallMap = new HashMap<String, List<ExprFunCall>>();
+	private HashMap<String, List<StmtAssign>> assignMap = new HashMap<String, List<StmtAssign>>();
 	private HashMap<String, String> fileFixMap = null;
-	private NameResolver nRes;
+	// private NameResolver nRes;
 	private RepairSketchOptions options;
+	private LocalVariableResolver resolver;
 
 	public RepairProgramController(Program prog, final RepairSketchOptions options) {
 		initProgram(prog);
-		nRes = new NameResolver(prog);
+		resolver = new LocalVariableResolver(prog);
 		this.options = options;
 	}
 
@@ -48,17 +44,19 @@ public class RepairProgramController {
 			for (Function func : pkg.getFuncs()) {
 				RepairFEFuncVisitor visitor = new RepairFEFuncVisitor();
 				func.accept(visitor);
-				funcAssertMap.put(func, visitor.getAsserts());
-				funcCallMap.put(func, visitor.getFunCall());
+				funcAssertMap.put(func.getName(), visitor.getAsserts());
+				funcCallMap.put(func.getName(), visitor.getFunCall());
 
-				HashMap<String, Type> varTypeMap = new HashMap<String, Type>();
-				for (StmtVarDecl var : visitor.getVarDecl()) {
-					varTypeMap.put(var.getName(0), var.getType(0));
-				}
 				for (Parameter para : visitor.getParameter())
-					varTypeMap.put(para.getName(), para.getType());
-				funcVarType.put(func, varTypeMap);
-				assignMap.put(func, visitor.getStmtAssign());
+					resolver.add(para.getName(), resolver.getStruct(para.getType().toString()), func.getName());
+				for (StmtVarDecl var : visitor.getVarDecl()) {
+					Iterator<StmtVarDecl.VarDeclEntry> iterator = var.iterator();
+					while (iterator.hasNext()) {
+						StmtVarDecl.VarDeclEntry entry = iterator.next();
+						resolver.add(entry.getName(), resolver.getStruct(entry.getType().toString()), func.getName());
+					}
+				}
+				assignMap.put(func.getName(), visitor.getStmtAssign());
 			}
 		}
 	}
@@ -83,69 +81,37 @@ public class RepairProgramController {
 		return files;
 	}
 
-	public List<FieldWrapper> resolveFieldChain(Function func, String string) {
-		HashMap<String, Type> varType = funcVarType.get(func);
+	public List<VarDeclEntry> resolveFieldChain(String func, String string) {
 		String[] token = string.split("\\.");
-		Type current = null;
-		String tmp = "";
-		String fieldName = "";
-		List<FieldWrapper> fields = new ArrayList<FieldWrapper>();
+		VarDeclEntry current = null;
+		List<VarDeclEntry> fields = new ArrayList<VarDeclEntry>();
 		for (String t : token) {
 			t = t.trim();
 			if (t.length() == 0)
 				continue;
 			if (current == null) {
-				current = varType.get(t);
+				current = resolver.getVarTypeInFunc(func, t);
 			} else {
-				current = getType(current.toString(), t);
-				varType.put(tmp + "." + t, current);
-				fieldName = tmp + "." + t;
+				current = resolver.getFieldTypeInStruct(current, t);
 			}
-			tmp = current.toString();
-			if (tmp.contains("@"))
-				tmp = tmp.substring(0, tmp.indexOf("@"));
-			fields.add(new FieldWrapper(fieldName, current));
+			fields.add(current);
 		}
 		return fields;
 	}
 
-	public Type resolveFieldType(Function func, String string) {
-		HashMap<String, Type> varType = funcVarType.get(func);
-		String[] token = string.split("\\.");
-		Type current = null;
-
-		for (String t : token) {
-			if (current == null) {
-				current = varType.get(t);
-			} else {
-				current = getType(current.toString(), t);
-			}
-		}
-		return current;
-	}
-
-	private Type getType(String type, String field) {
-		// if (type.contains("@"))
-		// type = type.substring(0, type.indexOf("@"));
-		StructDef strt = nRes.getStruct(type);
-		// StructDef strt = structMap.get(type);
-		ImmutableTypedHashMap<String, Type> fieldMap = strt.getFieldTypMap();
-		return fieldMap.get(field);
-	}
-
 	public Function getFuncMap(String name) {
-		return nRes.getFun(name);
+		return resolver.getFun(name);
 	}
 
-	public HashMap<Function, List<StmtAssert>> getFuncAssertMap() {
+	public HashMap<String, List<StmtAssert>> getFuncAssertMap() {
 		return funcAssertMap;
 	}
 
-	public HashMap<Function, List<ExprFunCall>> getFuncCallMap() {
+	public HashMap<String, List<ExprFunCall>> getFuncCallMap() {
 		return funcCallMap;
 	}
 
-	public HashMap<Function, List<StmtAssign>> getAssignMap() {
+	public HashMap<String, List<StmtAssign>> getAssignMap() {
 		return assignMap;
 	}
 
@@ -163,4 +129,12 @@ public class RepairProgramController {
 			bound = 3;
 		return bound;
 	}
+
+	// public NameResolver getNameResolver() {
+	// return resolver;
+	// }
+
+	// public HashMap<String, Type> getAllVarInMethod(Function func) {
+	// return funcVarType.get(func);
+	// }
 }

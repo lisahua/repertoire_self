@@ -4,22 +4,20 @@
 package sketch.compiler.assertionLocator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.stmts.StmtAssert;
-import sketch.compiler.ast.core.typs.Type;
 import sketch.compiler.bugLocator.RepairProgramController;
+import sketch.compiler.bugLocator.VarDeclEntry;
 
 public class FailAssertHandler {
 
 	private RepairProgramController utility;
-	private Function buggyHarness = null;
+	private String buggyHarness = null;
 	private StmtAssert failAssert = null;
 
-	private List<FieldWrapper> fields = new ArrayList<FieldWrapper>();
+	private List<VarDeclEntry> fields = new ArrayList<VarDeclEntry>();
 
 	public FailAssertHandler(final RepairProgramController utility) {
 		this.utility = utility;
@@ -34,12 +32,12 @@ public class FailAssertHandler {
 	}
 	
 
-	public Function getBuggyHarness() {
+	public String getBuggyHarness() {
 		return buggyHarness;
 	}
 
 	private StmtAssert findFailAssert(String failAssList) {
-		for (Map.Entry<Function, List<StmtAssert>> entry : utility.getFuncAssertMap().entrySet()) {
+		for (Map.Entry<String, List<StmtAssert>> entry : utility.getFuncAssertMap().entrySet()) {
 			for (StmtAssert ass : entry.getValue()) {
 				// fieldAssertMap.put(ass, findFailAssertTypeField(ass));
 				if ((ass.getCx().toString().trim()).equals(failAssList)) {
@@ -61,7 +59,7 @@ public class FailAssertHandler {
 		return utility.getFuncAssertMap().get(buggyHarness);
 	}
 
-	public List<FieldWrapper> getFailField() {
+	public List<VarDeclEntry> getFailField() {
 		return fields;
 	}
 

@@ -6,10 +6,9 @@ package sketch.compiler.ProgramLocator;
 import java.util.ArrayList;
 import java.util.List;
 
-import sketch.compiler.assertionLocator.FieldWrapper;
-import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.bugLocator.RepairProgramController;
+import sketch.compiler.bugLocator.VarDeclEntry;
 
 public class OmissionFieldLocator extends SuspiciousStmtLocator {
 	private RepairProgramController utility;
@@ -20,7 +19,7 @@ public class OmissionFieldLocator extends SuspiciousStmtLocator {
 		this.utility = utility;
 	}
 
-	public List<StmtAssign> findSuspiciousStmtInMethod(List<FieldWrapper> sField, Function func) {
+	public List<StmtAssign> findSuspiciousStmtInMethod(List<VarDeclEntry> sField, String func) {
 		List<StmtAssign> assigns = new ArrayList<StmtAssign>();
 
 //		for (StmtAssign assign : utility.getAssignMap().get(func)) {

@@ -3,15 +3,11 @@
  */
 package sketch.compiler.ProgramLocator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import sketch.compiler.assertionLocator.FieldWrapper;
-import sketch.compiler.ast.core.Function;
-import sketch.compiler.ast.core.exprs.ExprFunCall;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.bugLocator.RepairProgramController;
+import sketch.compiler.bugLocator.VarDeclEntry;
 
 public abstract class SuspiciousStmtLocator {
 	private RepairProgramController utility = null;
@@ -21,7 +17,7 @@ public abstract class SuspiciousStmtLocator {
 		this.utility = utility;
 	}
 
-	public abstract List<StmtAssign> findSuspiciousStmtInMethod(List<FieldWrapper> sField, Function func) ;
+	public abstract List<StmtAssign> findSuspiciousStmtInMethod(List<VarDeclEntry> sField, String func) ;
 
 	
 }

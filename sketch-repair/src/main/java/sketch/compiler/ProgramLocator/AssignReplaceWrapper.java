@@ -3,18 +3,18 @@
  */
 package sketch.compiler.ProgramLocator;
 
-import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 
 public class AssignReplaceWrapper {
 
 	private String replace;
 	private StmtAssign assign;
-	private Function func;
+	private String  func;
 
-	public AssignReplaceWrapper(String rep, StmtAssign assign, Function func) {
+	public AssignReplaceWrapper(String rep, StmtAssign assign, String func) {
 		replace = rep;
 		this.assign = assign;
+		this.func = func;
 	}
 
 	public String getReplace() {
@@ -25,7 +25,7 @@ public class AssignReplaceWrapper {
 		return assign;
 	}
 
-	public Function getFunc() {
+	public String getFunc() {
 		return func;
 	}
 

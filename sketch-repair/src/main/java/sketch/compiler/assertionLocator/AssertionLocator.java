@@ -6,6 +6,7 @@ package sketch.compiler.assertionLocator;
 import java.util.List;
 
 import sketch.compiler.ast.core.stmts.StmtAssert;
+import sketch.compiler.bugLocator.VarDeclEntry;
 
 public class AssertionLocator {
 
@@ -15,7 +16,7 @@ public class AssertionLocator {
 		this.assertList = assertList;
 	}
 
-	public List<StmtAssert> findAllAsserts(List<FieldWrapper> fields) {
+	public List<StmtAssert> findAllAsserts(List<VarDeclEntry> fields) {
 		// TODO assert with same type or field
 		return assertList;
 	}
