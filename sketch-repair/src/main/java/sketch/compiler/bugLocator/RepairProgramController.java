@@ -85,6 +85,7 @@ public class RepairProgramController {
 		String[] token = string.split("\\.");
 		VarDeclEntry current = null;
 		List<VarDeclEntry> fields = new ArrayList<VarDeclEntry>();
+		System.out.println("===DEBUG ===resolveFieldChain "+func+","+string);
 		for (String t : token) {
 			t = t.trim();
 			if (t.length() == 0)

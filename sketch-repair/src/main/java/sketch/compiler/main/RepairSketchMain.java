@@ -101,10 +101,12 @@ public class RepairSketchMain extends SequentialSketchMain {
 					System.out.println("Sketch front-end timed out");
 					exitCode = 1;
 				} catch (ExecutionException e) {
-					ErrorHandling.handleErr(e);
+					e.printStackTrace();
+//					ErrorHandling.handleErr(e);
 					exitCode = 1;
 				} catch (InterruptedException e) {
-					ErrorHandling.handleErr(e);
+					e.printStackTrace();
+//					ErrorHandling.handleErr(e);
 					exitCode = 1;
 				} finally {
 					executor.shutdown();
@@ -115,7 +117,8 @@ public class RepairSketchMain extends SequentialSketchMain {
 				// System.out.println("End run");
 			}
 		} catch (java.lang.Error e) {
-			ErrorHandling.handleErr(e);
+			e.printStackTrace();
+//			ErrorHandling.handleErr(e);
 			// necessary for unit tests, etc.
 			if (isTest) {
 				throw e;
@@ -123,7 +126,8 @@ public class RepairSketchMain extends SequentialSketchMain {
 				exitCode = 1;
 			}
 		} catch (RuntimeException e) {
-			ErrorHandling.handleErr(e);
+			e.printStackTrace();
+//			ErrorHandling.handleErr(e);
 			if (isTest) {
 				throw e;
 			} else {

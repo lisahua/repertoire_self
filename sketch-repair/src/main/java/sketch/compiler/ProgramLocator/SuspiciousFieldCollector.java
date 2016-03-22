@@ -47,6 +47,7 @@ public class SuspiciousFieldCollector {
 		List<ExprFunCall> funCall = utility.getFuncCallMap().get(suspFunc);
 		HashSet<String> funSet = new HashSet<String>();
 		for (ExprFunCall call : funCall) {
+			System.out.println("===DEBUG ==="+call.getName());
 			Function func = utility.getFuncMap(call.getName());
 			if (func != null)
 				funSet.add(func.getName());

@@ -6,21 +6,40 @@ package sketch.compiler.CandidateGenerator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 
-import sketch.compiler.ast.core.NameResolver;
+import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.typs.StructDef;
 import sketch.compiler.ast.core.typs.Type;
 import sketch.compiler.bugLocator.VarDeclEntry;
 import sketch.util.datastructures.ImmutableTypedHashMap;
 
-public class LocalVariableResolver extends NameResolver {
+public class LocalVariableResolver {
 	private HashMap<String, HashMap<String, VarDeclEntry>> funcVar = new HashMap<String, HashMap<String, VarDeclEntry>>();
+	private Map<String, StructDef> structMap = new HashMap<String, StructDef>();
+	private Map<String, Function> funcMap = new HashMap<String, Function>();
 
 	public LocalVariableResolver(Program prog) {
-		super(prog);
+		for (sketch.compiler.ast.core.Package pkg : prog.getPackages()) {
+			for (StructDef struct : pkg.getStructs()) {
+				String name = struct.getName();
+				if (name.contains("@")) {
+					name = name.substring(0, name.indexOf("@"));
+				}
+				structMap.put(name, struct);
+			}
+			for (Function func : pkg.getFuncs()) {
+				String name = func.getName();
+				if (name.contains("@")) {
+					name = name.substring(0, name.indexOf("@"));
+				}
+				funcMap.put(name, func);
+			}
+
+		}
 	}
 
 	public void extractCandidate(String func, String type) {
@@ -68,16 +87,11 @@ public class LocalVariableResolver extends NameResolver {
 		return null;
 	}
 
-//	public void add(VarDeclEntry entry) {
-//		add(entry.getName(), entry.getType(), entry.getFunc());
-//	}
+	public StructDef getStruct(String string) {
+		return structMap.get(string);
+	}
 
-	// private Type getType(String type, String field) {
-	// if (type.contains("@"))
-	// type = type.substring(0, type.indexOf("@"));
-	// StructDef strt = nRes.getStruct(type);
-	// // StructDef strt = structMap.get(type);
-	// ImmutableTypedHashMap<String, Type> fieldMap = strt.getFieldTypMap();
-	// return fieldMap.get(field);
-	// }
+	public Function getFun(String name) {
+		return funcMap.get(name);
+	}
 }
