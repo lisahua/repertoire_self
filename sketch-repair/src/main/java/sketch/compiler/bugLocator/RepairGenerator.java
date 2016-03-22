@@ -6,7 +6,7 @@ package sketch.compiler.bugLocator;
 import java.util.HashMap;
 
 import sketch.compiler.ast.core.Program;
-import sketch.compiler.main.RepairSketchOptions;
+import sketch.compiler.main.other.RepairSketchOptions;
 
 public class RepairGenerator {
 	HashMap<String, String> fileFixMap = null;

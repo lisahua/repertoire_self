@@ -1,4 +1,4 @@
-package sketch.compiler.main;
+package sketch.compiler.main.other;
 
 import sketch.util.cli.CliAnnotatedOptionGroup;
 import sketch.util.cli.CliParameter;

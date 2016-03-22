@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import sketch.compiler.ProgramLocator.SketchHoleGenerator;
+import sketch.compiler.CandidateGenerator.SketchHoleGenerator;
 import sketch.compiler.ProgramLocator.SuspiciousFieldCollector;
 import sketch.compiler.assertionLocator.AssertionLocator;
 import sketch.compiler.assertionLocator.FailAssertHandler;
@@ -24,7 +24,7 @@ import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
 import sketch.compiler.ast.core.typs.StructDef;
 import sketch.compiler.ast.core.typs.Type;
-import sketch.compiler.main.RepairSketchOptions;
+import sketch.compiler.main.other.RepairSketchOptions;
 import sketch.util.datastructures.ImmutableTypedHashMap;
 
 public class RepairProgramUtility {

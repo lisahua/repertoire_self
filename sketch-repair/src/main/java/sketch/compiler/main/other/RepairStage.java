@@ -1,7 +1,7 @@
 /**
  * @author Lisa Mar 21, 2016 RepairStage.java 
  */
-package sketch.compiler.main;
+package sketch.compiler.main.other;
 
 import java.util.HashMap;
 import java.util.List;

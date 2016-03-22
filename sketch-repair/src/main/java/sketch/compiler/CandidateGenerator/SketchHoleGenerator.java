@@ -1,7 +1,7 @@
 /**
  * @author Lisa Mar 20, 2016 RepairCandidateGenerator.java 
  */
-package sketch.compiler.ProgramLocator;
+package sketch.compiler.CandidateGenerator;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import sketch.compiler.ProgramLocator.AssignReplaceWrapper;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.typs.Type;

@@ -1,7 +1,7 @@
 /**
  * @author Lisa Mar 21, 2016 RepairSketchOptions.java 
  */
-package sketch.compiler.main;
+package sketch.compiler.main.other;
 
 import sketch.compiler.main.cmdline.SketchOptions;
 import sketch.util.cli.SketchCliParser;

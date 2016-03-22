@@ -1,7 +1,7 @@
 /**
  * @author Lisa Mar 21, 2016 OutputSketchFile.java 
  */
-package sketch.compiler.main;
+package sketch.compiler.main.other;
 
 import static sketch.util.DebugOut.printDebug;
 import static sketch.util.DebugOut.printError;

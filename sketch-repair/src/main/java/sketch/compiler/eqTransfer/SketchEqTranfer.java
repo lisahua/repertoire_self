@@ -1,7 +1,7 @@
 /**
  * @author Lisa Mar 20, 2016 SketchEqTranfer.java 
  */
-package sketch.compiler.ProgramLocator;
+package sketch.compiler.eqTransfer;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

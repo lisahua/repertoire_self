@@ -1,7 +1,7 @@
 /**
  * @author Lisa Mar 20, 2016 SimpleSketchFilePrinter.java 
  */
-package sketch.compiler.main;
+package sketch.compiler.main.other;
 
 import java.io.File;
 import java.io.FileNotFoundException;

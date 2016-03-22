@@ -5,6 +5,7 @@ package sketch.compiler.main;
 
 import static sketch.util.DebugOut.printError;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -15,8 +16,10 @@ import java.util.concurrent.TimeoutException;
 
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.main.other.ErrorHandling;
+import sketch.compiler.main.other.OutputSketchCode;
+import sketch.compiler.main.other.RepairSketchOptions;
+import sketch.compiler.main.other.RepairStage;
 import sketch.compiler.main.passes.CleanupFinalCode;
-import sketch.compiler.main.passes.OutputCCode;
 import sketch.compiler.main.passes.ParseProgramStage;
 import sketch.compiler.main.passes.SubstituteSolution;
 import sketch.compiler.main.seq.SequentialSketchMain;
@@ -143,7 +146,8 @@ public class RepairSketchMain extends SequentialSketchMain {
 		if (files == null || files.size() == 0)
 			return;
 
-		for (String f : files) {
+		for (int i = 0; i < files.size(); i++) {
+			String f = files.get(i);
 			String[] new_arg = options.args;
 			System.out.println("======DEBUG===" + new_arg[0] + "," + f);
 			new_arg[0] = f;
@@ -151,7 +155,11 @@ public class RepairSketchMain extends SequentialSketchMain {
 			if (recurRun()) {
 				System.out.println(
 						"======Repair End===" + options.repairOptions.outputRepair + "," + rStage.getFixPerFile(f));
+				while (++i < files.size())
+					new File(files.get(i)).delete();
 				break;
+			} else {
+				new File(f).delete();
 			}
 		}
 	}
