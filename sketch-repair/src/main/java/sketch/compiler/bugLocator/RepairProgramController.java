@@ -112,11 +112,16 @@ public class RepairProgramController {
 		return options.args[0];
 	}
 
-	public int getRepairBound() {
+	private int getRepairBound() {
 		int bound = options.repairOptions.bound;
 		if (bound == 0)
 			bound = 3;
 		return bound;
+	}
+
+	public String genCandidate(String func, String typeS) {
+		// TODO Auto-generated method stub
+		return resolver.extractCandidate(func, typeS, getRepairBound());
 	}
 
 }

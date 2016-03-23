@@ -39,6 +39,8 @@ public class SketchHoleGenerator {
 				if (candType != null) {
 					VarDeclEntry decl = candType.get(candType.size()-1);
 					String candidate = "$(" + decl.getTypeS() + ");";
+					
+					utility.genCandidate(func,decl.getTypeS());
 					assignCandidate.add(new AssignReplaceWrapper(candidate, assign, func));
 				}
 			}

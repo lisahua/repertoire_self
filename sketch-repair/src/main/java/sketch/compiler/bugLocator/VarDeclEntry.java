@@ -50,6 +50,7 @@ public class VarDeclEntry {
 	}
 
 	public String getTypeS() {
+		if (type==null) return "int";
 		return type.getName();
 	}
 

@@ -23,6 +23,7 @@ import sketch.compiler.main.passes.CleanupFinalCode;
 import sketch.compiler.main.passes.ParseProgramStage;
 import sketch.compiler.main.passes.SubstituteSolution;
 import sketch.compiler.main.seq.SequentialSketchMain;
+import sketch.compiler.passes.printers.SimpleCodePrinter;
 import sketch.util.exceptions.ProgramParseException;
 import sketch.util.exceptions.SketchException;
 
@@ -54,12 +55,17 @@ public class RepairSketchMain extends SequentialSketchMain {
 		try {
 			prog = parseProgram();
 			prog = this.preprocAndSemanticCheck(prog);
+			System.out.println("====Main observe prog 1===");
+			new SimpleCodePrinter().visitProgram(prog);
+			
 		} catch (RuntimeException re) {
 			throw new ProgramParseException("Sketch failed to parse: " + re.getMessage());
 		}
 		try {
 			SynthesisResult synthResult = this.partialEvalAndSolve(prog);
 			prog = synthResult.lowered.result;
+			System.out.println("====Main observe prog 2===");
+			new SimpleCodePrinter().visitProgram(prog);
 			Program finalCleaned = synthResult.lowered.highLevelC;
 			Program substituted;
 			if (synthResult.solution != null) {
