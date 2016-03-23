@@ -64,12 +64,12 @@ public class CandidateWrapper {
 				return "." + s;
 			}
 		}
-		String rtn = "(";
+		String rtn = "";
 		for (String s : values) {
 			rtn += "." + s + "|";
 		}
-		rtn.substring(0, rtn.length() - 2);
-		rtn += ")?";
+//		rtn.substring(0, rtn.length() - 2);
+
 		return rootString+ rtn;
 	}
 }

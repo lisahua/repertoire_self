@@ -27,10 +27,10 @@ public class SketchHoleGenerator {
 
 	private List<AssignReplaceWrapper> createCandidate(HashMap<String, List<StmtAssign>> bugAssign) {
 		// TODO based on schema
-		for (String func:bugAssign.keySet()) {
-			for (StmtAssign assign: bugAssign.get(func))
-				System.out.println("===createCandidate check==="+func+","+assign.toString());
-		}
+//		for (String func:bugAssign.keySet()) {
+//			for (StmtAssign assign: bugAssign.get(func))
+//				System.out.println("===createCandidate check==="+func+","+assign.toString());
+//		}
 		
 		List<AssignReplaceWrapper> assignCandidate = new ArrayList<AssignReplaceWrapper>();
 		for (String func : bugAssign.keySet()) {
@@ -45,6 +45,8 @@ public class SketchHoleGenerator {
 					StmtAssign rep_assign  = new StmtAssign(assign.getLHS(),n_rhs,assign.getOp());
 					utility.genCandidate(func,decl.getTypeS());
 					assignCandidate.add(new AssignReplaceWrapper(candidate, assign, func));
+					
+				
 				}
 			}
 		}

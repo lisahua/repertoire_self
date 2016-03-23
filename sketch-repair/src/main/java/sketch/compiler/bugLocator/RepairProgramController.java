@@ -3,13 +3,12 @@
  */
 package sketch.compiler.bugLocator;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import sketch.compiler.CandidateGenerator.LocalVariableResolver;
-import sketch.compiler.CandidateGenerator.SketchHoleGenerator;
+import sketch.compiler.CandidateGenerator.SketchRepairGenerator;
 import sketch.compiler.ProgramLocator.SuspiciousFieldCollector;
 import sketch.compiler.assertionLocator.AssertionLocator;
 import sketch.compiler.assertionLocator.FailAssertHandler;
@@ -32,12 +31,13 @@ public class RepairProgramController {
 	// private NameResolver nRes;
 	private RepairSketchOptions options;
 	private LocalVariableResolver resolver;
-
+private Program prog;
 	public RepairProgramController(Program prog, final RepairSketchOptions options) {
 		resolver = new LocalVariableResolver(prog);
 		initProgram(prog);
 		this.options = options;
 		prog.accept(new  SimpleCodePrinter());
+		this.prog = prog;
 	}
 
 	private void initProgram(Program prog) {
@@ -76,8 +76,8 @@ public class RepairProgramController {
 
 		SuspiciousFieldCollector suspLocator = new SuspiciousFieldCollector(this);
 		suspLocator.findAllFieldsInMethod(failHandler.getFailField(), failHandler.getBuggyHarness());
-
-		SketchHoleGenerator holeGenerator = new SketchHoleGenerator(this);
+		SketchRepairGenerator holeGenerator = new SketchRepairGenerator(this);
+//		SketchHoleGenerator holeGenerator = new SketchHoleGenerator(this);
 		List<String> files = holeGenerator.runSketch(suspLocator.getSuspciousAssign());
 
 		fileFixMap = holeGenerator.getFixPerFile();
@@ -122,6 +122,11 @@ public class RepairProgramController {
 	public String genCandidate(String func, String typeS) {
 		// TODO Auto-generated method stub
 		return resolver.extractCandidate(func, typeS, getRepairBound());
+	}
+
+	public Program getProgram() {
+		// TODO Auto-generated method stub
+		return prog;
 	}
 
 }

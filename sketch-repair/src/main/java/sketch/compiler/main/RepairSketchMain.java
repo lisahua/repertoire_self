@@ -58,6 +58,7 @@ public class RepairSketchMain extends SequentialSketchMain {
 			System.out.println("====Main observe prog 1===");
 			new SimpleCodePrinter().visitProgram(prog);
 			
+			
 		} catch (RuntimeException re) {
 			throw new ProgramParseException("Sketch failed to parse: " + re.getMessage());
 		}
@@ -171,7 +172,7 @@ public class RepairSketchMain extends SequentialSketchMain {
 					new File(files.get(i)).delete();
 				break;
 			} else {
-				new File(f).delete();
+//				new File(f).delete();
 			}
 		}
 	}
