@@ -5,15 +5,12 @@ package sketch.compiler.CandidateGenerator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Queue;
 
-import sketch.compiler.ast.core.FieldDecl;
-import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.NameResolver;
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.typs.StructDef;
@@ -23,7 +20,8 @@ import sketch.util.datastructures.ImmutableTypedHashMap;
 
 public class LocalVariableResolver extends NameResolver {
 	private HashMap<String, HashMap<String, VarDeclEntry>> funcVar = new HashMap<String, HashMap<String, VarDeclEntry>>();
-	private HashMap<String, List<VarDeclEntry>> fieldPerStruct ;
+	private HashMap<String, HashMap<String, VarDeclEntry>> fieldPerStruct;
+
 	public LocalVariableResolver(Program prog) {
 		super(prog);
 		genAllFieldsPerType();
@@ -32,21 +30,36 @@ public class LocalVariableResolver extends NameResolver {
 	public void extractCandidate(String func, String type, int bound) {
 		LinkedList<VarDeclEntry> queue = new LinkedList<VarDeclEntry>();
 		HashMap<String, VarDeclEntry> map = funcVar.get(func);
-		queue.addAll(map.values());
-		String candidate = "{|";
-		int curBound = 0;
-		while (!queue.isEmpty()) {
-			VarDeclEntry entry = queue.poll();
-			String var = "";
-			if (entry.getBound() == curBound) {
-				if (entry.getTypeS().equals(type)) {
-					var += entry.getName();
-				} else {
+//		queue.addAll(map.values());
+//		String candidate = "{|";
 
-				}
-			}
-		}
+		
+		
+//		HashMap
+//		while (!queue.isEmpty()) {
+//			VarDeclEntry entry = queue.poll();
+//			String var = "";
+//			if (entry.getBound() > curBound)
+//				continue;
+//			if (entry.getTypeS().equals(type)) {
+//				var += entry.getName();
+//			} else {
+//				String typ = entry.getType().toString();
+//				if (typ.contains("@"))
+//					typ = typ.substring(0, typ.indexOf("@"));
+//				HashMap<String, VarDeclEntry> fields = fieldPerStruct.get(typ);
+//				for (Map.Entry<String, VarDeclEntry> fld : fields.entrySet()) {
+//					VarDeclEntry model_e = fld.getValue().clone();
+//					model_e.setOrigin(entry.getOrigin() + "." + fld.getKey());
+//					queue.push(model_e);
+//					curBound = model_e.getBound();
+//				}
+//			}
+//		}
+	}
 
+	private void generateNextLayerCandidate(HashMap<String, HashSet<String>> type_value) {
+		
 	}
 
 	public void add(String name, StructDef struct, String func) {
@@ -70,24 +83,12 @@ public class LocalVariableResolver extends NameResolver {
 		if (fieldEntry != null)
 			return fieldEntry;
 		HashMap<String, VarDeclEntry> map = funcVar.get(entry.getFunc());
-		ImmutableTypedHashMap<String, Type> fieldMap = strt.getFieldTypMap();
-
-		Iterator<Entry<String, Type>> iterator = fieldMap.iterator();
-		while (iterator.hasNext()) {
-			Entry<String, Type> e = iterator.next();
-
-			if (e.getKey().equals(t)) {
-				Type type = e.getValue();
-				VarDeclEntry new_e = new VarDeclEntry(strt.getName() + "." + t, origin, getStruct(type.toString()),
-						entry.getFunc());
-				System.out.println("===getFieldTypeInStruct equal===" + e.getKey() + "," + e.getValue() + "," + new_e);
-
-				map.put(origin, new_e);
-				funcVar.put(entry.getFunc(), map);
-				return new_e;
-			}
-		}
-		return null;
+		VarDeclEntry model_e = getEntryInStruct(strt.getName(), t).clone();
+		model_e.setOrigin(origin);
+		model_e.setFunc(entry.getFunc());
+		map.put(origin, model_e);
+		funcVar.put(entry.getFunc(), map);
+		return model_e;
 	}
 
 	public List<VarDeclEntry> resolveFieldChain(String func, String string) {
@@ -109,20 +110,29 @@ public class LocalVariableResolver extends NameResolver {
 		return fields;
 	}
 
-	private void genAllFieldsPerType() {
-	fieldPerStruct	= new HashMap<String, List<VarDeclEntry>>();
-	for (String struct: structNamesList()) {
-		StructDef def = getStruct(struct);
-		ImmutableTypedHashMap<String, Type> fieldMap = def.getFieldTypMap();
-		Iterator<Entry<String, Type>> iterator = fieldMap.iterator();
-		List<VarDeclEntry> entryList = new ArrayList<VarDeclEntry>();
-		while (iterator.hasNext()) {
-			Entry<String, Type> e = iterator.next();
-			VarDeclEntry new_e = new VarDeclEntry(struct+"."+e.getKey(), getStruct(e.getValue().toString()),null);
-			entryList.add(new_e);
-		}
-		fieldPerStruct.put(struct, entryList);
+	private VarDeclEntry getEntryInStruct(String type, String field) {
+		System.out.println("===getEntryInstruct " + type + "," + field);
+		return fieldPerStruct.get(type).get(field);
 	}
+
+	private void genAllFieldsPerType() {
+		fieldPerStruct = new HashMap<String, HashMap<String, VarDeclEntry>>();
+		for (String struct : structNamesList()) {
+			StructDef def = getStruct(struct);
+			if (struct.contains("@"))
+				struct = struct.substring(0, struct.indexOf("@"));
+			ImmutableTypedHashMap<String, Type> fieldMap = def.getFieldTypMap();
+			Iterator<Entry<String, Type>> iterator = fieldMap.iterator();
+			HashMap<String, VarDeclEntry> entryList = new HashMap<String, VarDeclEntry>();
+			while (iterator.hasNext()) {
+				Entry<String, Type> e = iterator.next();
+				VarDeclEntry new_e = new VarDeclEntry(struct + "." + e.getKey(), getStruct(e.getValue().toString()),
+						null);
+				entryList.put(e.getKey(), new_e);
+				System.out.println("====getAllFieldPerType add" + new_e);
+			}
+			fieldPerStruct.put(struct, entryList);
+		}
 
 	}
 }

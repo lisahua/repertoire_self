@@ -53,8 +53,39 @@ public class VarDeclEntry {
 		return type.getName();
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setFunc(String func) {
+		this.func = func;
+	}
+
+	public void setType(StructDef type) {
+		this.type = type;
+	}
+
+	public void setBound(int bound) {
+		this.bound = bound;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
+		bound=0;
+		for (char a: origin.toCharArray()) {
+			if (a=='.')
+				bound++;
+		}
+	}
+
 	public String toString() {
 		return "[" + func + "] [" + type + "] [" + origin + "] [" + name + "]  [" + bound + "]";
 	}
 
+	public VarDeclEntry clone() {
+		VarDeclEntry entry = new VarDeclEntry(name,origin, type,func);
+		entry.bound = bound;
+		return entry;
+		
+	}
 }
