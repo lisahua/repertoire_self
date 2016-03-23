@@ -27,7 +27,6 @@ public class RepairFEFuncVisitor extends FEReplacer {
 		asserts.add(stmt);
 		return super.visitStmtAssert(stmt);
 	}
-	//
 
 	public Object visitStmtVarDecl(StmtVarDecl stmt) {
 		varDecl.add(stmt);
@@ -36,11 +35,6 @@ public class RepairFEFuncVisitor extends FEReplacer {
 
 	public Object visitExprNew(ExprNew expNew) {
 		return super.visitExprNew(expNew);
-	}
-	
-	public Object visitFieldDecl(FieldDecl field) {
-		System.out.println("field decl "+field);
-		return super.visitFieldDecl(field);
 	}
 	
 	public Object  visitParameter(Parameter par)  {
@@ -53,30 +47,16 @@ public class RepairFEFuncVisitor extends FEReplacer {
 		return super.visitStmtAssign(stmt);
 	}
 
-//	public Object visitFunction(Function var) {
-//		
-//		asserts.clear();
-//		varDecl.clear();
-//		return super.visitFunction(var);
-//	}
-
 	public Object visitStmtExpr(StmtExpr stmt) {
-//		System.out.println("===StmtExpr ==="+stmt+","+stmt.getOrigin());
 		return super.visitStmtExpr(stmt);
 	}
-	
 
-	
 	public Object visitExprFunCall(ExprFunCall exp) {
-//		System.out.println("===ExprFuncCall ==="+exp+","+exp.getOrigin());
 		funCall.add(exp);
 		return super.visitExprFunCall(exp);
 	}
 	
-	
-
 	public ArrayList<StmtAssert> getAsserts() {
-//		System.out.println("============StmtAssert=======" + asserts.size());
 		return asserts;
 	}
 
@@ -94,6 +74,4 @@ public class RepairFEFuncVisitor extends FEReplacer {
 	public ArrayList<Parameter> getParameter() {
 		return parameter;
 	}
-	
-	
 }

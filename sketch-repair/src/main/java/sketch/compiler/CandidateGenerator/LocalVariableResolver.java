@@ -7,11 +7,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import sketch.compiler.ast.core.NameResolver;
 import sketch.compiler.ast.core.Program;
@@ -24,19 +22,19 @@ import sketch.util.datastructures.ImmutableTypedHashMap;
 public class LocalVariableResolver extends NameResolver {
 	private HashMap<String, HashMap<String, VarDeclEntry>> funcVar = new HashMap<String, HashMap<String, VarDeclEntry>>();
 	private HashMap<String, HashMap<String, VarDeclEntry>> fieldPerStruct;
+	private HashSet<String> allStructs = new HashSet<String>();
 
 	public LocalVariableResolver(Program prog) {
 		super(prog);
+		allStructs.addAll(structNamesList());
 		genAllFieldsPerType();
 	}
 
 	public String extractCandidate(String func, String type, int bound) {
-		// LinkedList<VarDeclEntry> queue = new LinkedList<VarDeclEntry>();
 		HashMap<String, VarDeclEntry> map = funcVar.get(func);
 		HashMap<String, CandidateWrapper> first = new HashMap<String, CandidateWrapper>();
 		for (Map.Entry<String, VarDeclEntry> entry : map.entrySet()) {
 			String typ = entry.getValue().getTypeS();
-//			System.out.println("====extract candidate ====" + typ);
 			CandidateWrapper wp = first.get(typ);
 			if (wp == null)
 				wp = new CandidateWrapper(typ);
@@ -66,7 +64,6 @@ public class LocalVariableResolver extends NameResolver {
 			prev = map;
 		}
 		builder.append("}");
-		System.out.println("===genCandString ====" + builder.toString());
 		return builder.toString();
 	}
 
@@ -138,7 +135,6 @@ public class LocalVariableResolver extends NameResolver {
 	}
 
 	private VarDeclEntry getEntryInStruct(String type, String field) {
-		System.out.println("===getEntryInstruct " + type + "," + field);
 		return fieldPerStruct.get(type).get(field);
 	}
 
@@ -156,10 +152,13 @@ public class LocalVariableResolver extends NameResolver {
 				VarDeclEntry new_e = new VarDeclEntry(struct + "." + e.getKey(), getStruct(e.getValue().toString()),
 						null);
 				entryList.put(e.getKey(), new_e);
-				System.out.println("====getAllFieldPerType add" + new_e);
 			}
 			fieldPerStruct.put(struct, entryList);
 		}
-
 	}
+
+	public StructDef getStruct(String name) {
+		return super.getStruct(name);
+	}
+
 }

@@ -28,7 +28,6 @@ public class RepairProgramController {
 	private HashMap<String, List<ExprFunCall>> funcCallMap = new HashMap<String, List<ExprFunCall>>();
 	private HashMap<String, List<StmtAssign>> assignMap = new HashMap<String, List<StmtAssign>>();
 	private HashMap<String, String> fileFixMap = null;
-	// private NameResolver nRes;
 	private RepairSketchOptions options;
 	private LocalVariableResolver resolver;
 private Program prog;
@@ -77,7 +76,6 @@ private Program prog;
 		SuspiciousFieldCollector suspLocator = new SuspiciousFieldCollector(this);
 		suspLocator.findAllFieldsInMethod(failHandler.getFailField(), failHandler.getBuggyHarness());
 		SketchRepairGenerator holeGenerator = new SketchRepairGenerator(this);
-//		SketchHoleGenerator holeGenerator = new SketchHoleGenerator(this);
 		List<String> files = holeGenerator.runSketch(suspLocator.getSuspciousAssign());
 
 		fileFixMap = holeGenerator.getFixPerFile();
@@ -125,7 +123,6 @@ private Program prog;
 	}
 
 	public Program getProgram() {
-		// TODO Auto-generated method stub
 		return prog;
 	}
 

@@ -20,7 +20,6 @@ public class RepairStage {
 
 	public List<String> startRepair(Program prog, String err) {
 		if (err.equals(se)) {
-			System.out.println("=========repair error " + err + "," + se);
 			se = err;
 			return null;
 		}

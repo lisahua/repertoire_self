@@ -11,12 +11,10 @@ import sketch.compiler.bugLocator.RepairProgramController;
 import sketch.compiler.bugLocator.VarDeclEntry;
 
 public class AssignFieldLocator extends SuspiciousStmtLocator {
-	private RepairProgramController utility;
 	private String summary = "";
 
 	public AssignFieldLocator(RepairProgramController utility) {
 		super(utility);
-		this.utility = utility;
 	}
 
 	public List<StmtAssign> findSuspiciousStmtInMethod(List<VarDeclEntry> sField, String func) {
@@ -27,7 +25,6 @@ public class AssignFieldLocator extends SuspiciousStmtLocator {
 			VarDeclEntry suspField = sField.get(sField.size() - 1);
 			// FIXME now I only consider last field;
 			// FIXME now I only consider LHS
-//			System.out.println("===DEBUG ===lhsField "+lhsField.size()+" suspField "+suspField+" "+sField.size());
 			if (lhsField.get(lhsField.size() - 1).getName().equals(suspField.getName())) {
 				assigns.add(assign);
 				summary = func + ":" + assign.toString();

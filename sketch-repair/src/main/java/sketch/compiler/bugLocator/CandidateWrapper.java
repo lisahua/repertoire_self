@@ -68,8 +68,6 @@ public class CandidateWrapper {
 		for (String s : values) {
 			rtn += "." + s + "|";
 		}
-//		rtn.substring(0, rtn.length() - 2);
-
 		return rootString+ rtn;
 	}
 }

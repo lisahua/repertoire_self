@@ -9,8 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import sketch.compiler.ProgramLocator.AssignReplaceWrapper;
 import sketch.compiler.ast.core.Function;
+import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.exprs.Expression;
 import sketch.compiler.ast.core.exprs.regens.ExprRegen;
 import sketch.compiler.ast.core.stmts.StmtAssign;
@@ -27,32 +27,28 @@ public class SketchRepairGenerator {
 	}
 
 	public List<String> runSketch(HashMap<String, List<StmtAssign>> bugAssign) {
-
-		HashMap<String, List<StmtAssign>> assignLine = createCandidate(bugAssign);
+		List<StmtAssign> assignLine = createCandidate(bugAssign);
 		int index = 0;
 		List<String> files = new ArrayList<String>();
 		String path = utility.getSketchFile();
-		for (Entry<String, List<StmtAssign>> f_entry : assignLine.entrySet()) {
-			Function func = utility.getFuncMap(f_entry.getKey());
-			for (StmtAssign replace : f_entry.getValue()) {
-				RepairSketchReplacer replGen = new RepairSketchReplacer(replace);
-				func.accept(replGen);
-				try {
-					String pth = path + index++;
-					new SimpleSketchFilePrinter(pth).visitProgram(utility.getProgram());
-					fileFixMap.put(pth, replace.toString());
-					files.add(pth);
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
+		for (StmtAssign f_entry : assignLine) {
+			RepairSketchReplacer replGen = new RepairSketchReplacer(f_entry);
+			Program prog = (Program) replGen.visitProgram(utility.getProgram());
+			try {
+				String pth = path + index++;
+				new SimpleSketchFilePrinter(pth).visitProgram(prog);
+				fileFixMap.put(pth, f_entry.toString());
+				files.add(pth);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
 			}
 		}
 		return files;
 	}
 
-	private HashMap<String, List<StmtAssign>> createCandidate(HashMap<String, List<StmtAssign>> bugAssign) {
+	private List<StmtAssign> createCandidate(HashMap<String, List<StmtAssign>> bugAssign) {
 
-		HashMap<String, List<StmtAssign>> assignCandidate = new HashMap<String, List<StmtAssign>>();
+		List<StmtAssign> assignCandidate = new ArrayList<StmtAssign>();
 		for (String func : bugAssign.keySet()) {
 			List<StmtAssign> fixes = new ArrayList<StmtAssign>();
 			for (StmtAssign assign : bugAssign.get(func)) {
@@ -64,11 +60,11 @@ public class SketchRepairGenerator {
 					Expression n_rhs = new ExprRegen(rhs.getOrigin(), gen);
 					StmtAssign rep_assign = new StmtAssign(assign.getLHS(), n_rhs, assign.getOp());
 					fixes.add(rep_assign);
-					System.out.println("===createCandidate ===" + func + "," +gen+","+ rep_assign + "," + assign.toString());
-					
+					System.out.println(
+							"===createCandidate ===" + func + "," + gen + "," + rep_assign + "," + assign.toString());
 				}
 			}
-			assignCandidate.put(func, fixes);
+			assignCandidate.addAll(fixes);
 		}
 		return assignCandidate;
 	}

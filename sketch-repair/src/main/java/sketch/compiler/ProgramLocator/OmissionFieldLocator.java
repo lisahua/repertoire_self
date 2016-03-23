@@ -11,12 +11,10 @@ import sketch.compiler.bugLocator.RepairProgramController;
 import sketch.compiler.bugLocator.VarDeclEntry;
 
 public class OmissionFieldLocator extends SuspiciousStmtLocator {
-	private RepairProgramController utility;
 	private String summary = "";
 
 	public OmissionFieldLocator(RepairProgramController utility) {
 		super(utility);
-		this.utility = utility;
 	}
 
 	public List<StmtAssign> findSuspiciousStmtInMethod(List<VarDeclEntry> sField, String func) {

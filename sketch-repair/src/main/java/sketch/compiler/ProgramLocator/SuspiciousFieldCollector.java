@@ -15,7 +15,6 @@ import sketch.compiler.bugLocator.RepairProgramController;
 import sketch.compiler.bugLocator.VarDeclEntry;
 
 public class SuspiciousFieldCollector {
-	// private HashMap<String, Type> varTypeMap = new HashMap<String, Type>();
 	private RepairProgramController utility = null;
 	private HashMap<String, List<StmtAssign>> suspAssign = new HashMap<String, List<StmtAssign>>();
 	private List<SuspiciousStmtLocator> locatorList = new ArrayList<SuspiciousStmtLocator>();
@@ -48,7 +47,6 @@ public class SuspiciousFieldCollector {
 		List<ExprFunCall> funCall = utility.getFuncCallMap().get(suspFunc);
 		HashSet<String> funSet = new HashSet<String>();
 		for (ExprFunCall call : funCall) {
-			System.out.println("===DEBUG ==="+call.getName());
 			Function func = utility.getFuncMap(call.getName());
 			if (func != null)
 				funSet.add(func.getName());
