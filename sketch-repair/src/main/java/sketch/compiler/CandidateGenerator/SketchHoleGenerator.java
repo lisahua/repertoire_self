@@ -11,7 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import sketch.compiler.ProgramLocator.AssignReplaceWrapper;
-import sketch.compiler.ast.core.Function;
+import sketch.compiler.ast.core.exprs.Expression;
+import sketch.compiler.ast.core.exprs.regens.ExprRegen;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.bugLocator.RepairProgramController;
 import sketch.compiler.bugLocator.VarDeclEntry;
@@ -39,7 +40,9 @@ public class SketchHoleGenerator {
 				if (candType != null) {
 					VarDeclEntry decl = candType.get(candType.size()-1);
 					String candidate = "$(" + decl.getTypeS() + ");";
-					
+					Expression rhs= assign.getRHS();
+					Expression n_rhs = new ExprRegen(rhs.getOrigin(),utility.genCandidate(func,decl.getTypeS()));
+					StmtAssign rep_assign  = new StmtAssign(assign.getLHS(),n_rhs,assign.getOp());
 					utility.genCandidate(func,decl.getTypeS());
 					assignCandidate.add(new AssignReplaceWrapper(candidate, assign, func));
 				}

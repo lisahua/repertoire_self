@@ -64,8 +64,10 @@ public class RepairSketchMain extends SequentialSketchMain {
 		try {
 			SynthesisResult synthResult = this.partialEvalAndSolve(prog);
 			prog = synthResult.lowered.result;
-			System.out.println("====Main observe prog 2===");
-			new SimpleCodePrinter().visitProgram(prog);
+			
+			
+//			System.out.println("====Main observe prog 2===");
+//			new SimpleCodePrinter().visitProgram(prog);
 			Program finalCleaned = synthResult.lowered.highLevelC;
 			Program substituted;
 			if (synthResult.solution != null) {

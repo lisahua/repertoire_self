@@ -14,8 +14,8 @@ public class RepairSketchReplacer extends FEReplacer {
 	}
 
 	public Object visitStmtAssign(StmtAssign stmt) {
-		if (stmt.getLHS().equals(assign)) {
-			return assign;
+		if (stmt.getLHS().equals(assign.getLHS())) {
+			stmt = assign;
 		}
 		return super.visitStmtAssign(stmt);
 	}
