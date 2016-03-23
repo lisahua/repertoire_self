@@ -7,7 +7,9 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
+import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.exprs.Expression;
 import sketch.compiler.ast.core.exprs.regens.ExprRegen;
@@ -16,10 +18,10 @@ import sketch.compiler.bugLocator.RepairProgramController;
 import sketch.compiler.bugLocator.VarDeclEntry;
 import sketch.compiler.main.other.SimpleSketchFilePrinter;
 
-public class SketchOmissionGenerator extends SketchRepairGenerator {
-
-	public SketchOmissionGenerator(RepairProgramController repairProgramUtility) {
-		super(repairProgramUtility);
+public class SketchExprGenerator extends SketchRepairGenerator {
+	
+	public SketchExprGenerator(RepairProgramController utility) {
+		super(utility);
 	}
 
 	public List<String> runSketch(HashMap<String, List<StmtAssign>> bugAssign) {
@@ -64,4 +66,5 @@ public class SketchOmissionGenerator extends SketchRepairGenerator {
 		}
 		return assignCandidate;
 	}
+
 }

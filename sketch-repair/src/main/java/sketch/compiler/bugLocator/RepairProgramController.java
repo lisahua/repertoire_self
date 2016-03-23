@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import sketch.compiler.CandidateGenerator.LocalVariableResolver;
-import sketch.compiler.CandidateGenerator.SketchAssignGenerator;
+import sketch.compiler.CandidateGenerator.SketchRepairCollector;
 import sketch.compiler.ProgramLocator.SuspiciousFieldCollector;
 import sketch.compiler.assertionLocator.AssertionLocator;
 import sketch.compiler.assertionLocator.FailAssertHandler;
@@ -75,7 +75,7 @@ private Program prog;
 
 		SuspiciousFieldCollector suspLocator = new SuspiciousFieldCollector(this);
 		suspLocator.findAllFieldsInMethod(failHandler.getFailField(), failHandler.getBuggyHarness());
-		SketchAssignGenerator holeGenerator = new SketchAssignGenerator(this);
+		SketchRepairCollector holeGenerator = new SketchRepairCollector(this);
 		List<String> files = holeGenerator.runSketch(suspLocator.getSuspciousAssign());
 
 		fileFixMap = holeGenerator.getFixPerFile();
