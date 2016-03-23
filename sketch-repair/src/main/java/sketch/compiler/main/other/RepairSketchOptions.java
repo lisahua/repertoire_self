@@ -22,7 +22,6 @@ public class RepairSketchOptions extends SketchOptions {
 	public void parseCommandline(SketchCliParser parser) {
 		super.parseCommandline(parser);
 		repairOptions = new RepairOptions();
-//		System.out.println("who is null?" + repairOptions+","+parser);
 		repairOptions.parse(parser);
 	}
 

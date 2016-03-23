@@ -57,7 +57,6 @@ public class OutputSketchCode extends OutputCCode {
 				prog.accept(new SimpleSketchFilePrinter(file));
 				
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else if (!options.feOpts.noOutputPrint) {
