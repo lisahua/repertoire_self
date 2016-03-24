@@ -33,7 +33,7 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 			RepairSketchReplacer replGen = new RepairSketchReplacer(f_entry);
 			Program prog = (Program) replGen.visitProgram(utility.getProgram());
 			try {
-				String pth = path + index++;
+				String pth = path + "_exp"+index++;
 				new SimpleSketchFilePrinter(pth).visitProgram(prog);
 				fileFixMap.put(pth, f_entry.toString());
 				files.add(pth);
@@ -48,7 +48,6 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 
 		List<StmtAssign> assignCandidate = new ArrayList<StmtAssign>();
 		for (String func : bugAssign.keySet()) {
-			List<StmtAssign> fixes = new ArrayList<StmtAssign>();
 			for (StmtAssign assign : bugAssign.get(func)) {
 				List<VarDeclEntry> candType = utility.resolveFieldChain(func, assign.getLHS().toString());
 				if (candType != null) {
@@ -57,12 +56,11 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 					String gen = utility.genCandidate(func, decl.getTypeS());
 					Expression n_rhs = new ExprRegen(rhs.getOrigin(), gen);
 					StmtAssign rep_assign = new StmtAssign(assign.getLHS(), n_rhs, assign.getOp());
-					fixes.add(rep_assign);
+					assignCandidate.add(rep_assign);
 					System.out.println(
 							"===createCandidate ===" + func + "," + gen + "," + rep_assign + "," + assign.toString());
 				}
 			}
-			assignCandidate.addAll(fixes);
 		}
 		return assignCandidate;
 	}

@@ -15,7 +15,6 @@ import sketch.compiler.ast.core.NameResolver;
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.typs.StructDef;
 import sketch.compiler.ast.core.typs.Type;
-import sketch.compiler.bugLocator.CandidateWrapper;
 import sketch.compiler.bugLocator.VarDeclEntry;
 import sketch.util.datastructures.ImmutableTypedHashMap;
 
@@ -161,4 +160,59 @@ public class LocalVariableResolver extends NameResolver {
 		return super.getStruct(name);
 	}
 
+	/// rewrite for extension
+	public StringBuilder extractCandidateSetAsHole(String func, String type, int bound) {
+		HashSet<String> set = extractCandidateList(func, type, bound);
+		StringBuilder builder = new StringBuilder("{|");
+		for (String s : set)
+			builder.append(s + "|");
+		builder.append("}");
+		return builder;
+	}
+
+	public HashSet<String> extractCandidateList(String func, String type, int bound) {
+		HashMap<String, VarDeclEntry> map = funcVar.get(func);
+		HashMap<String, CandidateWrapper> first = new HashMap<String, CandidateWrapper>();
+		for (Map.Entry<String, VarDeclEntry> entry : map.entrySet()) {
+			String typ = entry.getValue().getTypeS();
+			CandidateWrapper wp = first.get(typ);
+			if (wp == null)
+				wp = new CandidateWrapper(typ);
+			wp.addValue(entry.getKey());
+			first.put(typ, wp);
+		}
+		List<HashMap<String, CandidateWrapper>> table = new ArrayList<HashMap<String, CandidateWrapper>>();
+		table.add(first);
+		for (int i = 1; i < bound; i++)
+			table.add(genNextLayerCandidateList(table.get(i - 1)));
+		return genCandStringList(table, type);
+	}
+
+	private HashSet<String> genCandStringList(List<HashMap<String, CandidateWrapper>> table, String type) {
+		HashSet<String> candSet = new HashSet<String>();
+		for (HashMap<String, CandidateWrapper> map : table) {
+			if (map.containsKey(type))
+				candSet.addAll(map.get(type).getValues());
+		}
+		return candSet;
+	}
+
+	private HashMap<String, CandidateWrapper> genNextLayerCandidateList(HashMap<String, CandidateWrapper> prev) {
+		HashMap<String, CandidateWrapper> new_layer = new HashMap<String, CandidateWrapper>();
+
+		for (Map.Entry<String, CandidateWrapper> prev_e : prev.entrySet()) {
+			HashMap<String, VarDeclEntry> fields = fieldPerStruct.get(prev_e.getKey());
+			if (fields == null)
+				continue;
+			for (Map.Entry<String, VarDeclEntry> fld : fields.entrySet()) {
+				String type = fld.getValue().getTypeS();
+				CandidateWrapper wp = new_layer.get(type);
+				if (wp == null)
+					wp = new CandidateWrapper(type);
+				wp.setRootStringList(prev_e.getValue().getValues());
+				wp.addValue(fld.getKey());
+			}
+		}
+		return new_layer;
+	}
 }

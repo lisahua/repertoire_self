@@ -31,7 +31,7 @@ public class SketchPrimitiveGenerator extends SketchRepairGenerator {
 			RepairSketchReplacer replGen = new RepairSketchReplacer(f_entry);
 			Program prog = (Program) replGen.visitProgram(utility.getProgram());
 			try {
-				String pth = path + index++;
+				String pth = path +"_p"+ index++;
 				new SimpleSketchFilePrinter(pth).visitProgram(prog);
 				fileFixMap.put(pth, f_entry.toString());
 				files.add(pth);
@@ -46,9 +46,18 @@ public class SketchPrimitiveGenerator extends SketchRepairGenerator {
 
 		List<StmtAssign> assignCandidate = new ArrayList<StmtAssign>();
 		for (String func : bugAssign.keySet()) {
-			List<StmtAssign> fixes = new ArrayList<StmtAssign>();
-			
-			assignCandidate.addAll(fixes);
+			for (StmtAssign assign : bugAssign.get(func)) {
+				List<VarDeclEntry> candType = utility.resolveFieldChain(func, assign.getLHS().toString());
+				if (candType != null) {
+					VarDeclEntry decl = candType.get(candType.size() - 1);
+					Expression rhs = assign.getRHS();
+					String gen = utility.genCandidate(func, decl.getTypeS());
+					Expression n_rhs = new ExprRegen(rhs.getOrigin(), gen);
+					StmtAssign rep_assign = new StmtAssign(assign.getLHS(), n_rhs, assign.getOp());
+					assignCandidate.add(rep_assign);
+					System.out.println("===createCandidate primitive ===" + func + "," + gen + "," + decl.getTypeS());
+				}
+			}
 		}
 		return assignCandidate;
 	}

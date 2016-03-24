@@ -4,6 +4,7 @@
 package sketch.compiler.bugLocator;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -117,11 +118,16 @@ private Program prog;
 		return bound;
 	}
 
+	public HashSet<String> genCandidateList(String func, String typeS) {
+		// TODO Auto-generated method stub
+		return resolver.extractCandidateList(func, typeS, getRepairBound());
+	}
+
 	public String genCandidate(String func, String typeS) {
 		// TODO Auto-generated method stub
 		return resolver.extractCandidate(func, typeS, getRepairBound());
 	}
-
+	
 	public Program getProgram() {
 		return prog;
 	}

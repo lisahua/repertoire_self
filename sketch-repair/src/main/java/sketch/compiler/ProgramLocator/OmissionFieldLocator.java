@@ -19,7 +19,9 @@ public class OmissionFieldLocator extends SuspiciousStmtLocator {
 
 	public List<StmtAssign> findSuspiciousStmtInMethod(List<VarDeclEntry> sField, String func) {
 		List<StmtAssign> assigns = new ArrayList<StmtAssign>();
-
+		VarDeclEntry suspField = sField.get(sField.size() - 1);
+		System.out.println("=======Suspcious field omission field====== " + ","+func+","+suspField);
+		
 //		for (StmtAssign assign : utility.getAssignMap().get(func)) {
 //			List<FieldWrapper> lhsField = utility.resolveFieldChain(func, assign.getLHS().toString());
 //			FieldWrapper suspField = sField.get(sField.size() - 1);

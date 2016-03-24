@@ -161,7 +161,7 @@ public class RepairSketchMain extends SequentialSketchMain {
 					new File(files.get(i)).delete();
 				break;
 			} else {
-				new File(f).delete();
+//				new File(f).delete();
 			}
 		}
 	}

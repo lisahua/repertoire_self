@@ -1,7 +1,7 @@
 /**
  * @author Lisa Mar 22, 2016 CandidateWrapper.java 
  */
-package sketch.compiler.bugLocator;
+package sketch.compiler.CandidateGenerator;
 
 import java.util.HashSet;
 
@@ -9,7 +9,8 @@ public class CandidateWrapper {
 
 	private String type;
 	private HashSet<String> values = new HashSet<String>();
-	private String rootString;
+	private String rootString = null;
+	private HashSet<String> roots = new HashSet<String>();
 
 	public CandidateWrapper(String type) {
 		this.type = type;
@@ -24,7 +25,14 @@ public class CandidateWrapper {
 	}
 
 	public HashSet<String> getValues() {
-		return values;
+		if (rootString == null)
+			return values;
+		HashSet<String> new_s = new HashSet<String>();
+		for (String rt : roots)
+			for (String s : values) {
+				new_s.add(rt + "." + s);
+			}
+		return new_s;
 	}
 
 	public void setValues(HashSet<String> values) {
@@ -49,6 +57,10 @@ public class CandidateWrapper {
 		rootString = value;
 	}
 
+	public void setRootStringList(HashSet<String> value) {
+		roots = value;
+	}
+
 	public String getRootString() {
 		return rootString;
 	}
@@ -68,6 +80,6 @@ public class CandidateWrapper {
 		for (String s : values) {
 			rtn += "." + s + "|";
 		}
-		return rootString+ rtn;
+		return rootString + rtn;
 	}
 }

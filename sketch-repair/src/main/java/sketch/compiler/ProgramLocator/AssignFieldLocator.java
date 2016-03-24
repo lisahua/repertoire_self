@@ -19,7 +19,6 @@ public class AssignFieldLocator extends SuspiciousStmtLocator {
 
 	public List<StmtAssign> findSuspiciousStmtInMethod(List<VarDeclEntry> sField, String func) {
 		List<StmtAssign> assigns = new ArrayList<StmtAssign>();
-
 		for (StmtAssign assign : utility.getAssignMap().get(func)) {
 			List<VarDeclEntry> lhsField = utility.resolveFieldChain(func, assign.getLHS().toString());
 			VarDeclEntry suspField = sField.get(sField.size() - 1);
