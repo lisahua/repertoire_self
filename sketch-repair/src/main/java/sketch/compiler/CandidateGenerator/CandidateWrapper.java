@@ -9,7 +9,6 @@ public class CandidateWrapper {
 
 	private String type;
 	private HashSet<String> values = new HashSet<String>();
-	private String rootString = null;
 	private HashSet<String> roots = new HashSet<String>();
 
 	public CandidateWrapper(String type) {
@@ -25,7 +24,7 @@ public class CandidateWrapper {
 	}
 
 	public HashSet<String> getValues() {
-		if (rootString == null)
+		if (roots.size() == 0)
 			return values;
 		HashSet<String> new_s = new HashSet<String>();
 		for (String rt : roots)
@@ -43,43 +42,15 @@ public class CandidateWrapper {
 		values.add(s);
 	}
 
-	public String getValueString() {
-		if (values.size() == 0)
-			return "";
-		String rtn = "";
-		for (String s : values) {
-			rtn += s + "|";
-		}
-		return rtn;
-	}
-
-	public void setRootString(String value) {
-		rootString = value;
-	}
-
 	public void setRootStringList(HashSet<String> value) {
 		roots = value;
 	}
 
-	public String getRootString() {
-		return rootString;
-	}
-
 	public String toString() {
-		if (rootString != null)
-			return rootString;
-		switch (values.size()) {
-		case 0:
-			return "";
-		case 1:
-			for (String s : values) {
-				return "." + s;
-			}
-		}
-		String rtn = "";
-		for (String s : values) {
-			rtn += "." + s + "|";
-		}
-		return rootString + rtn;
+		HashSet<String> result = getValues();
+		StringBuilder builder = new StringBuilder();
+		for (String s : result)
+			builder.append(s + ",");
+		return builder.toString();
 	}
 }

@@ -53,8 +53,8 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 				if (candType != null) {
 					VarDeclEntry decl = candType.get(candType.size() - 1);
 					Expression rhs = assign.getRHS();
-					String gen = utility.genCandidate(func, decl.getTypeS());
-					Expression n_rhs = new ExprRegen(rhs.getOrigin(), gen);
+					StringBuilder gen = utility.genCandidateSetString(func, decl.getTypeS());
+					Expression n_rhs = new ExprRegen(rhs.getOrigin(), gen.toString());
 					StmtAssign rep_assign = new StmtAssign(assign.getLHS(), n_rhs, assign.getOp());
 					assignCandidate.add(rep_assign);
 					System.out.println(

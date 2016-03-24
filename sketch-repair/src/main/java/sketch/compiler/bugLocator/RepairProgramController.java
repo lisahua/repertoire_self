@@ -119,13 +119,11 @@ private Program prog;
 	}
 
 	public HashSet<String> genCandidateList(String func, String typeS) {
-		// TODO Auto-generated method stub
 		return resolver.extractCandidateList(func, typeS, getRepairBound());
 	}
 
-	public String genCandidate(String func, String typeS) {
-		// TODO Auto-generated method stub
-		return resolver.extractCandidate(func, typeS, getRepairBound());
+	public StringBuilder genCandidateSetString(String func, String typeS) {
+		return resolver.extractCandidateSetAsHole(func, typeS, getRepairBound());
 	}
 	
 	public Program getProgram() {

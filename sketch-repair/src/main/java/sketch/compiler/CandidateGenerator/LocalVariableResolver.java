@@ -29,62 +29,6 @@ public class LocalVariableResolver extends NameResolver {
 		genAllFieldsPerType();
 	}
 
-	public String extractCandidate(String func, String type, int bound) {
-		HashMap<String, VarDeclEntry> map = funcVar.get(func);
-		HashMap<String, CandidateWrapper> first = new HashMap<String, CandidateWrapper>();
-		for (Map.Entry<String, VarDeclEntry> entry : map.entrySet()) {
-			String typ = entry.getValue().getTypeS();
-			CandidateWrapper wp = first.get(typ);
-			if (wp == null)
-				wp = new CandidateWrapper(typ);
-			wp.addValue(entry.getKey());
-			first.put(typ, wp);
-		}
-		List<HashMap<String, CandidateWrapper>> table = new ArrayList<HashMap<String, CandidateWrapper>>();
-		table.add(first);
-		for (int i = 1; i < bound; i++)
-			table.add(genNextLayerCandidate(table.get(i - 1)));
-		return genCandString(table, type);
-	}
-
-	private String genCandString(List<HashMap<String, CandidateWrapper>> table, String type) {
-		HashMap<String, CandidateWrapper> prev = null;
-		StringBuilder builder = new StringBuilder("{|");
-		for (HashMap<String, CandidateWrapper> map : table) {
-			if (prev == null) {
-				if (map.containsKey(type)) {
-					builder.append(map.get(type).getValueString());
-				}
-			} else {
-				if (map.containsKey(type)) {
-					builder.append(prev.toString() + map.get(type).toString());
-				}
-			}
-			prev = map;
-		}
-		builder.append("}");
-		return builder.toString();
-	}
-
-	private HashMap<String, CandidateWrapper> genNextLayerCandidate(HashMap<String, CandidateWrapper> prev) {
-		HashMap<String, CandidateWrapper> new_layer = new HashMap<String, CandidateWrapper>();
-
-		for (Map.Entry<String, CandidateWrapper> prev_e : prev.entrySet()) {
-			HashMap<String, VarDeclEntry> fields = fieldPerStruct.get(prev_e.getKey());
-			if (fields == null)
-				continue;
-			for (Map.Entry<String, VarDeclEntry> fld : fields.entrySet()) {
-				String type = fld.getValue().getTypeS();
-				CandidateWrapper wp = new_layer.get(type);
-				if (wp == null)
-					wp = new CandidateWrapper(type);
-				wp.setRootString(prev_e.getValue().toString());
-				wp.addValue(fld.getKey());
-			}
-		}
-		return new_layer;
-	}
-
 	public void add(String name, StructDef struct, String func) {
 		HashMap<String, VarDeclEntry> map = funcVar.get(func);
 		map = (map == null) ? new HashMap<String, VarDeclEntry>() : map;
