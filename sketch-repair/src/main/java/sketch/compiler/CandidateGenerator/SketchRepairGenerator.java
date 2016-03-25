@@ -18,7 +18,7 @@ public abstract class SketchRepairGenerator {
 	}
 	public abstract List<String> runSketch(HashMap<String, List<StmtAssign>> bugAssign) ;
 	
-	public abstract List<StmtAssign> createCandidate(HashMap<String, List<StmtAssign>> bugAssign) ;
+	public abstract List<List<StmtAssign>> createCandidate(HashMap<String, List<StmtAssign>> bugAssign) ;
 	
 	public HashMap<String, String> getFixPerFile() {
 		return fileFixMap;

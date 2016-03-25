@@ -23,17 +23,17 @@ public class SketchPrimitiveGenerator extends SketchRepairGenerator {
 	}
 
 	public List<String> runSketch(HashMap<String, List<StmtAssign>> bugAssign) {
-		List<StmtAssign> assignLine = createCandidate(bugAssign);
+		List<List<StmtAssign>> assignLine = createCandidate(bugAssign);
 		int index = 0;
 		List<String> files = new ArrayList<String>();
 		String path = utility.getSketchFile();
-		for (StmtAssign f_entry : assignLine) {
-			RepairSketchReplacer replGen = new RepairSketchReplacer(f_entry);
+		for (List<StmtAssign> ass_list : assignLine) {
+			RepairSketchReplacer replGen = new RepairSketchReplacer(ass_list);
 			Program prog = (Program) replGen.visitProgram(utility.getProgram());
 			try {
 				String pth = path + "_p" + index++;
 				new SimpleSketchFilePrinter(pth).visitProgram(prog);
-				fileFixMap.put(pth, f_entry.toString());
+//				fileFixMap.put(pth, f_entry.toString());
 				files.add(pth);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
@@ -42,26 +42,26 @@ public class SketchPrimitiveGenerator extends SketchRepairGenerator {
 		return files;
 	}
 
-	public List<StmtAssign> createCandidate(HashMap<String, List<StmtAssign>> bugAssign) {
+	public List<List<StmtAssign>> createCandidate(HashMap<String, List<StmtAssign>> bugAssign) {
 
-		List<StmtAssign> assignCandidate = new ArrayList<StmtAssign>();
-		for (String func : bugAssign.keySet()) {
-			for (StmtAssign assign : bugAssign.get(func)) {
-				List<VarDeclEntry> candType = utility.resolveFieldChain(func, assign.getLHS().toString());
-				if (candType != null) {
-					VarDeclEntry decl = candType.get(candType.size() - 1);
-					Expression rhs = assign.getRHS();
-					List<StringBuilder> gen = utility.genCandidateSetString(func, decl.getTypeS());
-					for (StringBuilder builder : gen) {
-						Expression n_rhs = new ExprRegen(rhs.getOrigin(), builder.toString());
-						StmtAssign rep_assign = new StmtAssign(assign.getLHS(), n_rhs, assign.getOp());
-						assignCandidate.add(rep_assign);
-						System.out
-								.println("===createCandidate primitive ===" + func + "," + gen + "," + decl.getTypeS());
-					}
-				}
-			}
-		}
+		List<List<StmtAssign>> assignCandidate = new ArrayList<List<StmtAssign>>();
+//		for (String func : bugAssign.keySet()) {
+//			for (StmtAssign assign : bugAssign.get(func)) {
+//				List<VarDeclEntry> candType = utility.resolveFieldChain(func, assign.getLHS().toString());
+//				if (candType != null) {
+//					VarDeclEntry decl = candType.get(candType.size() - 1);
+//					Expression rhs = assign.getRHS();
+//					List<StringBuilder> gen = utility.genCandidateSetString(func, decl.getTypeS());
+//					for (StringBuilder builder : gen) {
+//						Expression n_rhs = new ExprRegen(rhs.getOrigin(), builder.toString());
+//						StmtAssign rep_assign = new StmtAssign(assign.getLHS(), n_rhs, assign.getOp());
+//						assignCandidate.add(rep_assign);
+//						System.out
+//								.println("===createCandidate primitive ===" + func + "," + gen + "," + decl.getTypeS());
+//					}
+//				}
+//			}
+//		}
 		return assignCandidate;
 	}
 }

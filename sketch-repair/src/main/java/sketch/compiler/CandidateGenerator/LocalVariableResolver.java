@@ -72,7 +72,7 @@ public class LocalVariableResolver extends NameResolver {
 				current = getFieldTypeInStruct(current, t);
 			}
 			fields.add(current);
-			// System.out.println(current);
+
 		}
 		return fields;
 	}
@@ -95,11 +95,8 @@ public class LocalVariableResolver extends NameResolver {
 				VarDeclEntry new_e = new VarDeclEntry(struct + "." + e.getKey(), getStruct(e.getValue().toString()),
 						null);
 				entryList.put(e.getKey(), new_e);
-//				System.out.println("===fieldPerStruct add==="+struct+":" + e.getKey() + ":" + e.getValue());
 			}
 			fieldPerStruct.put(struct, entryList);
-//			for (String field : fieldPerStruct.get(struct).keySet())
-//				System.out.println("===fieldPerStruct ===" + struct + ":" + field);
 		}
 	}
 
@@ -124,7 +121,7 @@ public class LocalVariableResolver extends NameResolver {
 				builder.deleteCharAt(builder.length() - 1);
 			}
 			sList.add(builder);
-//			System.out.println("=====LocalVaresoler ===" + builder);
+			// System.out.println("=====LocalVaresoler ===" + builder);
 		}
 		return sList;
 	}
@@ -173,12 +170,13 @@ public class LocalVariableResolver extends NameResolver {
 				CandidateWrapper wp = new_layer.get(type);
 				if (wp == null)
 					wp = new CandidateWrapper(type);
-//				wp.setRootStringList(prev_e.getValue().getValues());
+				// wp.setRootStringList(prev_e.getValue().getValues());
 				wp.addValue(prev_e.getValue().getValues(), fld.getKey());
 				new_layer.put(type, wp);
 			}
-//			for (String type : new_layer.keySet())
-//				System.out.println("=== genNextLayerCandidateList == " + type + "," + new_layer.get(type));
+			// for (String type : new_layer.keySet())
+			// System.out.println("=== genNextLayerCandidateList == " + type +
+			// "," + new_layer.get(type));
 		}
 		return new_layer;
 	}

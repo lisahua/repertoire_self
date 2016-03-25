@@ -3,20 +3,26 @@
  */
 package sketch.compiler.CandidateGenerator;
 
+import java.util.HashMap;
+import java.util.List;
+
 import sketch.compiler.ast.core.FEReplacer;
+import sketch.compiler.ast.core.exprs.Expression;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 
 public class RepairSketchReplacer extends FEReplacer {
-	StmtAssign assign = null;
+	HashMap<Expression, StmtAssign> repMap = new HashMap<Expression, StmtAssign>();
 
-	public RepairSketchReplacer(StmtAssign assign) {
-		this.assign = assign;
+	public RepairSketchReplacer(List<StmtAssign> assign) {
+		for (StmtAssign ass : assign)
+			repMap.put(ass.getLHS(), ass);
 	}
 
 	public Object visitStmtAssign(StmtAssign stmt) {
-		if (stmt.getLHS().equals(assign.getLHS())) {
-			System.out.println("=====RepairSketchReplacer ===find assign stmt "+stmt+","+assign);
-			stmt = assign;
+		Expression lhs = stmt.getLHS();
+		if (repMap.containsKey(lhs)) {
+			System.out.println("=====RepairSketchReplacer ===find assign stmt " + stmt + "," + repMap.get(lhs));
+			stmt = repMap.get(lhs);
 		}
 		return super.visitStmtAssign(stmt);
 	}
