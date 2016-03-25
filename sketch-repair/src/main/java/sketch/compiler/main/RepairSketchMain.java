@@ -53,10 +53,6 @@ public class RepairSketchMain extends SequentialSketchMain {
 		try {
 			prog = parseProgram();
 			prog = this.preprocAndSemanticCheck(prog);
-		} catch (RuntimeException re) {
-			throw new ProgramParseException("Sketch failed to parse: " + re.getMessage());
-		}
-		try {
 			SynthesisResult synthResult = this.partialEvalAndSolve(prog);
 			prog = synthResult.lowered.result;
 			Program finalCleaned = synthResult.lowered.highLevelC;
@@ -77,7 +73,10 @@ public class RepairSketchMain extends SequentialSketchMain {
 				status = RPSTATUS.ONGOING;
 				parseProgram(prog, se.getMessage());
 			}
+		} catch (RuntimeException re) {
+			throw new ProgramParseException("Sketch failed to parse: " + re.getMessage());
 		}
+	
 		return false;
 	}
 
@@ -101,11 +100,11 @@ public class RepairSketchMain extends SequentialSketchMain {
 					exitCode = 1;
 				} catch (ExecutionException e) {
 					e.printStackTrace();
-//					ErrorHandling.handleErr(e);
+					// ErrorHandling.handleErr(e);
 					exitCode = 1;
 				} catch (InterruptedException e) {
 					e.printStackTrace();
-//					ErrorHandling.handleErr(e);
+					// ErrorHandling.handleErr(e);
 					exitCode = 1;
 				} finally {
 					executor.shutdown();
@@ -117,7 +116,7 @@ public class RepairSketchMain extends SequentialSketchMain {
 			}
 		} catch (java.lang.Error e) {
 			e.printStackTrace();
-//			ErrorHandling.handleErr(e);
+			// ErrorHandling.handleErr(e);
 			// necessary for unit tests, etc.
 			if (isTest) {
 				throw e;
@@ -126,7 +125,7 @@ public class RepairSketchMain extends SequentialSketchMain {
 			}
 		} catch (RuntimeException e) {
 			e.printStackTrace();
-//			ErrorHandling.handleErr(e);
+			// ErrorHandling.handleErr(e);
 			if (isTest) {
 				throw e;
 			} else {
@@ -161,7 +160,7 @@ public class RepairSketchMain extends SequentialSketchMain {
 					new File(files.get(i)).delete();
 				break;
 			} else {
-//				new File(f).delete();
+				// new File(f).delete();
 			}
 		}
 	}

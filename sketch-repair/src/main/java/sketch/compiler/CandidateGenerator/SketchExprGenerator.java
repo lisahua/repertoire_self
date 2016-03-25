@@ -19,7 +19,7 @@ import sketch.compiler.bugLocator.VarDeclEntry;
 import sketch.compiler.main.other.SimpleSketchFilePrinter;
 
 public class SketchExprGenerator extends SketchRepairGenerator {
-	
+
 	public SketchExprGenerator(RepairProgramController utility) {
 		super(utility);
 	}
@@ -32,14 +32,19 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 		for (StmtAssign f_entry : assignLine) {
 			RepairSketchReplacer replGen = new RepairSketchReplacer(f_entry);
 			Program prog = (Program) replGen.visitProgram(utility.getProgram());
-			try {
-				String pth = path + "_exp"+index++;
-				new SimpleSketchFilePrinter(pth).visitProgram(prog);
-				fileFixMap.put(pth, f_entry.toString());
-				files.add(pth);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+			if (utility.solveSketch(prog)) {
+				System.out.println("====SketchExprGenerator === successful solve");
+				break;
 			}
+				
+			// try {
+			// String pth = path + "_exp" + index++;
+			// new SimpleSketchFilePrinter(pth).visitProgram(prog);
+			// fileFixMap.put(pth, f_entry.toString());
+			// files.add(pth);
+			// } catch (FileNotFoundException e) {
+			// e.printStackTrace();
+			// }
 		}
 		return files;
 	}
@@ -53,12 +58,15 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 				if (candType != null) {
 					VarDeclEntry decl = candType.get(candType.size() - 1);
 					Expression rhs = assign.getRHS();
-					StringBuilder gen = utility.genCandidateSetString(func, decl.getTypeS());
-					Expression n_rhs = new ExprRegen(rhs.getOrigin(), gen.toString());
-					StmtAssign rep_assign = new StmtAssign(assign.getLHS(), n_rhs, assign.getOp());
-					assignCandidate.add(rep_assign);
-					System.out.println(
-							"===createCandidate ===" + func + "," + gen + "," + rep_assign + "," + assign.toString());
+					List<StringBuilder> gen = utility.genCandidateSetString(func, decl.getTypeS());
+					for (StringBuilder builder : gen) {
+						Expression n_rhs = new ExprRegen(rhs.getOrigin(), "{|"+builder.toString()+"|}");
+						StmtAssign rep_assign = new StmtAssign(assign.getLHS(), n_rhs, assign.getOp());
+						assignCandidate.add(rep_assign);
+						System.out.println("===createCandidate ===" + func + "," + gen + "," + rep_assign + ","
+								+ assign.toString());
+
+					}
 				}
 			}
 		}

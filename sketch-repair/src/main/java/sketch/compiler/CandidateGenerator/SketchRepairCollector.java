@@ -16,7 +16,7 @@ public class SketchRepairCollector {
 
 	public SketchRepairCollector(RepairProgramController controller) {
 		generatorList.add(new SketchExprGenerator(controller));
-		generatorList.add(new SketchPrimitiveGenerator(controller));
+//		generatorList.add(new SketchPrimitiveGenerator(controller));
 	}
 
 	public List<String> runSketch(HashMap<String, List<StmtAssign>> bugAssign) {

@@ -3,6 +3,7 @@
  */
 package sketch.compiler.bugLocator;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -22,6 +23,8 @@ import sketch.compiler.ast.core.stmts.StmtAssert;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
 import sketch.compiler.main.other.RepairSketchOptions;
+import sketch.compiler.main.other.RepairStageRunner;
+import sketch.compiler.main.other.SimpleSketchFilePrinter;
 import sketch.compiler.passes.printers.SimpleCodePrinter;
 
 public class RepairProgramController {
@@ -31,12 +34,13 @@ public class RepairProgramController {
 	private HashMap<String, String> fileFixMap = null;
 	private RepairSketchOptions options;
 	private LocalVariableResolver resolver;
-private Program prog;
+	private Program prog;
+private int num = 0;
 	public RepairProgramController(Program prog, final RepairSketchOptions options) {
 		resolver = new LocalVariableResolver(prog);
 		initProgram(prog);
 		this.options = options;
-		prog.accept(new  SimpleCodePrinter());
+		prog.accept(new SimpleCodePrinter());
 		this.prog = prog;
 	}
 
@@ -52,7 +56,7 @@ private Program prog;
 				for (Parameter para : visitor.getParameter()) {
 					resolver.add(para.getName(), resolver.getStruct(para.getType().toString()), func.getName());
 				}
-					for (StmtVarDecl var : visitor.getVarDecl()) {
+				for (StmtVarDecl var : visitor.getVarDecl()) {
 					Iterator<StmtVarDecl.VarDeclEntry> iterator = var.iterator();
 					while (iterator.hasNext()) {
 						StmtVarDecl.VarDeclEntry entry = iterator.next();
@@ -118,16 +122,25 @@ private Program prog;
 		return bound;
 	}
 
-	public HashSet<String> genCandidateList(String func, String typeS) {
+	public List<HashSet<String>> genCandidateList(String func, String typeS) {
 		return resolver.extractCandidateList(func, typeS, getRepairBound());
 	}
 
-	public StringBuilder genCandidateSetString(String func, String typeS) {
+	public List<StringBuilder> genCandidateSetString(String func, String typeS) {
 		return resolver.extractCandidateSetAsHole(func, typeS, getRepairBound());
 	}
-	
+
 	public Program getProgram() {
 		return prog;
 	}
 
+	public boolean solveSketch(Program prog) {
+		String path = options.sketchName+num++;
+		try {
+			new SimpleSketchFilePrinter(path).visitProgram(prog);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return new RepairStageRunner(options).solveSketch(path);
+	}
 }

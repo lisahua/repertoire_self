@@ -4,12 +4,13 @@
 package sketch.compiler.CandidateGenerator;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public class CandidateWrapper {
 
 	private String type;
 	private HashSet<String> values = new HashSet<String>();
-	private HashSet<String> roots = new HashSet<String>();
+//	private HashSet<String> roots = new HashSet<String>();
 
 	public CandidateWrapper(String type) {
 		this.type = type;
@@ -24,14 +25,15 @@ public class CandidateWrapper {
 	}
 
 	public HashSet<String> getValues() {
-		if (roots.size() == 0)
-			return values;
-		HashSet<String> new_s = new HashSet<String>();
-		for (String rt : roots)
-			for (String s : values) {
-				new_s.add(rt + "." + s);
-			}
-		return new_s;
+		// if (roots.size() == 0)
+		// return values;
+		// HashSet<String> new_s = new HashSet<String>();
+		// for (String rt : roots)
+		// for (String s : values) {
+		// new_s.add(rt + "." + s);
+		// }
+		// return new_s;
+		return values;
 	}
 
 	public void setValues(HashSet<String> values) {
@@ -42,9 +44,14 @@ public class CandidateWrapper {
 		values.add(s);
 	}
 
-	public void setRootStringList(HashSet<String> value) {
-		roots = value;
+	public void addValue(Set<String> roots, String s) {
+		for (String root : roots)
+			values.add(root + "." + s);
 	}
+
+	// public void setRootStringList(HashSet<String> value) {
+	// roots = value;
+	// }
 
 	public String toString() {
 		HashSet<String> result = getValues();

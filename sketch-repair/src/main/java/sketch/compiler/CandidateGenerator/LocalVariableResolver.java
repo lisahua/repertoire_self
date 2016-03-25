@@ -72,7 +72,7 @@ public class LocalVariableResolver extends NameResolver {
 				current = getFieldTypeInStruct(current, t);
 			}
 			fields.add(current);
-			System.out.println(current);
+			// System.out.println(current);
 		}
 		return fields;
 	}
@@ -95,8 +95,11 @@ public class LocalVariableResolver extends NameResolver {
 				VarDeclEntry new_e = new VarDeclEntry(struct + "." + e.getKey(), getStruct(e.getValue().toString()),
 						null);
 				entryList.put(e.getKey(), new_e);
+//				System.out.println("===fieldPerStruct add==="+struct+":" + e.getKey() + ":" + e.getValue());
 			}
 			fieldPerStruct.put(struct, entryList);
+//			for (String field : fieldPerStruct.get(struct).keySet())
+//				System.out.println("===fieldPerStruct ===" + struct + ":" + field);
 		}
 	}
 
@@ -105,16 +108,28 @@ public class LocalVariableResolver extends NameResolver {
 	}
 
 	/// rewrite for extension
-	public StringBuilder extractCandidateSetAsHole(String func, String type, int bound) {
-		HashSet<String> set = extractCandidateList(func, type, bound);
-		StringBuilder builder = new StringBuilder("{|");
-		for (String s : set)
-			builder.append(s + "|");
-		builder.append("}");
-		return builder;
+	public List<StringBuilder> extractCandidateSetAsHole(String func, String type, int bound) {
+		List<HashSet<String>> layers = extractCandidateList(func, type, bound);
+
+		List<StringBuilder> sList = new ArrayList<StringBuilder>();
+		for (HashSet<String> set : layers) {
+			StringBuilder builder = new StringBuilder();
+			if (set.size() > 0) {
+				for (String s : set)
+					builder.append(s + "|");
+				// if (allStructs.contains(type))
+				// builder.append("null");
+				// else
+				// // builder.append("??");
+				builder.deleteCharAt(builder.length() - 1);
+			}
+			sList.add(builder);
+//			System.out.println("=====LocalVaresoler ===" + builder);
+		}
+		return sList;
 	}
 
-	public HashSet<String> extractCandidateList(String func, String type, int bound) {
+	public List<HashSet<String>> extractCandidateList(String func, String type, int bound) {
 		HashMap<String, VarDeclEntry> map = funcVar.get(func);
 		HashMap<String, CandidateWrapper> first = new HashMap<String, CandidateWrapper>();
 		for (Map.Entry<String, VarDeclEntry> entry : map.entrySet()) {
@@ -122,28 +137,33 @@ public class LocalVariableResolver extends NameResolver {
 			CandidateWrapper wp = first.get(typ);
 			if (wp == null)
 				wp = new CandidateWrapper(typ);
-			wp.addValue(entry.getKey());
-			first.put(typ, wp);
+			if (!entry.getKey().contains(".")) {
+				wp.addValue(entry.getKey());
+				first.put(typ, wp);
+			}
 		}
 		List<HashMap<String, CandidateWrapper>> table = new ArrayList<HashMap<String, CandidateWrapper>>();
 		table.add(first);
 		for (int i = 1; i < bound; i++)
 			table.add(genNextLayerCandidateList(table.get(i - 1)));
-		return genCandStringList(table, type);
+		List<HashSet<String>> canList = genCandStringList(table, type);
+		return canList;
 	}
 
-	private HashSet<String> genCandStringList(List<HashMap<String, CandidateWrapper>> table, String type) {
-		HashSet<String> candSet = new HashSet<String>();
-		for (HashMap<String, CandidateWrapper> map : table) {
+	private List<HashSet<String>> genCandStringList(List<HashMap<String, CandidateWrapper>> table, String type) {
+		List<HashSet<String>> result = new ArrayList<HashSet<String>>();
+		for (int i = 0; i < table.size(); i++) {
+			HashSet<String> candSet = new HashSet<String>();
+			HashMap<String, CandidateWrapper> map = table.get(i);
 			if (map.containsKey(type))
 				candSet.addAll(map.get(type).getValues());
+			result.add(candSet);
 		}
-		return candSet;
+		return result;
 	}
 
 	private HashMap<String, CandidateWrapper> genNextLayerCandidateList(HashMap<String, CandidateWrapper> prev) {
 		HashMap<String, CandidateWrapper> new_layer = new HashMap<String, CandidateWrapper>();
-
 		for (Map.Entry<String, CandidateWrapper> prev_e : prev.entrySet()) {
 			HashMap<String, VarDeclEntry> fields = fieldPerStruct.get(prev_e.getKey());
 			if (fields == null)
@@ -153,9 +173,12 @@ public class LocalVariableResolver extends NameResolver {
 				CandidateWrapper wp = new_layer.get(type);
 				if (wp == null)
 					wp = new CandidateWrapper(type);
-				wp.setRootStringList(prev_e.getValue().getValues());
-				wp.addValue(fld.getKey());
+//				wp.setRootStringList(prev_e.getValue().getValues());
+				wp.addValue(prev_e.getValue().getValues(), fld.getKey());
+				new_layer.put(type, wp);
 			}
+//			for (String type : new_layer.keySet())
+//				System.out.println("=== genNextLayerCandidateList == " + type + "," + new_layer.get(type));
 		}
 		return new_layer;
 	}
