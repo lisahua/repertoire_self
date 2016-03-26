@@ -19,6 +19,7 @@ import sketch.compiler.ast.core.Package;
 import sketch.compiler.ast.core.Parameter;
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.exprs.ExprFunCall;
+import sketch.compiler.ast.core.exprs.Expression;
 import sketch.compiler.ast.core.stmts.StmtAssert;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
@@ -35,7 +36,8 @@ public class RepairProgramController {
 	private RepairSketchOptions options;
 	private LocalVariableResolver resolver;
 	private Program prog;
-private int num = 0;
+	private int num = 0;
+
 	public RepairProgramController(Program prog, final RepairSketchOptions options) {
 		resolver = new LocalVariableResolver(prog);
 		initProgram(prog);
@@ -80,11 +82,13 @@ private int num = 0;
 
 		SuspiciousFieldCollector suspLocator = new SuspiciousFieldCollector(this);
 		suspLocator.findAllFieldsInMethod(failHandler.getFailField(), failHandler.getBuggyHarness());
-		SketchRepairCollector holeGenerator = new SketchRepairCollector(this);
-		List<String> files = holeGenerator.runSketch(suspLocator.getSuspciousAssign());
-
-		fileFixMap = holeGenerator.getFixPerFile();
-		return files;
+		
+//		
+//		SketchRepairCollector holeGenerator = new SketchRepairCollector(this);
+//		List<String> files = holeGenerator.runSketch(suspLocator.getSuspciousAssign());
+//
+//		fileFixMap = holeGenerator.getFixPerFile();
+		return null;
 	}
 
 	public List<VarDeclEntry> resolveFieldChain(String func, String string) {
@@ -135,7 +139,7 @@ private int num = 0;
 	}
 
 	public boolean solveSketch(Program prog) {
-		String path = options.sketchName+num++;
+		String path = options.sketchName + num++;
 		try {
 			new SimpleSketchFilePrinter(path).visitProgram(prog);
 		} catch (FileNotFoundException e) {
@@ -143,8 +147,12 @@ private int num = 0;
 		}
 		return new RepairStageRunner(options).solveSketch(path);
 	}
-	
-	public boolean isPrimitiveType(String func, String exp){
+
+	public boolean isPrimitiveType(String func, String exp) {
 		return resolver.isPrimitiveType(func, exp);
+	}
+
+	public HashSet<Expression> instantiateField(String func, String field) {
+		return resolver.instantiateField(func, field,null);
 	}
 }

@@ -4,6 +4,7 @@
 package sketch.compiler.CandidateGenerator;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import sketch.compiler.ast.core.stmts.StmtAssign;
@@ -16,9 +17,15 @@ public abstract class SketchRepairGenerator {
 	public SketchRepairGenerator(RepairProgramController repairProgramUtility) {
 		utility = repairProgramUtility;
 	}
-	public abstract List<String> runSketch(HashMap<String, List<StmtAssign>> bugAssign) ;
+//	public abstract List<String> runSketch(String func, List<StmtAssign> bugAssign) ;
 	
-	public abstract List<List<StmtAssign>> createCandidate(HashMap<String, List<StmtAssign>> bugAssign) ;
+	/**
+	 * Use list instead of set because we want to consider stmt order in the future.
+	 * @param func
+	 * @param bugAssign
+	 * @return
+	 */
+	public abstract List<List<StmtAssign>> createCandidate(String func, List<StmtAssign> bugAssign) ;
 	
 	public HashMap<String, String> getFixPerFile() {
 		return fileFixMap;

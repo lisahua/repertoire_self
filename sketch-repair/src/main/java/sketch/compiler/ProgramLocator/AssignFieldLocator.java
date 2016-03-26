@@ -4,8 +4,11 @@
 package sketch.compiler.ProgramLocator;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
+import sketch.compiler.CandidateGenerator.RepairSketchReplacer;
+import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.bugLocator.RepairProgramController;
 import sketch.compiler.bugLocator.VarDeclEntry;
@@ -33,7 +36,31 @@ public class AssignFieldLocator extends SuspiciousStmtLocator {
 		return assigns;
 	}
 
+//	public boolean runSketch(List<Object> bugAssign) {
+//		// int index = 0;
+//		// List<String> files = new ArrayList<String>();
+//		// String path = utility.getSketchFile();
+//		RepairSketchReplacer replGen = new RepairSketchReplacer(bugAssign);
+//		Program prog = (Program) replGen.visitProgram(utility.getProgram());
+//		if (utility.solveSketch(prog)) {
+//			System.out.println("====SketchExprGenerator === successful solve");
+//			return true;
+//		}
+//		return false;
+//	}
+
 	public String toString() {
 		return summary;
+	}
+
+	@Override
+	public boolean runSketch(List<StmtAssign> bugAssign) {
+		RepairSketchReplacer replGen = new RepairSketchReplacer((List<sketch.compiler.ast.core.stmts.StmtAssign>) bugAssign);
+		Program prog = (Program) replGen.visitProgram(utility.getProgram());
+		if (utility.solveSketch(prog)) {
+			System.out.println("====SketchExprGenerator === successful solve");
+			return true;
+		}
+		return false;
 	}
 }

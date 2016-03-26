@@ -4,10 +4,10 @@
 package sketch.compiler.ProgramLocator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
+import sketch.compiler.CandidateGenerator.SketchRepairCollector;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.exprs.ExprFunCall;
 import sketch.compiler.ast.core.stmts.StmtAssign;
@@ -16,32 +16,30 @@ import sketch.compiler.bugLocator.VarDeclEntry;
 
 public class SuspiciousFieldCollector {
 	private RepairProgramController utility = null;
-	private HashMap<String, List<StmtAssign>> suspAssign = new HashMap<String, List<StmtAssign>>();
 	private List<SuspiciousStmtLocator> locatorList = new ArrayList<SuspiciousStmtLocator>();
+	private SketchRepairCollector genCollector = null;
 
 	public SuspiciousFieldCollector(RepairProgramController utility) {
 		this.utility = utility;
 		locatorList.add(new AssignFieldLocator(utility));
 		locatorList.add(new OmissionFieldLocator(utility));
-
+		genCollector = new SketchRepairCollector(utility);
 	}
 
-	public HashMap<String, List<StmtAssign>> findAllFieldsInMethod(List<VarDeclEntry> sField, String suspFunc) {
+	public boolean findAllFieldsInMethod(List<VarDeclEntry> sField, String suspFunc) {
 		HashSet<String> funSet = findAllSuspiciousMethod(suspFunc);
-		
-		for (String func : funSet) {
-			List<StmtAssign> assigns = new ArrayList<StmtAssign>();
-			for (SuspiciousStmtLocator locator : locatorList) {
+		for (SuspiciousStmtLocator locator : locatorList) {
+			for (String func : funSet) {
+				List<StmtAssign> assigns = new ArrayList<StmtAssign>();
 				assigns.addAll(locator.findSuspiciousStmtInMethod(sField, func));
-			}
-			suspAssign.put(func, assigns);
-			for (ExprFunCall funCall : utility.getFuncCallMap().get(func)) {
+				List<List<StmtAssign>> genAssign = genCollector.createCandidate(func, assigns);
+				for (List<StmtAssign> ass : genAssign)
+					if (locator.runSketch(ass))
+						return true;
 			}
 		}
-
-		return suspAssign;
+		return false;
 	}
-
 
 	private HashSet<String> findAllSuspiciousMethod(String suspFunc) {
 		List<ExprFunCall> funCall = utility.getFuncCallMap().get(suspFunc);
@@ -52,9 +50,5 @@ public class SuspiciousFieldCollector {
 				funSet.add(func.getName());
 		}
 		return funSet;
-	}
-
-	public HashMap<String, List<StmtAssign>> getSuspciousAssign() {
-		return suspAssign;
 	}
 }

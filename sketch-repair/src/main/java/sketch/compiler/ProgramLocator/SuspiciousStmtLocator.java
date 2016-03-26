@@ -17,5 +17,5 @@ public abstract class SuspiciousStmtLocator {
 	}
 
 	public abstract List<StmtAssign> findSuspiciousStmtInMethod(List<VarDeclEntry> sField, String func);
-
+	public abstract boolean runSketch(List<StmtAssign> bugAssign);
 }

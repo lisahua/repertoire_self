@@ -19,27 +19,21 @@ public class SketchRepairCollector {
 	public SketchRepairCollector(RepairProgramController controller) {
 		this.controller = controller;
 		generatorList.add(new SketchExprGenerator(controller));
-		// generatorList.add(new SketchPrimitiveGenerator(controller));
+		generatorList.add(new SketchPrimitiveGenerator(controller));
 	}
 
-	public List<String> runSketch(HashMap<String, List<StmtAssign>> bugAssign) {
-		List<String> candidate = new ArrayList<String>();
-		for (SketchRepairGenerator gen : generatorList) {
-			candidate.addAll(gen.runSketch(bugAssign));
-			fixFiles.putAll(gen.getFixPerFile());
-		}
+	public List<List<StmtAssign>> createCandidate(String func, List<StmtAssign> bugAssign) {
+		List<List<StmtAssign>> candidates = new ArrayList<List<StmtAssign>>();
+		candidates = new SketchExprGenerator(controller).createCandidate(func, bugAssign);
 		boolean isPrimitive = false;
-		for (Map.Entry<String, List<StmtAssign>> ass : bugAssign.entrySet()) {
-			if (!ass.getValue().isEmpty()) {
-				isPrimitive = controller.isPrimitiveType(ass.getKey(), ass.getValue().get(0).getLHS().toString());
-				break;
-			}
+		if (!bugAssign.isEmpty()) {
+			isPrimitive = controller.isPrimitiveType(func, bugAssign.get(0).getLHS().toString());
 		}
 		if (isPrimitive) {
 			System.out.println("Sketch repair Collector add primitive generator");
-			new SketchPrimitiveGenerator(controller).runSketch(bugAssign);
+			candidates.addAll(new SketchPrimitiveGenerator(controller).createCandidate(func, bugAssign));
 		}
-		return candidate;
+		return candidates;
 	}
 
 	public HashMap<String, String> getFixPerFile() {

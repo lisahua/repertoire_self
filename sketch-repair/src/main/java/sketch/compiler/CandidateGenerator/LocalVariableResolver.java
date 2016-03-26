@@ -11,8 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import sketch.compiler.ast.core.FENode;
 import sketch.compiler.ast.core.NameResolver;
 import sketch.compiler.ast.core.Program;
+import sketch.compiler.ast.core.exprs.ExprField;
+import sketch.compiler.ast.core.exprs.ExprVar;
+import sketch.compiler.ast.core.exprs.Expression;
 import sketch.compiler.ast.core.typs.StructDef;
 import sketch.compiler.ast.core.typs.Type;
 import sketch.compiler.bugLocator.VarDeclEntry;
@@ -171,45 +175,38 @@ public class LocalVariableResolver extends NameResolver {
 		return new_layer;
 	}
 
-	public HashSet<String> resolveFieldInFunc(String func, String fields) {
-		HashSet<String> set = new HashSet<String>();
-		String[] token = fields.split("\\.");
-		if (token.length == 0)
-			return set;
-
-		for (int i = 0; i < token.length - 1; i++) {
-
-		}
-		return set;
-	}
-
 	public boolean isPrimitiveType(String func, String exp) {
 		List<VarDeclEntry> list = resolveFieldChain(func, exp);
 		VarDeclEntry entry = list.get(list.size() - 1);
 		return entry.getType() == null;
 	}
 
-	public List<String> instantiateField(String func, String field) {
+	public HashSet<Expression> instantiateField(String func, String field, FENode node) {
 		HashMap<String, VarDeclEntry> varType = funcVar.get(func);
-		List<String> res = new ArrayList<String>();
+		HashSet<Expression> res = new HashSet<Expression>();
 		String[] token = field.split("\\.");
 		if (token.length == 0) {
 			for (Map.Entry<String, VarDeclEntry> entry : varType.entrySet()) {
 				VarDeclEntry decl = entry.getValue();
 				if (decl.getName().equals(field)) {
-					res.add(decl.getOrigin());
+					res.add(new ExprVar(node, decl.getOrigin()));
 				}
 			}
 		} else {
-			
-			VarDeclEntry current = null;
-			List<String> root = new ArrayList<String>();
-
+			String typ = token[0];
+			HashSet<Expression> root = new HashSet<Expression>();
 			for (Map.Entry<String, VarDeclEntry> entry : varType.entrySet()) {
 				VarDeclEntry decl = entry.getValue();
-				if (decl.getName().equals(field)) {
-
+				if (decl.getTypeS().equals(typ)) {
+					root.add(new ExprVar(node, decl.getOrigin()));
 				}
+			}
+			for (Expression rt : root) {
+				Expression expF = rt;
+				for (int i = 1; i < token.length; i++) {
+					expF = new ExprField(node, rt, token[i]);
+				}
+				res.add(expF);
 			}
 		}
 		return res;
