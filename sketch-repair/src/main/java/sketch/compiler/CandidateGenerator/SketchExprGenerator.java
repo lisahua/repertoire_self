@@ -39,7 +39,6 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 
 	public List<List<StmtAssign>> createCandidate(HashMap<String, List<StmtAssign>> bugAssign) {
 		List<List<StmtAssign>> layerCandidate = new ArrayList<List<StmtAssign>>();
-		// List<StmtAssign> singleLayer = new ArrayList<StmtAssign>();
 		for (String func : bugAssign.keySet()) {
 			for (StmtAssign assign : bugAssign.get(func)) {
 				List<VarDeclEntry> candType = utility.resolveFieldChain(func, assign.getLHS().toString());
@@ -50,14 +49,13 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 					for (int i = 0; i < gen.size(); i++) {
 						if (layerCandidate.size() <= i)
 							layerCandidate.add(new ArrayList<StmtAssign>());
+						Expression n_rhs = null;
 						if (gen.get(i).toString().trim().length() == 0)
-							continue;
-						System.out.println(
-								"==createCandidate ====" + "{|" + rhs.toString() + "|" + gen.get(i).toString() + "|}");
-						Expression n_rhs = new ExprRegen(rhs.getOrigin(),
-								"{|" + rhs.toString() + "|" + gen.get(i).toString() + "|}");
+							n_rhs = new ExprRegen(rhs.getOrigin(), "{|" + rhs.toString() + "|}");
+						else
+							n_rhs = new ExprRegen(rhs.getOrigin(),
+									"{|" + rhs.toString() + "|" + gen.get(i).toString() + "|}");
 						StmtAssign rep_assign = new StmtAssign(assign.getLHS(), n_rhs, assign.getOp());
-						
 						layerCandidate.get(i).add(rep_assign);
 
 					}

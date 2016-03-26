@@ -188,4 +188,30 @@ public class LocalVariableResolver extends NameResolver {
 		VarDeclEntry entry = list.get(list.size() - 1);
 		return entry.getType() == null;
 	}
+
+	public List<String> instantiateField(String func, String field) {
+		HashMap<String, VarDeclEntry> varType = funcVar.get(func);
+		List<String> res = new ArrayList<String>();
+		String[] token = field.split("\\.");
+		if (token.length == 0) {
+			for (Map.Entry<String, VarDeclEntry> entry : varType.entrySet()) {
+				VarDeclEntry decl = entry.getValue();
+				if (decl.getName().equals(field)) {
+					res.add(decl.getOrigin());
+				}
+			}
+		} else {
+			
+			VarDeclEntry current = null;
+			List<String> root = new ArrayList<String>();
+
+			for (Map.Entry<String, VarDeclEntry> entry : varType.entrySet()) {
+				VarDeclEntry decl = entry.getValue();
+				if (decl.getName().equals(field)) {
+
+				}
+			}
+		}
+		return res;
+	}
 }

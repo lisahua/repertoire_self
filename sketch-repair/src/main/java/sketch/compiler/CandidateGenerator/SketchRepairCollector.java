@@ -36,6 +36,7 @@ public class SketchRepairCollector {
 			}
 		}
 		if (isPrimitive) {
+			System.out.println("Sketch repair Collector add primitive generator");
 			new SketchPrimitiveGenerator(controller).runSketch(bugAssign);
 		}
 		return candidate;
