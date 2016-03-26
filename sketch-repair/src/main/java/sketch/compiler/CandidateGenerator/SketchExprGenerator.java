@@ -48,15 +48,17 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 					Expression rhs = assign.getRHS();
 					List<StringBuilder> gen = utility.genCandidateSetString(func, decl.getTypeS());
 					for (int i = 0; i < gen.size(); i++) {
+						if (layerCandidate.size() <= i)
+							layerCandidate.add(new ArrayList<StmtAssign>());
+						if (gen.get(i).toString().trim().length() == 0)
+							continue;
+						System.out.println(
+								"==createCandidate ====" + "{|" + rhs.toString() + "|" + gen.get(i).toString() + "|}");
 						Expression n_rhs = new ExprRegen(rhs.getOrigin(),
 								"{|" + rhs.toString() + "|" + gen.get(i).toString() + "|}");
 						StmtAssign rep_assign = new StmtAssign(assign.getLHS(), n_rhs, assign.getOp());
-						if (layerCandidate.size() <= i)
-							layerCandidate.add(new ArrayList<StmtAssign>());
+						
 						layerCandidate.get(i).add(rep_assign);
-						// System.out.println("===createCandidate ===" + func +
-						// "," + gen + "," + rep_assign + ","
-						// + assign.toString());
 
 					}
 				}

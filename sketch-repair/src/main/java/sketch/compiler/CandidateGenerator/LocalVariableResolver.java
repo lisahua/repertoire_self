@@ -39,11 +39,11 @@ public class LocalVariableResolver extends NameResolver {
 
 	}
 
-	public VarDeclEntry getVarTypeInFunc(String func, String t) {
+	private VarDeclEntry getVarTypeInFunc(String func, String t) {
 		return funcVar.get(func).get(t);
 	}
 
-	public VarDeclEntry getFieldTypeInStruct(VarDeclEntry entry, String t) {
+	private VarDeclEntry getFieldTypeInStruct(VarDeclEntry entry, String t) {
 		StructDef strt = entry.getType();
 		String origin = entry.getOrigin() + "." + t;
 		VarDeclEntry fieldEntry = getVarTypeInFunc(entry.getFunc(), origin);
@@ -104,7 +104,6 @@ public class LocalVariableResolver extends NameResolver {
 		return super.getStruct(name);
 	}
 
-	/// rewrite for extension
 	public List<StringBuilder> extractCandidateSetAsHole(String func, String type, int bound) {
 		List<HashSet<String>> layers = extractCandidateList(func, type, bound);
 
@@ -114,14 +113,9 @@ public class LocalVariableResolver extends NameResolver {
 			if (set.size() > 0) {
 				for (String s : set)
 					builder.append(s + "|");
-				// if (allStructs.contains(type))
-				// builder.append("null");
-				// else
-				// // builder.append("??");
 				builder.deleteCharAt(builder.length() - 1);
 			}
 			sList.add(builder);
-			// System.out.println("=====LocalVaresoler ===" + builder);
 		}
 		return sList;
 	}
@@ -170,14 +164,28 @@ public class LocalVariableResolver extends NameResolver {
 				CandidateWrapper wp = new_layer.get(type);
 				if (wp == null)
 					wp = new CandidateWrapper(type);
-				// wp.setRootStringList(prev_e.getValue().getValues());
 				wp.addValue(prev_e.getValue().getValues(), fld.getKey());
 				new_layer.put(type, wp);
 			}
-			// for (String type : new_layer.keySet())
-			// System.out.println("=== genNextLayerCandidateList == " + type +
-			// "," + new_layer.get(type));
 		}
 		return new_layer;
+	}
+
+	public HashSet<String> resolveFieldInFunc(String func, String fields) {
+		HashSet<String> set = new HashSet<String>();
+		String[] token = fields.split("\\.");
+		if (token.length == 0)
+			return set;
+
+		for (int i = 0; i < token.length - 1; i++) {
+
+		}
+		return set;
+	}
+
+	public boolean isPrimitiveType(String func, String exp) {
+		List<VarDeclEntry> list = resolveFieldChain(func, exp);
+		VarDeclEntry entry = list.get(list.size() - 1);
+		return entry.getType() == null;
 	}
 }

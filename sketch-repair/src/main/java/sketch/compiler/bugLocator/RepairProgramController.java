@@ -122,7 +122,7 @@ private int num = 0;
 		return bound;
 	}
 
-	public List<HashSet<String>> genCandidateList(String func, String typeS) {
+	private List<HashSet<String>> genCandidateList(String func, String typeS) {
 		return resolver.extractCandidateList(func, typeS, getRepairBound());
 	}
 
@@ -142,5 +142,9 @@ private int num = 0;
 			e.printStackTrace();
 		}
 		return new RepairStageRunner(options).solveSketch(path);
+	}
+	
+	public boolean isPrimitiveType(String func, String exp){
+		return resolver.isPrimitiveType(func, exp);
 	}
 }

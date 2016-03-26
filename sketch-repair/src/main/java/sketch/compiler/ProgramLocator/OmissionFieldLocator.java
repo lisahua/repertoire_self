@@ -22,15 +22,7 @@ public class OmissionFieldLocator extends SuspiciousStmtLocator {
 		VarDeclEntry suspField = sField.get(sField.size() - 1);
 		System.out.println("=======Suspcious field omission field====== " + ","+func+","+suspField);
 		
-//		for (StmtAssign assign : utility.getAssignMap().get(func)) {
-//			List<FieldWrapper> lhsField = utility.resolveFieldChain(func, assign.getLHS().toString());
-//			FieldWrapper suspField = sField.get(sField.size() - 1);
-//			if (lhsField.get(lhsField.size() - 1).getFieldS().equals(suspField.getFieldS())) {
-//				assigns.add(assign);
-//				summary = func.getName() + ":" + assign.toString();
-//				System.out.println("Suspcious field - " + summary);
-//			}
-//		}
+	
 		
 		
 		return assigns;
