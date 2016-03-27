@@ -43,8 +43,10 @@ public class SuspiciousFieldCollector {
 		for (String func : funSet) {
 			List<StmtAssign> assigns = new ArrayList<StmtAssign>();
 			assigns.addAll(locator.findSuspiciousStmtInMethod(sField, func));
-			
-//			List<List<StmtAssign>> genAssign = genCollector.createCandidate(func, assigns);
+			List<List<StmtAssign>> genAssign = genCollector.createCandidate(func, assigns);
+			for (List<StmtAssign> ass : genAssign)
+				if (locator.runSketch(ass))
+					return true;
 		}
 		
 		return false;
