@@ -44,6 +44,7 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 			if (candType != null) {
 				VarDeclEntry decl = candType.get(candType.size() - 1);
 				Expression rhs = assign.getRHS();
+				System.out.println("====SketchExprGenerator create === "+decl+",");
 				List<StringBuilder> gen = utility.genCandidateSetString(func, decl.getTypeS());
 				for (int i = 0; i < gen.size(); i++) {
 					if (layerCandidate.size() <= i)

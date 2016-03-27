@@ -8,14 +8,18 @@ import java.util.HashSet;
 import java.util.List;
 
 import sketch.compiler.CandidateGenerator.RepairSketchInsertionReplacer;
-import sketch.compiler.ast.core.Function;
+import sketch.compiler.CandidateGenerator.RepairSketchReplacer;
+import sketch.compiler.CandidateGenerator.SketchRepairCollector;
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.exprs.Expression;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.bugLocator.RepairProgramController;
 import sketch.compiler.bugLocator.VarDeclEntry;
+import sketch.compiler.passes.printers.SimpleCodePrinter;
 
 public class OmissionFieldLocator extends SuspiciousStmtLocator {
+	RepairProgramController controller;
+	List<List<StmtAssign>> genAssign;
 
 	public OmissionFieldLocator(RepairProgramController utility) {
 		super(utility);
@@ -23,53 +27,61 @@ public class OmissionFieldLocator extends SuspiciousStmtLocator {
 
 	public List<StmtAssign> findSuspiciousStmtInMethod(List<VarDeclEntry> sField, String func) {
 		List<StmtAssign> assigns = new ArrayList<StmtAssign>();
+		HashSet<String> lhsList = new HashSet<String>();
 		VarDeclEntry suspField = sField.get(sField.size() - 1);
 		System.out.println("=======Suspcious field omission field====== " + "," + func + "," + suspField);
 		HashSet<Expression> fields = utility.instantiateField(func, suspField.getName());
 		for (Expression exp : fields) {
 			assigns.add(new StmtAssign(exp, exp, 0));
+			String[] tokens = exp.toString().split("\\.");
+			String rep = "";
+			// TODO hacky!!
+			for (String s : tokens) {
+				if (s.contains("_")) {
+					String[] tks = s.split("_");
+					for (int i = 0; i < tks.length; i++)
+						rep += tks[i] + "_";
+					rep += tks[tks.length - 1];
+					rep += ".";
+				} else
+					rep += s;
+			}
+			lhsList.add(rep);
+			System.out.println("==omission field lhsList " + func + "," + rep);
 		}
-		Program prog = writeToFile(func, assigns);
+		controller = writeToFile(func, assigns);
 		assigns = new ArrayList<StmtAssign>();
-		for (int i = 0; i < prog.getPackages().size(); i++) {
-			sketch.compiler.ast.core.Package pkg = prog.getPackages().get(i);
-			for (int j = 0; j < pkg.getFuncs().size(); j++) {
-				Function f = pkg.getFuncs().get(j);
-				if (f.getName().equals(func)) {
-					for (StmtAssign assign : utility.getAssignMap().get(func)) {
-						List<VarDeclEntry> lhsField = utility.resolveFieldChain(func, assign.getLHS().toString());
-						if (lhsField.get(lhsField.size() - 1).getName().equals(suspField.getName())) {
-							assigns.add(assign);
-						}
-					}
-					return assigns;
-				}
+		List<StmtAssign> ass_fromProg = controller.getAssignMap().get(func);
+		for (StmtAssign assign : ass_fromProg) {
+			System.out.println("==omission field return assigns " + func + ",assign " + assign);
+			if (lhsList.contains(assign.getLHS().toString())) {
+				assigns.add(assign);
 			}
 		}
+		SketchRepairCollector genCollector = new SketchRepairCollector(controller);
+		genAssign = genCollector.createCandidate(func, assigns);
 		return assigns;
 	}
 
-	private Program writeToFile(String func, List<StmtAssign> assigns) {
+	private RepairProgramController writeToFile(String func, List<StmtAssign> assigns) {
 		RepairSketchInsertionReplacer replacer = new RepairSketchInsertionReplacer(func, assigns);
-		// Function fuc = (Function) utility.getFuncMap(func).accept(replacer);
-
 		return utility.writeFile(replacer);
 	}
 
-	@Override
-	public boolean runSketch(List<StmtAssign> bugAssign) {
-		// RepairSketchInsertionReplacer replGen = new
-		// RepairSketchInsertionReplacer(funcbugAssign);
-		// Program prog = (Program) replGen.visitProgram(utility.getProgram());
-		// if (utility.solveSketch(prog)) {
-		// System.out.println("====SketchExprGenerator === successful solve");
-		// return true;
-		// }
+	public boolean runSketch(List<StmtAssign> bugAssign, Program prog) {
+		System.out.println("====omission field run sketch before replace==="
+				+ new SimpleCodePrinter().visitProgram(controller.getProgram()));
+		for (List<StmtAssign> ass : genAssign) {
+			System.out.println("====omission field run sketch ===" + ass);
+			for (StmtAssign a : ass) {
+				RepairSketchReplacer replGen = new RepairSketchReplacer(a);
+				prog = (Program) replGen.visitProgram(controller.getProgram());
+				if (utility.solveSketch(prog)) {
+					System.out.println("====SketchExprGenerator === successful solve");
+					return true;
+				}
+			}
+		}
 		return false;
 	}
-
-	// public boolean runSketch(List<Object> bugAssign) {
-	//
-
-	// }
 }

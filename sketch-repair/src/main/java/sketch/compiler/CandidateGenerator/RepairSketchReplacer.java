@@ -15,10 +15,14 @@ public class RepairSketchReplacer extends FEReplacer {
 	HashMap<Expression, StmtAssign> repMap = new HashMap<Expression, StmtAssign>();
 	HashSet<StmtAssign> isVisited = new HashSet<StmtAssign>();
 
-	public  RepairSketchReplacer(List<StmtAssign> bugAssign) {
+	public RepairSketchReplacer(List<StmtAssign> bugAssign) {
 		for (sketch.compiler.ast.core.stmts.StmtAssign ass : bugAssign) {
 			repMap.put(((sketch.compiler.ast.core.stmts.StmtAssign) ass).getLHS(), ass);
 		}
+	}
+
+	public RepairSketchReplacer(StmtAssign ass) {
+		repMap.put(((sketch.compiler.ast.core.stmts.StmtAssign) ass).getLHS(), ass);
 	}
 
 	public Object visitStmtAssign(StmtAssign stmt) {

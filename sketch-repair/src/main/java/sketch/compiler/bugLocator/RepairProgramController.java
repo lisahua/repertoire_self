@@ -150,14 +150,18 @@ public class RepairProgramController {
 		return new RepairStageRunner(options).solveSketch(path);
 	}
 
-	public Program writeFile(RepairSketchInsertionReplacer replacer) {
+	public RepairProgramController writeFile(RepairSketchInsertionReplacer replacer) {
+
 		try {
 			String path = options.sketchName + num++;
 			prog = (Program) replacer.visitProgram(prog);
 			System.out.println("===Write after insert assigns ====");
 			new SimpleCodePrinter().visitProgram(prog);
 			new SimpleSketchFilePrinter(path).visitProgram(prog);
-			return new RepairStageRunner(options).readSketch(path);
+
+			Program prog = new RepairStageRunner(options).readSketch(path);
+			RepairProgramController update_c = new RepairProgramController(prog, options);
+			return update_c;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

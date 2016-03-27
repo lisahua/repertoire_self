@@ -52,14 +52,5 @@ public class AssignFieldLocator extends SuspiciousStmtLocator {
 		return summary;
 	}
 
-	@Override
-	public boolean runSketch(List<StmtAssign> bugAssign) {
-		RepairSketchReplacer replGen = new RepairSketchReplacer((List<sketch.compiler.ast.core.stmts.StmtAssign>) bugAssign);
-		Program prog = (Program) replGen.visitProgram(utility.getProgram());
-		if (utility.solveSketch(prog)) {
-			System.out.println("====SketchExprGenerator === successful solve");
-			return true;
-		}
-		return false;
-	}
+	
 }
