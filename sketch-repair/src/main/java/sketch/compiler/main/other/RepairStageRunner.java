@@ -39,7 +39,7 @@ public class RepairStageRunner extends RepairSketchMain {
 	public boolean solveSketch(String sketchF) {
 		try {
 			System.out.println("===repair stage runner solve sketch =====");
-//			new SimpleCodePrinter().visitProgram(origin);
+			// new SimpleCodePrinter().visitProgram(origin);
 			options.args[0] = sketchF;
 			Program prog = new ParseProgramStage(varGen, options).visitProgram(null);
 			prog = this.preprocAndSemanticCheck(prog);
@@ -56,12 +56,28 @@ public class RepairStageRunner extends RepairSketchMain {
 			Program substitutedCleaned = (new CleanupFinalCode(varGen, options, visibleRControl(finalCleaned)))
 					.visitProgram(substituted);
 			generateCode(substitutedCleaned);
-//			new SimpleCodePrinter().visitProgram(prog)
+			// new SimpleCodePrinter().visitProgram(prog)
 			return true;
 		} catch (SketchException e) {
-//			e.printStackTrace();
+			// e.printStackTrace();
 			System.out.println("===RepairStageRunner ===not solve");
 			return false;
 		}
 	}
+
+	public Program readSketch(String sketchF) {
+		try {
+			System.out.println("===repair stage runner read sketch =====");
+			// new SimpleCodePrinter().visitProgram(origin);
+			options.args[0] = sketchF;
+			Program prog = new ParseProgramStage(varGen, options).visitProgram(null);
+			prog = this.preprocAndSemanticCheck(prog);
+			return prog;
+		} catch (SketchException e) {
+			// e.printStackTrace();
+			System.out.println("===repair stage runner read sketch parse error");
+			return null;
+		}
+	}
+
 }

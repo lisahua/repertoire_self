@@ -29,8 +29,7 @@ public class AssignFieldLocator extends SuspiciousStmtLocator {
 			// FIXME now I only consider LHS
 			if (lhsField.get(lhsField.size() - 1).getName().equals(suspField.getName())) {
 				assigns.add(assign);
-				summary = func + ":" + assign.toString();
-				System.out.println("Suspcious field - " + summary);
+				
 			}
 		}
 		return assigns;

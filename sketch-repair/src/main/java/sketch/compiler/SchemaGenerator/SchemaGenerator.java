@@ -8,10 +8,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SchemaGenerator {
-	private static List<Integer> operators = Arrays.asList(1, 2, 3, 4);
 
-	public static List<Integer> getOperator() {
-		return operators;
+	public static List<Integer> getAssignOperator() {
+		return Arrays.asList(1, 2, 3, 4);
+	}
+
+	public static List<Integer> getChoiceOperator() {
+		return Arrays.asList(1<<1, 1<<2, 1<<3, 1<<4,1<<5);
 	}
 
 	public static List<StringBuilder> extendCandidateHorizon(StringBuilder builder, int hbound) {

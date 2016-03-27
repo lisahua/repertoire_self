@@ -8,9 +8,9 @@ import java.util.HashSet;
 import java.util.List;
 
 import sketch.compiler.CandidateGenerator.RepairSketchInsertionReplacer;
+import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.exprs.Expression;
-import sketch.compiler.ast.core.stmts.Statement;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.bugLocator.RepairProgramController;
 import sketch.compiler.bugLocator.VarDeclEntry;
@@ -29,22 +29,31 @@ public class OmissionFieldLocator extends SuspiciousStmtLocator {
 		for (Expression exp : fields) {
 			assigns.add(new StmtAssign(exp, exp, 0));
 		}
+		Program prog = writeToFile(func, assigns);
+
 		return assigns;
 	}
 
+	private Program writeToFile(String func, List<StmtAssign> assigns) {
+		RepairSketchInsertionReplacer replacer = new RepairSketchInsertionReplacer(func, assigns);
+//		Function fuc = (Function) utility.getFuncMap(func).accept(replacer);
+		
+		return utility.writeFile(replacer);
+	}
+
 	@Override
-	public  boolean runSketch(List<StmtAssign> bugAssign) {
-		RepairSketchInsertionReplacer replGen = new RepairSketchInsertionReplacer(bugAssign);
-		Program prog = (Program) replGen.visitProgram(utility.getProgram());
-		if (utility.solveSketch(prog)) {
-			System.out.println("====SketchExprGenerator === successful solve");
-			return true;
-		}
+	public boolean runSketch(List<StmtAssign> bugAssign) {
+//		RepairSketchInsertionReplacer replGen = new RepairSketchInsertionReplacer(funcbugAssign);
+//		Program prog = (Program) replGen.visitProgram(utility.getProgram());
+//		if (utility.solveSketch(prog)) {
+//			System.out.println("====SketchExprGenerator === successful solve");
+//			return true;
+//		}
 		return false;
 	}
-	
-//	public boolean runSketch(List<Object> bugAssign) {
-//	
 
-//	}
+	// public boolean runSketch(List<Object> bugAssign) {
+	//
+
+	// }
 }

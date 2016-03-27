@@ -43,6 +43,8 @@ public class RepairFEFuncVisitor extends FEReplacer {
 	}
 	
 	public Object visitStmtAssign(StmtAssign stmt) {
+//		System.out.println("=====RepairSketchReplacer ===find assign stmt " + stmt+","+stmt.getRHS()+"," +stmt.getRHS().getClass());
+		
 		stmtAssign.add(stmt);
 		return super.visitStmtAssign(stmt);
 	}

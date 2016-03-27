@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import sketch.compiler.CandidateGenerator.LocalVariableResolver;
-import sketch.compiler.CandidateGenerator.SketchRepairCollector;
+import sketch.compiler.CandidateGenerator.RepairSketchInsertionReplacer;
 import sketch.compiler.ProgramLocator.SuspiciousFieldCollector;
 import sketch.compiler.assertionLocator.AssertionLocator;
 import sketch.compiler.assertionLocator.FailAssertHandler;
@@ -82,12 +82,14 @@ public class RepairProgramController {
 
 		SuspiciousFieldCollector suspLocator = new SuspiciousFieldCollector(this);
 		suspLocator.findAllFieldsInMethod(failHandler.getFailField(), failHandler.getBuggyHarness());
-		
-//		
-//		SketchRepairCollector holeGenerator = new SketchRepairCollector(this);
-//		List<String> files = holeGenerator.runSketch(suspLocator.getSuspciousAssign());
-//
-//		fileFixMap = holeGenerator.getFixPerFile();
+
+		//
+		// SketchRepairCollector holeGenerator = new
+		// SketchRepairCollector(this);
+		// List<String> files =
+		// holeGenerator.runSketch(suspLocator.getSuspciousAssign());
+		//
+		// fileFixMap = holeGenerator.getFixPerFile();
 		return null;
 	}
 
@@ -148,11 +150,25 @@ public class RepairProgramController {
 		return new RepairStageRunner(options).solveSketch(path);
 	}
 
+	public Program writeFile(RepairSketchInsertionReplacer replacer) {
+		try {
+			String path = options.sketchName + num++;
+			prog = (Program) replacer.visitProgram(prog);
+			System.out.println("===Write after insert assigns ====");
+			new SimpleCodePrinter().visitProgram(prog);
+			new SimpleSketchFilePrinter(path).visitProgram(prog);
+			return new RepairStageRunner(options).readSketch(path);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	public boolean isPrimitiveType(String func, String exp) {
 		return resolver.isPrimitiveType(func, exp);
 	}
 
 	public HashSet<Expression> instantiateField(String func, String field) {
-		return resolver.instantiateField(func, field,null);
+		return resolver.instantiateField(func, field, null);
 	}
 }

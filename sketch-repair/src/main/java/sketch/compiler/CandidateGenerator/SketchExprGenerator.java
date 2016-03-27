@@ -4,10 +4,9 @@
 package sketch.compiler.CandidateGenerator;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
+import sketch.compiler.ast.core.FENode;
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.exprs.Expression;
 import sketch.compiler.ast.core.exprs.regens.ExprRegen;
@@ -50,14 +49,19 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 					if (layerCandidate.size() <= i)
 						layerCandidate.add(new ArrayList<StmtAssign>());
 					Expression n_rhs = null;
-					System.out.println("====ExprGenerator create candidate==="+rhs+","+gen.get(i));
-					if (gen.get(i).toString().trim().length() == 0)
-						n_rhs = new ExprRegen(rhs.getOrigin(), "{|" + rhs.toString() + "|}");
-					else
-						n_rhs = new ExprRegen(rhs.getOrigin(),
+					if (gen.get(i) == null || rhs == null)
+						continue;
+					if (gen.get(i).toString().trim().length() != 0) {
+						FENode node = assign.getOrigin();
+						System.out.println("====ExprGenerator create candidate node===" + node+","+node.getCx());
+//						if (node == null) {
+//							node = utility.getFuncMap(func).getOrigin();
+//						}
+						n_rhs = new ExprRegen(assign.getOrigin(),
 								"{|" + rhs.toString() + "|" + gen.get(i).toString() + "|}");
-					StmtAssign rep_assign = new StmtAssign(assign.getLHS(), n_rhs, assign.getOp());
-					layerCandidate.get(i).add(rep_assign);
+						StmtAssign rep_assign = new StmtAssign(assign.getLHS(), n_rhs, assign.getOp());
+						layerCandidate.get(i).add(rep_assign);
+					}
 				}
 			}
 		}
