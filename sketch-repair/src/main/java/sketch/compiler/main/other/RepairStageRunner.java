@@ -3,6 +3,7 @@
  */
 package sketch.compiler.main.other;
 
+import java.io.File;
 import java.util.HashMap;
 
 import sketch.compiler.ast.core.Program;
@@ -11,8 +12,6 @@ import sketch.compiler.main.RepairSketchMain;
 import sketch.compiler.main.passes.CleanupFinalCode;
 import sketch.compiler.main.passes.ParseProgramStage;
 import sketch.compiler.main.passes.SubstituteSolution;
-import sketch.compiler.main.seq.SequentialSketchMain.SynthesisResult;
-import sketch.compiler.passes.printers.SimpleCodePrinter;
 import sketch.util.exceptions.SketchException;
 
 public class RepairStageRunner extends RepairSketchMain {
@@ -20,28 +19,28 @@ public class RepairStageRunner extends RepairSketchMain {
 	RepairSketchOptions options = null;
 	HashMap<String, String> map = null;
 	TempVarGen varGen = new TempVarGen();
-	// RPSTATUS status = RPSTATUS.NULL;
 	static int index = 0;
-	// static String path =
-	// "/Users/lisahua/Documents/lisa/project/spr/git-repo/repo/sketch/doublyll/"
-	// ;
-
+	static String fix  =null;
+static Program fixProg = null;
 	public RepairStageRunner(RepairSketchOptions options) {
 		super(options);
 		this.options = options;
 	}
 
-	protected void repairProgram(Program prog, String e) {
+	protected boolean repairProgram(Program prog, String e) {
 		RepairStage rStage = new RepairStage(options);
-		rStage.startRepair(prog, e);
+		serr = parseErr(e);
+		return rStage.startRepair(prog, e);
+
 	}
 
 	public boolean solveSketch(String sketchF) {
+		Program prog = null;
 		try {
 			System.out.println("===repair stage runner solve sketch =====");
 			// new SimpleCodePrinter().visitProgram(origin);
 			options.args[0] = sketchF;
-			Program prog = new ParseProgramStage(varGen, options).visitProgram(null);
+			prog = new ParseProgramStage(varGen, options).visitProgram(null);
 			prog = this.preprocAndSemanticCheck(prog);
 			SynthesisResult synthResult = this.partialEvalAndSolve(prog);
 			prog = synthResult.lowered.result;
@@ -60,9 +59,21 @@ public class RepairStageRunner extends RepairSketchMain {
 			return true;
 		} catch (SketchException e) {
 			// e.printStackTrace();
-			System.out.println("===RepairStageRunner ===not solve");
-			return false;
+			String err = parseErr(e.getMessage());
+//			if (serr.equals("") || serr.equals(err)) {
+				System.out.println("===RepairStageRunner ===not solve");
+				new File(sketchF).delete();
+				serr = err;
+				fix = sketchF;
+				return false;
+//			} else {
+//				System.out.println("===RepairStageRunner repair message," + serr + "," + err);
+//				serr = err;
+//				fixProg = prog;
+//				return true;
+//			}
 		}
+
 	}
 
 	public Program readSketch(String sketchF) {
@@ -80,4 +91,18 @@ public class RepairStageRunner extends RepairSketchMain {
 		}
 	}
 
+	public String parseErr(String err) {
+		int index2 = err.indexOf(":");
+		int index3 = err.indexOf("(");
+		err = err.substring(index2 + 1, index3).trim();
+		return err;
+	}
+
+	public static String getFix() {
+		return fix;
+	}
+	
+	public static Program getFixProg() {
+		return fixProg;
+	}
 }

@@ -70,18 +70,18 @@ public class RepairProgramController {
 		}
 	}
 
-	public List<String> startRepair(String message) {
+	public boolean startRepair(String message) {
 		FailAssertHandler failHandler = new FailAssertHandler(this);
 		StmtAssert failAssert = failHandler.findBuggyAssertion(message);
 		if (failAssert == null) {
 			System.out.println("Cannot identify failing assertion! Repair stop.");
-			return null;
+			return false;
 		}
 		AssertionLocator assertLocator = new AssertionLocator(failHandler.getAllAsserts());
 		List<StmtAssert> asserts = assertLocator.findAllAsserts(failHandler.getFailField());
 
 		SuspiciousFieldCollector suspLocator = new SuspiciousFieldCollector(this);
-		suspLocator.findAllFieldsInMethod(failHandler.getFailField(), failHandler.getBuggyHarness());
+		return suspLocator.findAllFieldsInMethod(failHandler.getFailField(), failHandler.getBuggyHarness());
 
 		//
 		// SketchRepairCollector holeGenerator = new
@@ -90,7 +90,7 @@ public class RepairProgramController {
 		// holeGenerator.runSketch(suspLocator.getSuspciousAssign());
 		//
 		// fileFixMap = holeGenerator.getFixPerFile();
-		return null;
+		
 	}
 
 	public List<VarDeclEntry> resolveFieldChain(String func, String string) {

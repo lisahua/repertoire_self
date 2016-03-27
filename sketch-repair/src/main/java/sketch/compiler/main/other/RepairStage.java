@@ -18,16 +18,24 @@ public class RepairStage {
 		this.options = options;
 	}
 
-	public List<String> startRepair(Program prog, String err) {
+	public boolean startRepair(Program prog, String err) {
 		if (err.equals(se)) {
 			se = err;
-			return null;
+			return false;
 		}
 		RepairProgramController utility = new RepairProgramController(prog, options);
-		List<String> candFiles = utility.startRepair(err);
-		map = utility.getFixPerFile();
-
-		return candFiles;
+		if(  utility.startRepair(err)) {
+			String fix = RepairStageRunner.getFix();
+			if (fix ==null) return true;
+			options.args[0] = fix;
+			System.out.println("====Partial fix ===="+fix);
+//			utility = new RepairProgramController(RepairStageRunner.getFixProg(), options);
+//			return  utility.startRepair(err);
+		}
+		return false;
+//		map = utility.getFixPerFile();
+//
+//		return candFiles;
 	}
 
 	public String getFixPerFile(String file) {

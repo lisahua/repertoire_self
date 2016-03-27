@@ -144,25 +144,26 @@ public class RepairSketchMain extends SequentialSketchMain {
 
 	protected void parseProgram(Program prog, String e) {
 		RepairStage rStage = new RepairStage(options);
-		List<String> files = rStage.startRepair(prog, e);
-		if (files == null || files.size() == 0)
-			return;
-
-		for (int i = 0; i < files.size(); i++) {
-			String f = files.get(i);
-			String[] new_arg = options.args;
-			new_arg[0] = f;
-			options = new RepairSketchOptions(new_arg);
-			if (recurRun()) {
-				System.out.println(
-						"======Repair End===" + options.repairOptions.outputRepair + "," + rStage.getFixPerFile(f));
-				while (++i < files.size())
-					new File(files.get(i)).delete();
-				break;
-			} else {
-				// new File(f).delete();
-			}
-		}
+		boolean result = rStage.startRepair(prog, e);
+		// if (files == null || files.size() == 0)
+		// return;
+		//
+		// for (int i = 0; i < files.size(); i++) {
+		// String f = files.get(i);
+		// String[] new_arg = options.args;
+		// new_arg[0] = f;
+		// options = new RepairSketchOptions(new_arg);
+		// if (recurRun()) {
+		// System.out.println(
+		// "======Repair End===" + options.repairOptions.outputRepair + "," +
+		// rStage.getFixPerFile(f));
+		// while (++i < files.size())
+		// new File(files.get(i)).delete();
+		// break;
+		// } else {
+		// // new File(f).delete();
+		// }
+		// }
 	}
 
 	protected Program parseProgram() {
