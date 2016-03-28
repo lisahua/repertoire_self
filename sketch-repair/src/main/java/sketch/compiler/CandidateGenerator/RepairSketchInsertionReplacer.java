@@ -17,11 +17,22 @@ public class RepairSketchInsertionReplacer extends FEReplacer {
 	private List<Statement> stmt = new ArrayList<Statement>();
 	private String fName = null;
 
-	public RepairSketchInsertionReplacer(String func, List<StmtAssign> bugAssign) {
-		for (Object ass : bugAssign)
-			stmt.add((Statement) ass);
+	// public RepairSketchInsertionReplacer(String func, List<StmtAssign>
+	// bugAssign) {
+	// for (Object ass : bugAssign)
+	// stmt.add((Statement) ass);
+	// fName = func;
+	// System.out.println("RepairSketchInsertionReplacer " + func + "," +
+	// bugAssign.get(0));
+	// }
+
+	public RepairSketchInsertionReplacer(String func, StmtAssign ass) {
+		stmt.add(ass);
 		fName = func;
-		System.out.println("RepairSketchInsertionReplacer " + func + "," + bugAssign.get(0));
+	}
+
+	public Statement getAssign() {
+		return stmt.get(0);
 	}
 
 	public Object visitProgram(Program prog) {
@@ -36,10 +47,16 @@ public class RepairSketchInsertionReplacer extends FEReplacer {
 					List<Statement> list = ((StmtBlock) body).getStmts();
 					List<Statement> allSList = new ArrayList<Statement>();
 					allSList.addAll(list);
-					Statement last = allSList.remove(allSList.size() - 1);
-					allSList.addAll(stmt);
-					allSList.add(last);
-//					System.out.println("=====replacer ===" + allSList.get(allSList.size() - 1));
+					Statement last = allSList.get(allSList.size() - 1);
+					if (last.toString().contains("return")) {
+						last = allSList.remove(allSList.size() - 1);
+						allSList.addAll(stmt);
+						allSList.add(last);
+					} else {
+						allSList.addAll(stmt);
+					}
+					// System.out.println("=====replacer ===" +
+					// allSList.get(allSList.size() - 1));
 					StmtBlock block = new StmtBlock(allSList);
 					func = func.creator().body(block).create();
 

@@ -35,20 +35,24 @@ public class SuspiciousFieldCollector {
 			assigns.addAll(locator.findSuspiciousStmtInMethod(sField, func));
 			List<List<StmtAssign>> genAssign = genCollector.createCandidate(func, assigns);
 			for (List<StmtAssign> ass : genAssign)
-				if (locator.runSketch(ass,utility.getProgram()))
+				if (locator.runSketch(ass, utility.getProgram()))
 					return true;
 		}
-		
-		locator= new OmissionFieldLocator(utility);
+
+		OmissionFieldLocator m_locator = new OmissionFieldLocator(utility);
 		for (String func : funSet) {
-			List<StmtAssign> assigns = new ArrayList<StmtAssign>();
-			assigns.addAll(locator.findSuspiciousStmtInMethod(sField, func));
-//			List<List<StmtAssign>> genAssign = genCollector.createCandidate(func, assigns);
-//			for (List<StmtAssign> ass : genAssign)
-				if (locator.runSketch(assigns,null))
-					return true;
+			if (m_locator.repairInMethod(sField, func))
+				return true;
+
+			// List<StmtAssign> assigns = new ArrayList<StmtAssign>();
+			// assigns.addAll(locator.findSuspiciousStmtInMethod(sField, func));
+			// List<List<StmtAssign>> genAssign =
+			// genCollector.createCandidate(func, assigns);
+			// for (List<StmtAssign> ass : genAssign)
+			// if (locator.runSketch(assigns,null))
+			// return true;
 		}
-		
+
 		return false;
 	}
 

@@ -73,6 +73,7 @@ public class RepairSketchMain extends SequentialSketchMain {
 				status = RPSTATUS.ONGOING;
 				parseProgram(prog, se.getMessage());
 			}
+//			se.printStackTrace();
 		} catch (RuntimeException re) {
 			throw new ProgramParseException("Sketch failed to parse: " + re.getMessage());
 		}

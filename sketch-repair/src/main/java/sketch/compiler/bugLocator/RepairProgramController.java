@@ -35,7 +35,7 @@ public class RepairProgramController {
 	private HashMap<String, String> fileFixMap = null;
 	private RepairSketchOptions options;
 	private LocalVariableResolver resolver;
-	private Program prog;
+	private final Program prog;
 	private int num = 0;
 
 	public RepairProgramController(Program prog, final RepairSketchOptions options) {
@@ -124,7 +124,7 @@ public class RepairProgramController {
 	private int getRepairBound() {
 		int bound = options.repairOptions.bound;
 		if (bound == 0)
-			bound = 3;
+			bound = 1;
 		return bound;
 	}
 
@@ -154,13 +154,19 @@ public class RepairProgramController {
 
 		try {
 			String path = options.sketchName + num++;
-			prog = (Program) replacer.visitProgram(prog);
-			System.out.println("===Write after insert assigns ====");
+			System.out.println("===Controller why side effect =="+replacer.getAssign());
 			new SimpleCodePrinter().visitProgram(prog);
-			new SimpleSketchFilePrinter(path).visitProgram(prog);
-
-			Program prog = new RepairStageRunner(options).readSketch(path);
-			RepairProgramController update_c = new RepairProgramController(prog, options);
+			
+			Program new_prog = prog.creator().create();
+			new_prog = (Program) replacer.visitProgram(new_prog);
+			System.out.println("===What's after the replace? ====");
+			new SimpleCodePrinter().visitProgram(new_prog);
+			System.out.println("===Do we have side effect on prog? ====");
+			new SimpleCodePrinter().visitProgram(prog);
+			
+			new SimpleSketchFilePrinter(path).visitProgram(new_prog);
+			new_prog = new RepairStageRunner(options).readSketch(path);
+			RepairProgramController update_c = new RepairProgramController(new_prog, options);
 			return update_c;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
