@@ -1,0 +1,91 @@
+struct ListNode{
+        int value;
+        ListNode next;
+}
+
+struct List {
+    ListNode head;
+}
+
+ListNode newNode(int v) {
+    ListNode node = new ListNode();
+    node.value = v;
+    node.next = null;
+    return node;
+}
+
+List newList() {
+    List list = new List();
+    list.head = null;
+    return list;
+}
+
+ListNode addFirst (List l, int val) {
+    ListNode n = newNode(val);
+    n.next = l.head;
+    l.head = n;
+    return n;
+}
+
+void reverse(List l) {
+    ListNode ln1=null;
+    ListNode ln2=null;
+    ListNode ln3=null;
+    ListNode ln4=null;
+
+    if (l.head == null)
+        return;
+
+    ln1 = l.head;
+    ln2 = l.head.next;
+    ln3 = null;
+
+    while (ln2 !=null) {
+        ln4 = ln2.next;
+        ln1.next = ln3;
+        ln3 = ln1;
+        ln1 = ln2;
+        ln2 = ln4;
+    }
+    l.head = ln1;
+   // ln1.next = ln3;
+}
+
+harness void reverseHarness() {
+//Empty
+    List l = newList();
+    reverse(l);
+    assert l.head == null;
+
+//insert 1
+    ListNode one = addFirst(l,1);
+    reverse(l);
+    assert l.head == one;
+    assert one.next ==null;
+    
+    //insert 2;
+    l = newList();
+    one = addFirst(l,1);
+    ListNode two = addFirst(l,2);
+    assert l.head == two;
+    assert two.next == one;
+    assert one.next == null;
+    
+    reverse(l);
+    assert l.head == one;
+    assert one.next == two;
+    assert two.next ==null;
+    
+    
+//insert 3;
+    l = newList();
+    one = addFirst(l,1);
+    two = addFirst(l,2);
+    ListNode three = addFirst(l,3);
+    reverse(l);
+    assert l.head == one;
+    assert one.next ==two;
+    assert two.next ==three;
+    assert three.next == null;
+
+}
