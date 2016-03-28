@@ -12,21 +12,14 @@ import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.stmts.Statement;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtBlock;
+import sketch.compiler.passes.printers.SimpleCodePrinter;
 
 public class RepairSketchInsertionReplacer extends FEReplacer {
 	private List<Statement> stmt = new ArrayList<Statement>();
 	private String fName = null;
-
-	// public RepairSketchInsertionReplacer(String func, List<StmtAssign>
-	// bugAssign) {
-	// for (Object ass : bugAssign)
-	// stmt.add((Statement) ass);
-	// fName = func;
-	// System.out.println("RepairSketchInsertionReplacer " + func + "," +
-	// bugAssign.get(0));
-	// }
-
+	
 	public RepairSketchInsertionReplacer(String func, StmtAssign ass) {
+
 		stmt.add(ass);
 		fName = func;
 	}
@@ -36,7 +29,7 @@ public class RepairSketchInsertionReplacer extends FEReplacer {
 	}
 
 	public Object visitProgram(Program prog) {
-		// List<sketch.compiler.ast.core.Package> pkgs =prog.getPackages();
+		System.out.println("insert replacer "+getAssign()+","+prog.accept(new SimpleCodePrinter()));
 		int i = 0, j = 0;
 		for (; i < prog.getPackages().size(); i++) {
 			sketch.compiler.ast.core.Package pkg = prog.getPackages().get(i);

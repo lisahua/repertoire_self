@@ -20,11 +20,12 @@ public class RepairStageRunner extends RepairSketchMain {
 	HashMap<String, String> map = null;
 	TempVarGen varGen = new TempVarGen();
 	static int index = 0;
-	static String fix  =null;
-static Program fixProg = null;
+	static String fix = null;
+	static Program fixProg = null;
+
 	public RepairStageRunner(RepairSketchOptions options) {
 		super(options);
-		this.options = options;
+		this.options = options.clone();
 	}
 
 	protected boolean repairProgram(Program prog, String e) {
@@ -60,18 +61,12 @@ static Program fixProg = null;
 		} catch (SketchException e) {
 			// e.printStackTrace();
 			String err = parseErr(e.getMessage());
-//			if (serr.equals("") || serr.equals(err)) {
-				System.out.println("===RepairStageRunner ===not solve");
-//				new File(sketchF).delete();
-				serr = err;
-				fix = sketchF;
-				return false;
-//			} else {
-//				System.out.println("===RepairStageRunner repair message," + serr + "," + err);
-//				serr = err;
-//				fixProg = prog;
-//				return true;
-//			}
+			// if (serr.equals("") || serr.equals(err)) {
+			System.out.println("===RepairStageRunner ===not solve");
+			 new File(sketchF).delete();
+			serr = err;
+			fix = sketchF;
+			return false;
 		}
 
 	}
@@ -101,7 +96,7 @@ static Program fixProg = null;
 	public static String getFix() {
 		return fix;
 	}
-	
+
 	public static Program getFixProg() {
 		return fixProg;
 	}

@@ -35,14 +35,13 @@ public class RepairProgramController {
 	private HashMap<String, String> fileFixMap = null;
 	private RepairSketchOptions options;
 	private LocalVariableResolver resolver;
-	private final Program prog;
+	private Program prog;
 	private int num = 0;
 
-	public RepairProgramController(Program prog, final RepairSketchOptions options) {
+	public RepairProgramController(final Program prog, final RepairSketchOptions options) {
 		resolver = new LocalVariableResolver(prog);
 		initProgram(prog);
 		this.options = options;
-		prog.accept(new SimpleCodePrinter());
 		this.prog = prog;
 	}
 
@@ -90,7 +89,7 @@ public class RepairProgramController {
 		// holeGenerator.runSketch(suspLocator.getSuspciousAssign());
 		//
 		// fileFixMap = holeGenerator.getFixPerFile();
-		
+
 	}
 
 	public List<VarDeclEntry> resolveFieldChain(String func, String string) {
@@ -151,27 +150,12 @@ public class RepairProgramController {
 	}
 
 	public RepairProgramController writeFile(RepairSketchInsertionReplacer replacer) {
-
-		try {
 			String path = options.sketchName + num++;
-			System.out.println("===Controller why side effect =="+replacer.getAssign());
-			new SimpleCodePrinter().visitProgram(prog);
-			
-			Program new_prog = prog.creator().create();
-			new_prog = (Program) replacer.visitProgram(new_prog);
-			System.out.println("===What's after the replace? ====");
-			new SimpleCodePrinter().visitProgram(new_prog);
-			System.out.println("===Do we have side effect on prog? ====");
-			new SimpleCodePrinter().visitProgram(prog);
-			
-			new SimpleSketchFilePrinter(path).visitProgram(new_prog);
-			new_prog = new RepairStageRunner(options).readSketch(path);
-			RepairProgramController update_c = new RepairProgramController(new_prog, options);
+			prog = new RepairStageRunner(options).readSketch(options.args[0]);
+			prog = (Program) replacer.visitProgram(prog);
+			prog = new RepairStageRunner(options).readSketch(path);
+			RepairProgramController update_c = new RepairProgramController(prog, options);
 			return update_c;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return null;
 	}
 
 	public boolean isPrimitiveType(String func, String exp) {
