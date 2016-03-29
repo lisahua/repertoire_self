@@ -26,7 +26,6 @@ import sketch.compiler.ast.core.stmts.StmtVarDecl;
 import sketch.compiler.main.other.RepairSketchOptions;
 import sketch.compiler.main.other.RepairStageRunner;
 import sketch.compiler.main.other.SimpleSketchFilePrinter;
-import sketch.compiler.passes.printers.SimpleCodePrinter;
 
 public class RepairProgramController {
 	private HashMap<String, List<StmtAssert>> funcAssertMap = new HashMap<String, List<StmtAssert>>();
@@ -82,14 +81,6 @@ public class RepairProgramController {
 		SuspiciousFieldCollector suspLocator = new SuspiciousFieldCollector(this);
 		return suspLocator.findAllFieldsInMethod(failHandler.getFailField(), failHandler.getBuggyHarness());
 
-		//
-		// SketchRepairCollector holeGenerator = new
-		// SketchRepairCollector(this);
-		// List<String> files =
-		// holeGenerator.runSketch(suspLocator.getSuspciousAssign());
-		//
-		// fileFixMap = holeGenerator.getFixPerFile();
-
 	}
 
 	public List<VarDeclEntry> resolveFieldChain(String func, String string) {
@@ -140,6 +131,7 @@ public class RepairProgramController {
 	}
 
 	public boolean solveSketch(Program prog) {
+		System.out.println("solve sketch "+ options.sktmpdir().getAbsolutePath());
 		String path = options.sketchName + num++;
 		try {
 			new SimpleSketchFilePrinter(path).visitProgram(prog);
@@ -153,9 +145,16 @@ public class RepairProgramController {
 			String path = options.sketchName + num++;
 			prog = new RepairStageRunner(options).readSketch(options.args[0]);
 			prog = (Program) replacer.visitProgram(prog);
-			prog = new RepairStageRunner(options).readSketch(path);
-			RepairProgramController update_c = new RepairProgramController(prog, options);
-			return update_c;
+			try {
+				new SimpleSketchFilePrinter(path).visitProgram(prog);
+				prog = new RepairStageRunner(options).readSketch(path);
+				RepairProgramController update_c = new RepairProgramController(prog, options);
+				return update_c;
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return null;
 	}
 
 	public boolean isPrimitiveType(String func, String exp) {
@@ -165,4 +164,6 @@ public class RepairProgramController {
 	public HashSet<Expression> instantiateField(String func, String field) {
 		return resolver.instantiateField(func, field, null);
 	}
+	
+	
 }

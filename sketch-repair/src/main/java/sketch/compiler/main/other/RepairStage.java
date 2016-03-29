@@ -23,12 +23,14 @@ public class RepairStage {
 			se = err;
 			return false;
 		}
+		
+		
 		RepairProgramController utility = new RepairProgramController(prog, options);
 		if(  utility.startRepair(err)) {
 			String fix = RepairStageRunner.getFix();
 			if (fix ==null) return true;
 			options.args[0] = fix;
-			System.out.println("====Partial fix ===="+fix);
+//			System.out.println("====Partial fix ===="+fix);
 //			utility = new RepairProgramController(RepairStageRunner.getFixProg(), options);
 //			return  utility.startRepair(err);
 		}

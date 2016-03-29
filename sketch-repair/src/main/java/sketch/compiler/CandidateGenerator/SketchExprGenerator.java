@@ -22,9 +22,9 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 
 	public List<String> runSketch(String func, List<StmtAssign> bugAssign) {
 		List<List<StmtAssign>> assignLine = createCandidate(func, bugAssign);
-		int index = 0;
+//		int index = 0;
 		List<String> files = new ArrayList<String>();
-		String path = utility.getSketchFile();
+//		String path = utility.getSketchFile();
 		for (List<StmtAssign> ass_list : assignLine) {
 			RepairSketchReplacer replGen = new RepairSketchReplacer(ass_list);
 			Program prog = (Program) replGen.visitProgram(utility.getProgram());
