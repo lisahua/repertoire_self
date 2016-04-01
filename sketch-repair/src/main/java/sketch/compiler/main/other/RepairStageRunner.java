@@ -56,7 +56,9 @@ public class RepairStageRunner extends RepairSketchMain {
 			Program substitutedCleaned = (new CleanupFinalCode(varGen, options, visibleRControl(finalCleaned)))
 					.visitProgram(substituted);
 			generateCode(substitutedCleaned);
-			// new SimpleCodePrinter().visitProgram(prog)
+			
+			new CodeGenerator().testJavaWriter(substitutedCleaned);
+			
 			return true;
 		} catch (SketchException e) {
 			// e.printStackTrace();
