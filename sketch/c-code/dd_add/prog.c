@@ -59,19 +59,20 @@ int main(int argc, char *argv[]) {
     newList(&l);
     
     while (fscanf(f,"%s",x)==1) {
-        if (x[0]<='9'&& x[0]>='0')
+        if (x[0] != '"') {
             addFirst(&l,atoi(x));
+        }
     }
-    ListNode* n = l->head;
-    while ((n->next) != NULL) {
-        printf("%d ", n->value);
+    struct ListNode* n = l->head;
+    while ((n->next) != (l->head)) {
+        printf("%d ", n->next->value);
         n = n->next;
     }
-      while ((n->previous) != (l->head)) {
+    
+      while ((n) != (l->head)) {
         printf("%d ", n->value);
         n = n->previous;
     }
     fclose(f);
-    reverse(&l);
     return 0;
 }

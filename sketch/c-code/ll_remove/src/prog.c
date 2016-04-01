@@ -12,9 +12,9 @@ struct List {
   struct ListNode*  head;
 };
 void newList(struct List **_out) ;
-void reverse(struct List **l);
 void addFirst(struct List **l, int val);
 void newNode(int v, struct ListNode **_out);
+void remove(struct List** l, int val);
 
 void newList(struct List** l) {
   *l = malloc( sizeof(struct List)  ); 
@@ -29,24 +29,27 @@ void newNode(int v, struct ListNode **n){
    (*n)->next = NULL;
 }
 
-void reverse(struct List** l) {
-  if ((*l)->head == NULL) {
-    return;
-  }
-  struct ListNode*  ln1 = (*l)->head;
-  struct ListNode*  ln2 = (*l)->head->next;
-  struct ListNode*  ln3 = NULL;
-  struct ListNode*  ln4 = NULL;
-  while (ln2 != NULL) {
-    ln4 = ln2->next;
-    ln1->next = ln3;
-    ln3 = ln1;
-    ln1 = ln2;
-    ln2 = ln4;
-  }
-  (*l)->head = ln1;
-  ln1->next = ln3;
-} 
+void  remove(struct List** l, int val,struct ListNode* del) {
+    del = (*l)->head;
+    if (del==NULL) {
+        return;
+    }
+    if (del->value == val){
+        (*l)->head = node->next;
+        return;
+    }
+    struct ListNode* prev = (*l)->head;
+   del = del->next;
+    while (del!=NULL) {
+        if (del->value==val) {
+            prev->next= node->next;
+            return;
+        }
+        prev  = del;
+        del = del->next;
+    }
+    del = NULL;
+}
 
 void addFirst(struct List** l, int val) {
   struct ListNode* n ; 
