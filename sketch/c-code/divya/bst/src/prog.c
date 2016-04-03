@@ -43,11 +43,8 @@ int insertNode (struct Tree** t, int k) {
         if (x->key==k) {
             return 1;
         }
-        //BUG should be if not while
-//        while ((x != NULL) && k<x->key) 
         if ( k<x->key) 
             x = x->left;
-//         if ((x != NULL) &&  k > x->key)
         else if (k > x->key)
             x = x->right;
     }
