@@ -37,8 +37,6 @@ int insertNode (struct Tree** t, int k) {
     struct Node* y;
     struct Node* x = (*t)->root;
     
-    printf ("print ahead %s",",");
-    printTree(&((*t)->root));
     
     while (x != NULL) {
         y = x;
@@ -46,10 +44,11 @@ int insertNode (struct Tree** t, int k) {
             return 1;
         }
         //BUG should be if not while
-        //while ((x != NULL) && k<x->key) 
-        if ((x != NULL) && k<x->key) 
+//        while ((x != NULL) && k<x->key) 
+        if ( k<x->key) 
             x = x->left;
-        if ((x!= NULL)&& k>x->key)
+//         if ((x != NULL) &&  k > x->key)
+        else if (k > x->key)
             x = x->right;
     }
     
@@ -66,9 +65,6 @@ int insertNode (struct Tree** t, int k) {
     }
     x->parent = y;
     (*t)->size = (*t)->size +1;
-    
-     printf ("print after %s",",");
-    printTree(&((*t)->root));
     return 0;   
 }
 
