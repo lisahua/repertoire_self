@@ -1,7 +1,7 @@
 /**
  * @author Lisa Apr 17, 2016 LinkedList_7.java 
  */
-package java.util.examples.linkedList;
+package examples.linkedList;
 
 /**
  * Adapted from jdk / openjdk / 7-b147 / java.util.LinkedList (@see <a href=
@@ -19,11 +19,11 @@ package java.util.examples.linkedList;
  * @author lisahua
  *
  */
-public class LinkedList_6_correct {
+public class LinkedList_6_DLLERR5 extends LinkedList_6_base {
 	private Entry header = new Entry();
 	private int size = 0;
 
-	public LinkedList_6_correct() {
+	public LinkedList_6_DLLERR5() {
 		header.next = header.previous = header;
 	}
 
@@ -33,8 +33,8 @@ public class LinkedList_6_correct {
 		e.next = header.next;
 		e.previous = header;
 		e.previous.next = e;
-		e.next.previous = e;// insert bug here
-		size++;// omission error insert here
+		e.next.previous = e;
+		size++;
 	}
 
 	/**
@@ -44,10 +44,10 @@ public class LinkedList_6_correct {
 		Entry e = new Entry();
 		e.element = val;
 		e.next = header;
-		e.previous = header.previous;// insert bug here
+		e.previous = header.previous;
 		e.previous.next = e;
-		e.next.previous = e;// insert bug here
-		size++;// omission error insert here
+		e.next.previous = e;
+		size++;
 	}
 
 	private int remove(Entry e) {
@@ -55,7 +55,7 @@ public class LinkedList_6_correct {
 			return 0;
 
 		int result = e.element;
-		e.previous.next = e.next;
+		e.previous.next = e;//LISTERR5 e.previous.next = e.next;
 		e.next.previous = e.previous;
 		e.next = null;
 		e.previous = null;
@@ -82,49 +82,4 @@ public class LinkedList_6_correct {
 		return remove(header.previous);
 	}
 
-	public int indexOf(int o) {
-		int index = 0;
-		for (Entry e = header.next; e != header; e = e.next) {
-			if (o == e.element)
-				return index;
-			index++;
-		}
-		return -1;
-	}
-
-	public void clear() {
-		Entry e = header.next;
-		while (e != header) {
-			Entry next = e.next;
-			e.next = e.previous = null;
-			e.element = 0;
-			e = next;
-		}
-		header.next = header.previous = header;
-		size = 0;
-	}
-
-	public int getFirst() {
-		if (size == 0)
-			return 0;
-		return header.next.element;
-	}
-
-	public int getLast() {
-		if (size == 0)
-			return 0;
-		return header.previous.element;
-	}
-
-	private static class Entry {
-		int element;
-		Entry next;
-		Entry previous;
-
-		Entry() {
-			this.element = 0;
-			this.next = null;
-			this.previous = null;
-		}
-	}
 }

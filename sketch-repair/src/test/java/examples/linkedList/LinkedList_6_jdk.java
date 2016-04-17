@@ -1,7 +1,7 @@
 /**
  * @author Lisa Apr 17, 2016 LinkedList_7.java 
  */
-package java.util.examples.linkedList;
+package examples.linkedList;
 
 import java.util.NoSuchElementException;
 
