@@ -20,8 +20,6 @@ package examples.linkedList;
  *
  */
 public class LinkedList_6_DLLERR3 extends LinkedList_6_base {
-	private Entry header = new Entry();
-	private int size = 0;
 
 	public LinkedList_6_DLLERR3() {
 		header.next = header.previous = header;
