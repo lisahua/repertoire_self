@@ -4,7 +4,7 @@
 package examples.linkedList;
 
 /**
- * Adapted from jdk / openjdk / 7-b147 / java.util.LinkedList (@see <a href=
+ * Adapted from jdk / openjdk / 6-b27 / java.util.LinkedList (@see <a href=
  * "http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b27/java/util/LinkedList.java">
  * LinkedList.java</a>). This file was changed to improve performance in jdk-7
  * (@see

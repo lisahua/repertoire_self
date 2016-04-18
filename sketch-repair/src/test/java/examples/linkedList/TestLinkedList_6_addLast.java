@@ -1,5 +1,5 @@
 /**
- * @author Lisa Apr 17, 2016 TestLinkedList_6.java 
+a * @author Lisa Apr 17, 2016 TestLinkedList_6.java 
  */
 package examples.linkedList;
 
@@ -24,7 +24,7 @@ public class TestLinkedList_6_addLast {
 	@Test
 	public void test2() {
 		 LinkedList_6_base list = getLinkedList();
-		 list.addFirst(7);
+		 list.addLast(7);
 		 //element 7
 		 assertEquals(list.header.next.element,7);
 		 assertEquals(list.header.next.next,list.header);
