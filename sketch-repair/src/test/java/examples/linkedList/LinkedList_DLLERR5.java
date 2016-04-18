@@ -19,9 +19,9 @@ package examples.linkedList;
  * @author lisahua
  *
  */
-public class LinkedList_6_DLLERR2 extends LinkedList_6_base {
+public class LinkedList_DLLERR5 extends LinkedList_base {
 
-	public LinkedList_6_DLLERR2() {
+	public LinkedList_DLLERR5() {
 		header.next = header.previous = header;
 	}
 
@@ -42,9 +42,42 @@ public class LinkedList_6_DLLERR2 extends LinkedList_6_base {
 		Entry e = new Entry();
 		e.element = val;
 		e.next = header;
-		e.previous = header;// LISTERR2 e.previous = header.previous;
+		e.previous = header.previous;
 		e.previous.next = e;
 		e.next.previous = e;
 		size++;
 	}
+
+	private int remove(Entry e) {
+		if (e == header)
+			return 0;
+
+		int result = e.element;
+		e.previous.next = e;//LISTERR5 e.previous.next = e.next;
+		e.next.previous = e.previous;
+		e.next = null;
+		e.previous = null;
+		e.element = 0;
+		size--;
+		return result;
+	}
+
+	public boolean remove(int o) {
+		for (Entry e = header.next; e != header; e = e.next) {
+			if (o == e.element) {
+				remove(e);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public int removeFirst() {
+		return remove(header.next);
+	}
+
+	public int removeLast() {
+		return remove(header.previous);
+	}
+
 }

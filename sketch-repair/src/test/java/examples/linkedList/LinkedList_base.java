@@ -19,11 +19,11 @@ package examples.linkedList;
  * @author lisahua
  *
  */
-public class LinkedList_6_base {
+public class LinkedList_base {
 	Entry header = new Entry();
 	int size = 0;
 
-	public LinkedList_6_base() {
+	public LinkedList_base() {
 		header.next = header.previous = header;
 	}
 

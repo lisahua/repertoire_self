@@ -3,80 +3,61 @@
  */
 package examples.treemap;
 
-import java.util.Comparator;
 /**
  * Adapted from jdk / openjdk / 6-b27 / java.util.TreeMap (@see <a href=
  * "http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b27/java/util/TreeMap.java">
- * LinkedList.java</a>). 
- * <p>I remove the generic type for simplicity. I remove the
- * transient property for simplicity. I assume the int 0 represents null in
- * generic type.
+ * LinkedList.java</a>).
+ * <p>
+ * I remove the generic type for simplicity. I remove the transient property for
+ * simplicity. I assume the int 0 represents null in generic type.
  * </p>
  * 
  * @author lisahua
  *
  */
-public class TreeMap_6_jdk<K, V> {
-	private transient Entry_6_jdk<K, V> root = null;
-	private transient int size = 0;
-	private final Comparator<? super K> comparator = null;
+public class TreeMap_base {
+	 Entry root = null;
+	 int size = 0;
+	// private final Comparator<? super K> comparator = null;
 	private static final boolean RED = false;
 	private static final boolean BLACK = true;
 
-	public V put(K key, V value) {
-		Entry_6_jdk<K, V> t = root;
+	public void put(int key, String value) {
+		Entry t = root;
 		if (t == null) {
-			root = new Entry_6_jdk<K, V>(key, value, null);
+			root = new Entry(key, value, null);
 			size = 1;
-			return null;
 		}
 		int cmp;
-		Entry_6_jdk<K, V> parent;
-		// split comparator and comparable paths
-		Comparator<? super K> cpr = comparator;
-		if (cpr != null) {
-			do {
-				parent = t;
-				cmp = cpr.compare(key, t.key);
-				if (cmp < 0)
-					t = t.left;
-				else if (cmp > 0)
-					t = t.right;
-				else
-					return t.setValue(value);
-			} while (t != null);
-		} else {
-			if (key == null)
-				throw new NullPointerException();
-			Comparable<? super K> k = (Comparable<? super K>) key;
-			do {
-				parent = t;
-				cmp = k.compareTo(t.key);
-				if (cmp < 0)
-					t = t.left;
-				else if (cmp > 0)
-					t = t.right;
-				else
-					return t.setValue(value);
-			} while (t != null);
-		}
-		Entry_6_jdk<K, V> e = new Entry_6_jdk<K, V>(key, value, parent);
+		Entry parent;
+
+		do {
+			parent = t;
+			cmp = key - t.key;
+			if (cmp < 0)
+				t = t.left;
+			else if (cmp > 0)
+				t = t.right;
+			else
+				return;
+		} while (t != null);
+
+		Entry e = new Entry(key, value, parent);
 		if (cmp < 0)
 			parent.left = e;
 		else
 			parent.right = e;
 		fixAfterInsertion(e);
 		size++;
-		return null;
 	}
 
 	/** From CLR */
-	private void fixAfterInsertion(Entry_6_jdk<K, V> x) {
+	private void fixAfterInsertion(Entry x) {
 		x.color = RED;
 
 		while (x != null && x != root && x.parent.color == RED) {
 			if (parentOf(x) == leftOf(parentOf(parentOf(x)))) {
-				Entry_6_jdk<K, V> y = rightOf(parentOf(parentOf(x)));
+				Entry y = rightOf(parentOf(parentOf(x)));
 				if (colorOf(y) == RED) {
 					setColor(parentOf(x), BLACK);
 					setColor(y, BLACK);
@@ -92,7 +73,7 @@ public class TreeMap_6_jdk<K, V> {
 					rotateRight(parentOf(parentOf(x)));
 				}
 			} else {
-				Entry_6_jdk<K, V> y = leftOf(parentOf(parentOf(x)));
+				Entry y = leftOf(parentOf(parentOf(x)));
 				if (colorOf(y) == RED) {
 					setColor(parentOf(x), BLACK);
 					setColor(y, BLACK);
@@ -112,31 +93,31 @@ public class TreeMap_6_jdk<K, V> {
 		root.color = BLACK;
 	}
 
-	private static <K, V> boolean colorOf(Entry_6_jdk<K, V> p) {
+	private static boolean colorOf(Entry p) {
 		return (p == null ? BLACK : p.color);
 	}
 
-	private static <K, V> Entry_6_jdk<K, V> parentOf(Entry_6_jdk<K, V> p) {
+	private static <K, V> Entry parentOf(Entry p) {
 		return (p == null ? null : p.parent);
 	}
 
-	private static <K, V> void setColor(Entry_6_jdk<K, V> p, boolean c) {
+	private static <K, V> void setColor(Entry p, boolean c) {
 		if (p != null)
 			p.color = c;
 	}
 
-	private static <K, V> Entry_6_jdk<K, V> leftOf(Entry_6_jdk<K, V> p) {
+	private static <K, V> Entry leftOf(Entry p) {
 		return (p == null) ? null : p.left;
 	}
 
-	private static <K, V> Entry_6_jdk<K, V> rightOf(Entry_6_jdk<K, V> p) {
+	private static <K, V> Entry rightOf(Entry p) {
 		return (p == null) ? null : p.right;
 	}
 
 	/** From CLR */
-	private void rotateLeft(Entry_6_jdk<K, V> p) {
+	private void rotateLeft(Entry p) {
 		if (p != null) {
-			Entry_6_jdk<K, V> r = p.right;
+			Entry r = p.right;
 			p.right = r.left;
 			if (r.left != null)
 				r.left.parent = p;
@@ -153,9 +134,9 @@ public class TreeMap_6_jdk<K, V> {
 	}
 
 	/** From CLR */
-	private void rotateRight(Entry_6_jdk<K, V> p) {
+	private void rotateRight(Entry p) {
 		if (p != null) {
-			Entry_6_jdk<K, V> l = p.left;
+			Entry l = p.left;
 			p.left = l.right;
 			if (l.right != null)
 				l.right.parent = p;
@@ -171,26 +152,21 @@ public class TreeMap_6_jdk<K, V> {
 		}
 	}
 
-	public V remove(Object key) {
-		Entry_6_jdk<K, V> p = getEntry(key);
+	public String remove(int key) {
+		Entry p = getEntry(key);
 		if (p == null)
 			return null;
 
-		V oldValue = p.value;
+		String oldValue = p.value;
 		deleteEntry(p);
 		return oldValue;
 	}
 
-	private final Entry_6_jdk<K, V> getEntry(Object key) {
-		// Offload comparator-based version for sake of performance
-		if (comparator != null)
-			return getEntryUsingComparator(key);
-		if (key == null)
-			throw new NullPointerException();
-		Comparable<? super K> k = (Comparable<? super K>) key;
-		Entry_6_jdk<K, V> p = root;
+	private final Entry getEntry(int key) {
+
+		Entry p = root;
 		while (p != null) {
-			int cmp = k.compareTo(p.key);
+			int cmp = key - p.key;
 			if (cmp < 0)
 				p = p.left;
 			else if (cmp > 0)
@@ -201,39 +177,20 @@ public class TreeMap_6_jdk<K, V> {
 		return null;
 	}
 
-	private  final Entry_6_jdk<K, V> getEntryUsingComparator(Object key) {
-		@SuppressWarnings("unchecked")
-		K k = (K) key;
-		Comparator<? super K> cpr = comparator;
-		if (cpr != null) {
-			Entry_6_jdk<K, V> p = root;
-			while (p != null) {
-				int cmp = cpr.compare(k, p.key);
-				if (cmp < 0)
-					p = p.left;
-				else if (cmp > 0)
-					p = p.right;
-				else
-					return p;
-			}
-		}
-		return null;
-	}
-
-	private void deleteEntry(Entry_6_jdk<K, V> p) {
+	private void deleteEntry(Entry p) {
 		size--;
 
 		// If strictly internal, copy successor's element to p and then make p
 		// point to successor.
 		if (p.left != null && p.right != null) {
-			Entry_6_jdk<K, V> s = successor(p);
+			Entry s = successor(p);
 			p.key = s.key;
 			p.value = s.value;
 			p = s;
 		} // p has 2 children
 
 		// Start fixup at replacement node, if it exists.
-		Entry_6_jdk<K, V> replacement = (p.left != null ? p.left : p.right);
+		Entry replacement = (p.left != null ? p.left : p.right);
 
 		if (replacement != null) {
 			// Link replacement to parent
@@ -268,10 +225,10 @@ public class TreeMap_6_jdk<K, V> {
 	}
 
 	/** From CLR */
-	private void fixAfterDeletion(Entry_6_jdk<K, V> x) {
+	private void fixAfterDeletion(Entry x) {
 		while (x != root && colorOf(x) == BLACK) {
 			if (x == leftOf(parentOf(x))) {
-				Entry_6_jdk<K, V> sib = rightOf(parentOf(x));
+				Entry sib = rightOf(parentOf(x));
 
 				if (colorOf(sib) == RED) {
 					setColor(sib, BLACK);
@@ -297,7 +254,7 @@ public class TreeMap_6_jdk<K, V> {
 					x = root;
 				}
 			} else { // symmetric
-				Entry_6_jdk<K, V> sib = leftOf(parentOf(x));
+				Entry sib = leftOf(parentOf(x));
 
 				if (colorOf(sib) == RED) {
 					setColor(sib, BLACK);
@@ -331,17 +288,17 @@ public class TreeMap_6_jdk<K, V> {
 	/**
 	 * Returns the successor of the specified Entry, or null if no such.
 	 */
-	private  static <K, V> Entry_6_jdk<K, V> successor(Entry_6_jdk<K, V> t) {
+	private static <K, V> Entry successor(Entry t) {
 		if (t == null)
 			return null;
 		else if (t.right != null) {
-			Entry_6_jdk<K, V> p = t.right;
+			Entry p = t.right;
 			while (p.left != null)
 				p = p.left;
 			return p;
 		} else {
-			Entry_6_jdk<K, V> p = t.parent;
-			Entry_6_jdk<K, V> ch = t;
+			Entry p = t.parent;
+			Entry ch = t;
 			while (p != null && ch == p.right) {
 				ch = p;
 				p = p.parent;

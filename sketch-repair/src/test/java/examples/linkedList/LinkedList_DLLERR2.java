@@ -19,9 +19,9 @@ package examples.linkedList;
  * @author lisahua
  *
  */
-public class LinkedList_6_DLLERR4 extends LinkedList_6_base {
+public class LinkedList_DLLERR2 extends LinkedList_base {
 
-	public LinkedList_6_DLLERR4() {
+	public LinkedList_DLLERR2() {
 		header.next = header.previous = header;
 	}
 
@@ -32,7 +32,7 @@ public class LinkedList_6_DLLERR4 extends LinkedList_6_base {
 		e.previous = header;
 		e.previous.next = e;
 		e.next.previous = e;
-//		size++;// LISTERR4 omission error 
+		size++;
 	}
 
 	/**
@@ -42,10 +42,9 @@ public class LinkedList_6_DLLERR4 extends LinkedList_6_base {
 		Entry e = new Entry();
 		e.element = val;
 		e.next = header;
-		e.previous = header.previous;
+		e.previous = header;// LISTERR2 e.previous = header.previous;
 		e.previous.next = e;
 		e.next.previous = e;
 		size++;
 	}
-
 }

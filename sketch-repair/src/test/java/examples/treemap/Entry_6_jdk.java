@@ -1,45 +1,47 @@
 package examples.treemap;
-public class Entry {
+public class Entry_6_jdk<K, V> {
 //	 private static final boolean RED   = false;
 	    private static final boolean BLACK = true;
-        int key;
-        String value;
-        Entry left = null;
-        Entry right = null;
-        Entry parent;
+        K key;
+        V value;
+        Entry_6_jdk<K,V> left = null;
+        Entry_6_jdk<K,V> right = null;
+        Entry_6_jdk<K,V> parent;
         boolean color = BLACK;
 
-        Entry(int key, String value, Entry  parent) {
+        Entry_6_jdk(K key, V value, Entry_6_jdk<K,V> parent) {
             this.key = key;
             this.value = value;
             this.parent = parent;
         }
         
-        public int getKey() {
+        public K getKey() {
             return key;
         }
 
-        public String getValue() {
+        public V getValue() {
             return value;
         }
 
-        public String setValue(String value) {
-        	String oldValue = this.value;
+        public V setValue(V value) {
+            V oldValue = this.value;
             this.value = value;
             return oldValue;
         }
 
         public boolean equals(Object o) {
-            if (!(o instanceof Entry))
+            if (!(o instanceof Entry_6_jdk))
                 return false;
-			Entry e = (Entry)o;
+            @SuppressWarnings("unchecked")
+			Entry_6_jdk<K, V> e = (Entry_6_jdk<K, V>)o;
 
-            return key==e.getKey() && value.equals(e.getValue());
+            return key.equals(e.getKey()) && value.equals(e.getValue());
         }
 
         public int hashCode() {
+            int keyHash = (key==null ? 0 : key.hashCode());
             int valueHash = (value==null ? 0 : value.hashCode());
-            return  valueHash;
+            return keyHash ^ valueHash;
         }
 
         public String toString() {

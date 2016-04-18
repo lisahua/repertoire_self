@@ -7,15 +7,15 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-public class TestLinkedList_6_addLast {
+public class TestLinkedList_addLast {
 
-	private LinkedList_6_base getLinkedList() {
+	private LinkedList_base getLinkedList() {
 	// apply to DLLERR1, DLLERR3, DLLERR4
-		return  new LinkedList_6_DLLERR4();
+		return  new LinkedList_DLLERR4();
 	}
 	@Test
 	public void test1() {
-		 LinkedList_6_base list = getLinkedList();
+		 LinkedList_base list = getLinkedList();
 		 assertEquals(list.header.next,list.header);
 		 assertEquals(list.header.previous, list.header);
 		 assertEquals(list.size,0);
@@ -23,7 +23,7 @@ public class TestLinkedList_6_addLast {
 	
 	@Test
 	public void test2() {
-		 LinkedList_6_base list = getLinkedList();
+		 LinkedList_base list = getLinkedList();
 		 list.addLast(7);
 		 //element 7
 		 assertEquals(list.header.next.element,7);
@@ -35,7 +35,7 @@ public class TestLinkedList_6_addLast {
 	}
 	@Test
 	public void test3() {
-		 LinkedList_6_base list = getLinkedList();
+		 LinkedList_base list = getLinkedList();
 		 list.addFirst(7);
 		 list.addFirst(4);
 		 //element 4
@@ -53,7 +53,7 @@ public class TestLinkedList_6_addLast {
 	
 	@Test
 	public void test4() {
-		 LinkedList_6_base list = getLinkedList();
+		 LinkedList_base list = getLinkedList();
 		 list.addFirst(7);
 		 list.addFirst(4);
 		 list.addFirst(6);
