@@ -6,7 +6,7 @@ package examples.treemap;
 /**
  * Adapted from jdk / openjdk / 6-b27 / java.util.TreeMap (@see <a href=
  * "http://grepcode.com/file/repository.grepcode.com/java/root/jdk/openjdk/6-b27/java/util/TreeMap.java">
- * LinkedList.java</a>).
+ * TreeMap.java</a>).
  * <p>
  * I remove the generic type for simplicity. I remove the transient property for
  * simplicity. I assume the int 0 represents null in generic type.
@@ -15,18 +15,18 @@ package examples.treemap;
  * @author lisahua
  *
  */
-public class TreeMap_base {
-	 Entry root = null;
-	 int size = 0;
-	// private final Comparator<? super K> comparator = null;
-	private static final boolean RED = false;
-	private static final boolean BLACK = true;
+public class RedBlackTree_base {
+	Entry root = null;
+	int size = 0;
+	public static final boolean RED = false;
+	public static final boolean BLACK = true;
 
-	public void put(int key, String value) {
+	public void put(int key) {
 		Entry t = root;
 		if (t == null) {
-			root = new Entry(key, value, null);
+			root = new Entry(key,  null);
 			size = 1;
+			return;
 		}
 		int cmp;
 		Entry parent;
@@ -42,7 +42,7 @@ public class TreeMap_base {
 				return;
 		} while (t != null);
 
-		Entry e = new Entry(key, value, parent);
+		Entry e = new Entry(key, parent);
 		if (cmp < 0)
 			parent.left = e;
 		else
@@ -152,17 +152,14 @@ public class TreeMap_base {
 		}
 	}
 
-	public String remove(int key) {
-		Entry p = getEntry(key);
+	public void remove(int key) {
+		Entry p = contains(key);
 		if (p == null)
-			return null;
-
-		String oldValue = p.value;
+			return ;
 		deleteEntry(p);
-		return oldValue;
 	}
 
-	private final Entry getEntry(int key) {
+	public Entry contains(int key) {
 
 		Entry p = root;
 		while (p != null) {
@@ -185,7 +182,6 @@ public class TreeMap_base {
 		if (p.left != null && p.right != null) {
 			Entry s = successor(p);
 			p.key = s.key;
-			p.value = s.value;
 			p = s;
 		} // p has 2 children
 
