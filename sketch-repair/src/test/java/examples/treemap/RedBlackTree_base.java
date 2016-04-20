@@ -284,7 +284,7 @@ public class RedBlackTree_base {
 	/**
 	 * Returns the successor of the specified Entry, or null if no such.
 	 */
-	private static <K, V> Entry successor(Entry t) {
+	private static Entry successor(Entry t) {
 		if (t == null)
 			return null;
 		else if (t.right != null) {

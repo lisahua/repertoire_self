@@ -67,8 +67,6 @@ public class SortedLinkedList {
 			else
 				ln1 = ln1.next;
 
-		
-
 			if (ln2.next.equals(header) || ln2.next.next.equals(header))
 				return false;
 			else
