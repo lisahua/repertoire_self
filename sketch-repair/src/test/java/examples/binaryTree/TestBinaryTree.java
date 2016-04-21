@@ -34,6 +34,31 @@ public class TestBinaryTree {
 		assertEquals(tree.size,9);
 	}
 	@Test
+	public void test_inorder_complex() {
+		BinaryTree tree = new BinaryTree();
+		tree.insert(8);
+		tree.insert(3);
+		tree.insert(6);
+		tree.insert(1);
+		tree.insert(4);
+		tree.insert(7);
+		tree.insert(10);
+		tree.insert(14);
+		tree.insert(13);
+		int[] result = tree.inorder_complex();
+		
+		assertEquals(result[0],1);
+		assertEquals(result[1],3);
+		assertEquals(result[2],4);
+		assertEquals(result[3],6);
+		assertEquals(result[4],7);
+		assertEquals(result[5],8);
+		assertEquals(result[6],10);
+		assertEquals(result[7],13);
+		assertEquals(result[8],14);
+	}
+	
+	@Test
 	public void test_inorder() {
 		BinaryTree tree = new BinaryTree();
 		tree.insert(8);
@@ -57,6 +82,7 @@ public class TestBinaryTree {
 		assertEquals(result[7],13);
 		assertEquals(result[8],14);
 	}
+	
 	@Test
 	public void test_preorder() {
 		BinaryTree tree = new BinaryTree();

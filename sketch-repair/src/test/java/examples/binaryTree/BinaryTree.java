@@ -61,8 +61,8 @@ public class BinaryTree {
 		return true;
 	}
 
-	public int[] inorder() {
-		int[] result = new int[100]; //assume no more than 100 elements; 
+	public int[] inorder_complex() {
+		int[] result = new int[100]; // assume no more than 100 elements;
 		int index = 0;
 		Node current, pre;
 
@@ -103,74 +103,102 @@ public class BinaryTree {
 	}
 
 	public int[] preorder() {
-		int[] result = new int[100]; //assume no more than 100 elements; 
+		int[] result = new int[100]; // assume no more than 100 elements;
 		int index = 0;
-		if(root == null)
-            return result;
- 
-        Stack<Node> stack = new Stack<Node>();
-        stack.push(root);
- 
-        while(!stack.empty()){
-           Node n = stack.pop();
-           result[index++] = n.key;
- 
-            if(n.right != null){
-                stack.push(n.right);
-            }
-            if(n.left != null){
-                stack.push(n.left);
-            }
-        }
-        return result;
+		if (root == null)
+			return result;
+
+		Stack<Node> stack = new Stack<Node>();
+		stack.push(root);
+
+		while (!stack.empty()) {
+			Node n = stack.pop();
+			result[index++] = n.key;
+
+			if (n.right != null) {
+				stack.push(n.right);
+			}
+			if (n.left != null) {
+				stack.push(n.left);
+			}
+		}
+		return result;
 	}
 
 	public int[] postorder() {
-		int[] result = new int[100]; //assume no more than 100 elements; 
+		int[] result = new int[100]; // assume no more than 100 elements;
 		int index = 0;
-		   Stack<Node> stack = new Stack<Node>();
-	         
-	        // Check for empty tree
-	        if (root == null) {
-	            return result;
-	        }
-	        stack.push(root);
-	        Node prev = null;
-	        while (!stack.isEmpty()) {
-	            Node current = stack.peek();
-	 
-	            /* go down the tree in search of a leaf an if so process it and pop
-	            stack otherwise move down */
-	            if (prev == null || prev.left == current || prev.right == current) {
-	                if (current.left != null) {
-	                    stack.push(current.left);
-	                } else if (current.right != null) {
-	                    stack.push(current.right);
-	                } else {
-	                    stack.pop();
-	                    result[index++] = current.key;
-	                }
-	 
-	                /* go up the tree from left node, if the child is right 
-	                push it onto stack otherwise process parent and pop stack */
-	            } else if (current.left == prev) {
-	                if (current.right != null) {
-	                    stack.push(current.right);
-	                } else {
-	                    stack.pop();
-	                    result[index++] = current.key;
-	                }
-	                 
-	                /* go up the tree from right node and after coming back
-	                 from right node process parent and pop stack */
-	            } else if (current.right == prev) {
-	                stack.pop();
-	                result[index++] = current.key;
-	            }
-	 
-	            prev = current;
-	        }
-	 
-	        return result;
+		Stack<Node> stack = new Stack<Node>();
+
+		// Check for empty tree
+		if (root == null) {
+			return result;
+		}
+		stack.push(root);
+		Node prev = null;
+		while (!stack.isEmpty()) {
+			Node current = stack.peek();
+
+			/*
+			 * go down the tree in search of a leaf an if so process it and pop
+			 * stack otherwise move down
+			 */
+			if (prev == null || prev.left == current || prev.right == current) {
+				if (current.left != null) {
+					stack.push(current.left);
+				} else if (current.right != null) {
+					stack.push(current.right);
+				} else {
+					stack.pop();
+					result[index++] = current.key;
+				}
+
+				/*
+				 * go up the tree from left node, if the child is right push it
+				 * onto stack otherwise process parent and pop stack
+				 */
+			} else if (current.left == prev) {
+				if (current.right != null) {
+					stack.push(current.right);
+				} else {
+					stack.pop();
+					result[index++] = current.key;
+				}
+
+				/*
+				 * go up the tree from right node and after coming back from
+				 * right node process parent and pop stack
+				 */
+			} else if (current.right == prev) {
+				stack.pop();
+				result[index++] = current.key;
+			}
+
+			prev = current;
+		}
+
+		return result;
+	}
+
+	public int[] inorder() {
+		int[] result = new int[100]; // assume no more than 100 elements;
+		int index = 0;
+		if (root == null)
+			return result;
+		Stack<Node> stack = new Stack<Node>();
+		Node p = root;
+
+		while (!stack.empty() || p != null) {
+
+			if (p != null) {
+				stack.push(p);
+				p = p.left;
+			} else {
+				Node t = stack.pop();
+				result[index++] = t.key;
+				p = t.right;
+			}
+		}
+		return result;
 	}
 }
