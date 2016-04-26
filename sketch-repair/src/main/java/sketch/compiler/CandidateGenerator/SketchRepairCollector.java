@@ -24,14 +24,19 @@ public class SketchRepairCollector {
 
 	public List<List<StmtAssign>> createCandidate(String func, List<StmtAssign> bugAssign) {
 		List<List<StmtAssign>> candidates = new ArrayList<List<StmtAssign>>();
-		candidates = new SketchExprGenerator(controller).createCandidate(func, bugAssign);
+
 		boolean isPrimitive = false;
-		if (!bugAssign.isEmpty()) {
-			isPrimitive = controller.isPrimitiveType(func, bugAssign.get(0).getLHS().toString());
-		}
-		if (isPrimitive) {
-			System.out.println("Sketch repair Collector add primitive generator");
-			candidates.addAll(new SketchPrimitiveGenerator(controller).createCandidate(func, bugAssign));
+
+		for (StmtAssign ass : bugAssign) {
+			System.out.println(ass);
+			isPrimitive = controller.isPrimitiveType(func, ass.getLHS().toString());
+			System.out.println("Sketch repair Collector Is it primitive?" + isPrimitive);
+			if (isPrimitive) {
+				System.out.println("Sketch repair Collector add primitive generator");
+				candidates.get(0).addAll(new SketchPrimitiveGenerator(controller).createCandidate(func, ass));
+			} else {
+				candidates.addAll(new SketchExprGenerator(controller).createCandidate(func, bugAssign));
+			}
 		}
 		return candidates;
 	}

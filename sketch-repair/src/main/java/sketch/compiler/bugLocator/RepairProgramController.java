@@ -118,7 +118,7 @@ public class RepairProgramController {
 		return bound;
 	}
 
-	private List<HashSet<String>> genCandidateList(String func, String typeS) {
+	public List<HashSet<String>> genCandidateList(String func, String typeS) {
 		return resolver.extractCandidateList(func, typeS, getRepairBound());
 	}
 

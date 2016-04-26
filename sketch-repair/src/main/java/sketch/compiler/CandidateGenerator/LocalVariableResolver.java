@@ -178,10 +178,13 @@ public class LocalVariableResolver extends NameResolver {
 	public boolean isPrimitiveType(String func, String exp) {
 		List<VarDeclEntry> list = resolveFieldChain(func, exp);
 		VarDeclEntry entry = list.get(list.size() - 1);
+		if (entry == null)
+			return false;
 		return entry.getType() == null;
 	}
 
 	public HashSet<Expression> instantiateField(String func, String field, FENode node) {
+
 		HashMap<String, VarDeclEntry> varType = funcVar.get(func);
 		HashSet<Expression> res = new HashSet<Expression>();
 		String[] token = field.split("\\.");
@@ -209,6 +212,9 @@ public class LocalVariableResolver extends NameResolver {
 				res.add(expF);
 			}
 		}
+		System.out.println("====LocalVariableResolver instanciate field ===" + field + " node " + node);
+		for (Expression e : res)
+			System.out.println(e);
 		return res;
 	}
 }

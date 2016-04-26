@@ -11,15 +11,15 @@ public class PriorityQueue_base {
 	/**
 	 * Inserts the specified element into this priority queue.
 	 */
-	
+
 	public PriorityQueue_base() {
 	}
-	
+
 	public PriorityQueue_base(int[] values) {
 		queue = values;
 		size = values.length;
 	}
-	
+
 	public boolean add(int value) {
 		int i = size;
 		while (i > 0) {
@@ -34,13 +34,13 @@ public class PriorityQueue_base {
 		size++;
 		return true;
 	}
-	
+
 	public void heapSort() {
-		for (int i = size/2 - 1; i >= 0; i--) {
+		for (int i = size / 2 - 1; i >= 0; i--) {
 			int half = size / 2;
 			int moved = queue[i];
 			while (i < half) {
-				int child = i*2 + 1;
+				int child = i * 2 + 1;
 				int c = queue[child];
 				int right = child + 1;
 				if (right < size && c > queue[right])
@@ -76,17 +76,16 @@ public class PriorityQueue_base {
 						i = child;
 					}
 					queue[i] = moved;
-						while (i > 0) {
-							int parent = (i - 1) / 2;
-							int p_val = queue[parent];
-							if (moved >= p_val)
-								break;
-							queue[i] = p_val;
-							i = parent;
-						}
-						queue[i] = moved;
+					while (i > 0) {
+						int parent = (i - 1) / 2;
+						int p_val = queue[parent];
+						if (moved >= p_val)
+							break;
+						queue[i] = p_val;
+						i = parent;
 					}
-//				}
+					queue[i] = moved;
+				}
 			}
 		}
 	}

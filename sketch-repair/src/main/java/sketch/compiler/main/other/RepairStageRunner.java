@@ -56,16 +56,16 @@ public class RepairStageRunner extends RepairSketchMain {
 			Program substitutedCleaned = (new CleanupFinalCode(varGen, options, visibleRControl(finalCleaned)))
 					.visitProgram(substituted);
 			generateCode(substitutedCleaned);
-			
-			new CodeGenerator().testJavaWriter(substitutedCleaned);
-			
+
+//			new CodeGenerator().testJavaWriter(substitutedCleaned);
+
 			return true;
 		} catch (SketchException e) {
 			// e.printStackTrace();
 			String err = parseErr(e.getMessage());
 			// if (serr.equals("") || serr.equals(err)) {
 			System.out.println("===RepairStageRunner ===not solve");
-			 new File(sketchF).delete();
+			new File(sketchF).delete();
 			serr = err;
 			fix = sketchF;
 			return false;
@@ -89,9 +89,13 @@ public class RepairStageRunner extends RepairSketchMain {
 	}
 
 	public String parseErr(String err) {
-		int index2 = err.indexOf(":");
-		int index3 = err.indexOf("(");
-		err = err.substring(index2 + 1, index3).trim();
+		try {
+			int index2 = err.indexOf(":");
+			int index3 = err.indexOf("(");
+			err = err.substring(index2 + 1, index3).trim();
+		} catch (Exception e) {
+			// ignore
+		}
 		return err;
 	}
 

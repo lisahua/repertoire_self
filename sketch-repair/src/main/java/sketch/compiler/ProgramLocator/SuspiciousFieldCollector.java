@@ -21,7 +21,7 @@ public class SuspiciousFieldCollector {
 
 	public SuspiciousFieldCollector(RepairProgramController utility) {
 		this.utility = utility;
-		locatorList.add(new AssignFieldLocator(utility));
+//		locatorList.add(new AssignFieldLocator(utility));
 		locatorList.add(new OmissionFieldLocator(utility));
 		genCollector = new SketchRepairCollector(utility);
 	}
@@ -29,15 +29,15 @@ public class SuspiciousFieldCollector {
 	public boolean findAllFieldsInMethod(List<VarDeclEntry> sField, String suspFunc) {
 		HashSet<String> funSet = findAllSuspiciousMethod(suspFunc);
 		// for (SuspiciousStmtLocator locator : locatorList) {
-		SuspiciousStmtLocator locator = new AssignFieldLocator(utility);
-		for (String func : funSet) {
-			List<StmtAssign> assigns = new ArrayList<StmtAssign>();
-			assigns.addAll(locator.findSuspiciousStmtInMethod(sField, func));
-			List<List<StmtAssign>> genAssign = genCollector.createCandidate(func, assigns);
-			for (List<StmtAssign> ass : genAssign)
-				if (locator.runSketch(ass, utility.getProgram()))
-					return true;
-		}
+//		SuspiciousStmtLocator locator = new AssignFieldLocator(utility);
+//		for (String func : funSet) {
+//			List<StmtAssign> assigns = new ArrayList<StmtAssign>();
+//			assigns.addAll(locator.findSuspiciousStmtInMethod(sField, func));
+//			List<List<StmtAssign>> genAssign = genCollector.createCandidate(func, assigns);
+//			for (List<StmtAssign> ass : genAssign)
+//				if (locator.runSketch(ass, utility.getProgram()))
+//					return true;
+//		}
 
 		OmissionFieldLocator m_locator = new OmissionFieldLocator(utility);
 		for (String func : funSet) {

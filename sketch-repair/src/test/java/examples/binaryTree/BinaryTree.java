@@ -27,23 +27,18 @@ public class BinaryTree {
 	public boolean insert(int k) {
 		Node y = null;
 		Node x = root;
-
 		while ((x != null)) {
 			y = x;
-
 			if (x.key == k) {
 				return false;
 			}
-
 			if ((x != null) && k < x.key) {
 				x = x.left;
 			}
-
 			else if ((x != null) && (k > x.key)) {
 				x = x.right;
 			}
 		}
-
 		x = new Node();
 		x.key = k;
 

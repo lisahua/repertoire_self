@@ -95,38 +95,4 @@ public class DoublyLinkedList extends LinkedList_base{
 		return remove(header.previous);
 	}
 
-	// public int indexOf(int o) {
-	// int index = 0;
-	// for (Entry e = header.next; e != header; e = e.next) {
-	// if (o == e.element)
-	// return index;
-	// index++;
-	// }
-	// return -1;
-	// }
-	//
-	// public void clear() {
-	// Entry e = header.next;
-	// while (e != header) {
-	// Entry next = e.next;
-	// e.next = e.previous = null;
-	// e.element = 0;
-	// e = next;
-	// }
-	// header.next = header.previous = header;
-	// size = 0;
-	// }
-	//
-	// public int getFirst() {
-	// if (size == 0)
-	// return 0;
-	// return header.next.element;
-	// }
-	//
-	// public int getLast() {
-	// if (size == 0)
-	// return 0;
-	// return header.previous.element;
-	// }
-
 }

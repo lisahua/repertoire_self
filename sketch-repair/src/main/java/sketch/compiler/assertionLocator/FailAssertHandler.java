@@ -30,7 +30,6 @@ public class FailAssertHandler {
 		System.out.println("=====fail assert ====" + context);
 		return findFailAssert(context.trim());
 	}
-	
 
 	public String getBuggyHarness() {
 		return buggyHarness;
@@ -60,6 +59,7 @@ public class FailAssertHandler {
 	}
 
 	public List<VarDeclEntry> getFailField() {
+		
 		return fields;
 	}
 
@@ -72,10 +72,12 @@ public class FailAssertHandler {
 		String lhs = token[0].replace("(", "").replace(")", "").trim();
 		String rhs = token[1].replace("(", "").replace(")", "").trim();
 		if (lhs.contains(".")) {
+
 			fields.addAll(utility.resolveFieldChain(buggyHarness, lhs));
 		}
 		if (rhs.contains("."))
 			fields.addAll(utility.resolveFieldChain(buggyHarness, rhs));
+
 	}
 
 }
