@@ -6,7 +6,6 @@ package sketch.compiler.CandidateGenerator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.bugLocator.RepairProgramController;
@@ -28,14 +27,12 @@ public class SketchRepairCollector {
 		boolean isPrimitive = false;
 
 		for (StmtAssign ass : bugAssign) {
-			System.out.println(ass);
 			// FIXME hacky!
 			if (ass.toString().trim().startsWith("__s"))
 				continue;
 			isPrimitive = controller.isPrimitiveType(func, ass.getLHS().toString());
-			System.out.println("Sketch repair Collector Is it primitive?" + isPrimitive);
+//			System.out.println("Sketch repair Collector Is it primitive?" + isPrimitive);
 			if (isPrimitive) {
-				System.out.println("Sketch repair Collector add primitive generator");
 				candidates.addAll(new SketchPrimitiveGenerator(controller).createCandidate(func, ass));
 			} else {
 				candidates.addAll(new SketchExprGenerator(controller).createCandidate(func, bugAssign));

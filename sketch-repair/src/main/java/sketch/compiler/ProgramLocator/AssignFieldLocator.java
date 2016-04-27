@@ -35,19 +35,6 @@ public class AssignFieldLocator extends SuspiciousStmtLocator {
 		return assigns;
 	}
 
-//	public boolean runSketch(List<Object> bugAssign) {
-//		// int index = 0;
-//		// List<String> files = new ArrayList<String>();
-//		// String path = utility.getSketchFile();
-//		RepairSketchReplacer replGen = new RepairSketchReplacer(bugAssign);
-//		Program prog = (Program) replGen.visitProgram(utility.getProgram());
-//		if (utility.solveSketch(prog)) {
-//			System.out.println("====SketchExprGenerator === successful solve");
-//			return true;
-//		}
-//		return false;
-//	}
-
 	public String toString() {
 		return summary;
 	}

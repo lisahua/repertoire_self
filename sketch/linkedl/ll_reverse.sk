@@ -1,3 +1,5 @@
+pragma options "--fe-output-code";
+
 struct Node {
 Node next;
 int value;

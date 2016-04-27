@@ -47,54 +47,22 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 			if (candType != null) {
 				VarDeclEntry decl = candType.get(candType.size() - 1);
 				Expression rhs = assign.getRHS();
-				System.out.println("====SketchExprGenerator create === " + decl + ",");
 				List<StringBuilder> gen = utility.genCandidateSetString(func, decl.getTypeS());
-
-				// List<HashSet<String>> lhs_S = utility.genCandidateList(func,
-				// decl.getTypeS());
-				// System.out.print("===sketchExprGen lhs ===");
-				// HashSet<Expression> lhs_set = new HashSet<Expression>();
-				// HashSet<Expression> rhs_set = new HashSet<Expression>();
-				// for (HashSet<String> set : lhs_S) {
-				// for (String s : set) {
-				// Expression n_lhs = null;
-				// String[] token = s.split("\\.");
-				// n_lhs = new ExprVar(assign.getOrigin(), token[0]);
-				// int len = token.length;
-				// for (int i = 1; i < len; i++) {
-				// n_lhs = new ExprField(assign.getOrigin(), n_lhs, token[i]);
-				// }
-				// lhs_set.add(n_lhs);
-				// }
-				// }
 
 				for (int i = 1; i < gen.size(); i++) {
 					if (gen.get(i).length() != 0)
 						gen.get(0).append("|" + gen.get(i));
 				}
-				// change rhs
-				// if (layerCandidate.size() <= i)
-//				layerCandidate.add(new ArrayList<StmtAssign>());
 				Expression n_rhs = null;
-				// if (gen.get(i) == null || rhs == null)
-				// continue;
 				if (gen.get(0).toString().trim().length() != 0) {
-					FENode node = assign.getOrigin();
-					// if (node == null) {
-					// node = utility.getFuncMap(func).getOrigin();
-					// }
 					n_rhs = new ExprRegen(assign.getOrigin(),
 							"{|" + rhs.toString() + "|" + gen.get(0).toString() + "|}");
 					// for (Expression n_lhs : lhs_set) {
 					StmtAssign rep_assign = new StmtAssign(assign.getLHS(), n_rhs, assign.getOp());
-					System.out.println("====ExprGenerator create candidate node===" + rep_assign + "," + assign);
 
 					layerCandidate.add(rep_assign);
 				}
 			}
-			// }
-
-			// }
 		}
 		return layerCandidate;
 	}
@@ -106,29 +74,17 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 			return layerCandidate;
 		VarDeclEntry decl = candType.get(candType.size() - 1);
 		Expression rhs = assign.getRHS();
-		System.out.println("====SketchExprGenerator create === " + decl + ",");
 		List<StringBuilder> gen = utility.genCandidateSetString(func, decl.getTypeS());
 
 		for (int i = 1; i < gen.size(); i++) {
 			if (gen.get(i).length() != 0)
 				gen.get(0).append("|" + gen.get(i));
 		}
-		// change rhs
-		// if (layerCandidate.size() <= i)
-		// layerCandidate.add(new ArrayList<StmtAssign>());
 		Expression n_rhs = null;
-		// if (gen.get(i) == null || rhs == null)
-		// continue;
 		if (gen.get(0).toString().trim().length() != 0) {
-			FENode node = assign.getOrigin();
-			// if (node == null) {
-			// node = utility.getFuncMap(func).getOrigin();
-			// }
 			n_rhs = new ExprRegen(assign.getOrigin(), "{|" + rhs.toString() + "|" + gen.get(0).toString() + "|}");
 			// for (Expression n_lhs : lhs_set) {
 			StmtAssign rep_assign = new StmtAssign(assign.getLHS(), n_rhs, assign.getOp());
-			System.out.println("====ExprGenerator create candidate node===" + rep_assign + "," + assign);
-
 			layerCandidate.add(rep_assign);
 		}
 		return layerCandidate;

@@ -8,75 +8,81 @@ struct LinkedList {
     Entry head;
     int size;
 }
-/*dll_add.sk11:13*/
+/*dll_add.sk0:13*/
 
-void addLast (LinkedList l_7_7, int v_8_8)/*dll_add.sk11:13*/
+void addLast (LinkedList l_7_7, int v_8_8)/*dll_add.sk0:13*/
 {
   Entry@ANONYMOUS e_s9_a_a = null;
   newEntry(e_s9_a_a);
+  l_7_7.size = l_7_7.size;
+  l_7_7.size = l_7_7.size;
   e_s9_a_a.element = v_8_8;
+  l_7_7.size = l_7_7.size;
   e_s9_a_a.next = l_7_7.head;
+  l_7_7.size = l_7_7.size;
   e_s9_a_a.previous = l_7_7.head.previous;
+  l_7_7.size = l_7_7.size;
   e_s9_a_a.previous.next = e_s9_a_a;
+  l_7_7.size = l_7_7.size;
   e_s9_a_a.next.previous = e_s9_a_a;
   l_7_7.size = (l_7_7.size) + 1;
 }
-/*dll_add.sk11:28*/
+/*dll_add.sk0:34*/
 
-void addLastHarness ()/*dll_add.sk11:28*/
+void addLastHarness ()/*dll_add.sk0:34*/
 {
   LinkedList@ANONYMOUS l_s1_1_1 = null;
   newList(l_s1_1_1);
-  assert ((l_s1_1_1.size) == 0); //Assert at dll_add.sk11:34 (7798217866199117338)
-  assert ((l_s1_1_1.head.next) == (l_s1_1_1.head)); //Assert at dll_add.sk11:35 (7880229527118724841)
-  assert ((l_s1_1_1.head.previous) == (l_s1_1_1.head)); //Assert at dll_add.sk11:36 (7922078474106621595)
+  assert ((l_s1_1_1.size) == 0); //Assert at dll_add.sk0:40 (-7649976673073047053)
+  assert ((l_s1_1_1.head.next) == (l_s1_1_1.head)); //Assert at dll_add.sk0:41 (8756251985582443179)
+  assert ((l_s1_1_1.head.previous) == (l_s1_1_1.head)); //Assert at dll_add.sk0:42 (4721500730694658463)
   LinkedList@ANONYMOUS l_s3_2_2 = null;
   newList(l_s3_2_2);
   addLast(l_s3_2_2, 8);
-  assert ((l_s3_2_2.head.next.element) == 8); //Assert at dll_add.sk11:41 (8545123084939679249)
-  assert ((l_s3_2_2.head.next.previous) == (l_s3_2_2.head)); //Assert at dll_add.sk11:42 (-2369656252837583467)
-  assert ((l_s3_2_2.head.next.next) == (l_s3_2_2.head)); //Assert at dll_add.sk11:43 (-4184609394111727761)
-  assert ((l_s3_2_2.size) == 1); //Assert at dll_add.sk11:44 (-4575612128912385193)
+  assert ((l_s3_2_2.head.next.element) == 8); //Assert at dll_add.sk0:47 (7427437089702401984)
+  assert ((l_s3_2_2.head.next.previous) == (l_s3_2_2.head)); //Assert at dll_add.sk0:48 (-4865117361618389370)
+  assert ((l_s3_2_2.head.next.next) == (l_s3_2_2.head)); //Assert at dll_add.sk0:49 (3074486709028553426)
+  assert ((l_s3_2_2.size) == 1); //Assert at dll_add.sk0:50 (-8539555679781903468)
   LinkedList@ANONYMOUS l_s5_3_3 = null;
   newList(l_s5_3_3);
   addLast(l_s5_3_3, 8);
   addLast(l_s5_3_3, 5);
-  assert ((l_s5_3_3.head.next.element) == 8); //Assert at dll_add.sk11:50 (-7469879907899036770)
-  assert ((l_s5_3_3.head.next.previous) == (l_s5_3_3.head)); //Assert at dll_add.sk11:51 (6843464402789135913)
-  assert ((l_s5_3_3.head.next.next.element) == 5); //Assert at dll_add.sk11:52 (3398496818835937701)
-  assert ((l_s5_3_3.head.next.next.element) == 5); //Assert at dll_add.sk11:53 (2382066592367360201)
-  assert ((l_s5_3_3.head.next.next.previous.element) == 8); //Assert at dll_add.sk11:54 (-6065428620105219523)
-  assert ((l_s5_3_3.head.next.next.next) == (l_s5_3_3.head)); //Assert at dll_add.sk11:55 (2421111842216839711)
-  assert ((l_s5_3_3.size) == 2); //Assert at dll_add.sk11:56 (4103016202963329874)
+  assert ((l_s5_3_3.head.next.element) == 8); //Assert at dll_add.sk0:56 (-7117601166508126294)
+  assert ((l_s5_3_3.head.next.previous) == (l_s5_3_3.head)); //Assert at dll_add.sk0:57 (-2851444970545849493)
+  assert ((l_s5_3_3.head.next.next.element) == 5); //Assert at dll_add.sk0:58 (-1119158703630254777)
+  assert ((l_s5_3_3.head.next.next.element) == 5); //Assert at dll_add.sk0:59 (-4860013573301686442)
+  assert ((l_s5_3_3.head.next.next.previous.element) == 8); //Assert at dll_add.sk0:60 (-246951578250403902)
+  assert ((l_s5_3_3.head.next.next.next) == (l_s5_3_3.head)); //Assert at dll_add.sk0:61 (2674005060527139076)
+  assert ((l_s5_3_3.size) == 2); //Assert at dll_add.sk0:62 (6842087982751211989)
   LinkedList@ANONYMOUS l_s7_4_4 = null;
   newList(l_s7_4_4);
   addLast(l_s7_4_4, 8);
   addLast(l_s7_4_4, 5);
   addLast(l_s7_4_4, 13);
-  assert ((l_s7_4_4.head.next.element) == 8); //Assert at dll_add.sk11:63 (-1082596764024489845)
-  assert ((l_s7_4_4.head.next.previous) == (l_s7_4_4.head)); //Assert at dll_add.sk11:64 (5707751542965389419)
-  assert ((l_s7_4_4.head.next.next.element) == 5); //Assert at dll_add.sk11:65 (6408541887802943440)
-  assert ((l_s7_4_4.head.next.next.element) == 5); //Assert at dll_add.sk11:66 (1637780635395875435)
-  assert ((l_s7_4_4.head.next.next.previous.element) == 8); //Assert at dll_add.sk11:67 (6309121861376153)
-  assert ((l_s7_4_4.head.next.next.next.element) == 13); //Assert at dll_add.sk11:68 (1228863010088321701)
-  assert ((l_s7_4_4.head.next.next.next.element) == 13); //Assert at dll_add.sk11:69 (6422426103791095994)
-  assert ((l_s7_4_4.head.next.next.next.previous.element) == 5); //Assert at dll_add.sk11:70 (6946976882621896556)
-  assert ((l_s7_4_4.head.next.next.next.next) == (l_s7_4_4.head)); //Assert at dll_add.sk11:71 (441104385344072780)
-  assert ((l_s7_4_4.size) == 3); //Assert at dll_add.sk11:72 (-7520650070322762681)
+  assert ((l_s7_4_4.head.next.element) == 8); //Assert at dll_add.sk0:69 (-4929084358453221906)
+  assert ((l_s7_4_4.head.next.previous) == (l_s7_4_4.head)); //Assert at dll_add.sk0:70 (8137605454704088379)
+  assert ((l_s7_4_4.head.next.next.element) == 5); //Assert at dll_add.sk0:71 (1956334679230750219)
+  assert ((l_s7_4_4.head.next.next.element) == 5); //Assert at dll_add.sk0:72 (8101771733112204240)
+  assert ((l_s7_4_4.head.next.next.previous.element) == 8); //Assert at dll_add.sk0:73 (4304145631803288554)
+  assert ((l_s7_4_4.head.next.next.next.element) == 13); //Assert at dll_add.sk0:74 (-2780396373409307345)
+  assert ((l_s7_4_4.head.next.next.next.element) == 13); //Assert at dll_add.sk0:75 (4721892421683318785)
+  assert ((l_s7_4_4.head.next.next.next.previous.element) == 5); //Assert at dll_add.sk0:76 (-8894102413876130223)
+  assert ((l_s7_4_4.head.next.next.next.next) == (l_s7_4_4.head)); //Assert at dll_add.sk0:77 (7171787356856761830)
+  assert ((l_s7_4_4.size) == 3); //Assert at dll_add.sk0:78 (3983616930603311771)
 }
-/*dll_add.sk11:76*/
+/*dll_add.sk0:82*/
 
-void addLastHarness__Wrapper ()  implements addLastHarness__WrapperNospec/*dll_add.sk11:76*/
+void addLastHarness__Wrapper ()  implements addLastHarness__WrapperNospec/*dll_add.sk0:82*/
 {
   addLastHarness();
 }
-/*dll_add.sk11:82*/
+/*dll_add.sk0:88*/
 
-void addLastHarness__WrapperNospec ()/*dll_add.sk11:82*/
+void addLastHarness__WrapperNospec ()/*dll_add.sk0:88*/
 { }
-/*dll_add.sk11:87*/
+/*dll_add.sk0:93*/
 
-void newEntry (ref Entry _out_b_b)/*dll_add.sk11:87*/
+void newEntry (ref Entry _out_b_b)/*dll_add.sk0:93*/
 {
   _out_b_b = null;
   _out_b_b = new Entry();
@@ -84,9 +90,9 @@ void newEntry (ref Entry _out_b_b)/*dll_add.sk11:87*/
   _out_b_b.next = null;
   return;
 }
-/*dll_add.sk11:97*/
+/*dll_add.sk0:103*/
 
-void newList (ref LinkedList _out_5_5)/*dll_add.sk11:97*/
+void newList (ref LinkedList _out_5_5)/*dll_add.sk0:103*/
 {
   _out_5_5 = null;
   _out_5_5 = new LinkedList();

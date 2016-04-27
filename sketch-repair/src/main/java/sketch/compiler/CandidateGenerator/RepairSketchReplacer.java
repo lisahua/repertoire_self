@@ -16,6 +16,7 @@ public class RepairSketchReplacer extends FEReplacer {
 	HashSet<StmtAssign> isVisited = new HashSet<StmtAssign>();
 
 	public RepairSketchReplacer(List<StmtAssign> bugAssign) {
+//	public RepairSketchReplacer(List<StmtAssign> bugAssign) {
 		for (sketch.compiler.ast.core.stmts.StmtAssign ass : bugAssign) {
 			repMap.put(((sketch.compiler.ast.core.stmts.StmtAssign) ass).getLHS(), ass);
 		}

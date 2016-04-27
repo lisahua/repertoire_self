@@ -13,12 +13,10 @@ import sketch.compiler.ast.core.Parameter;
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.stmts.Statement;
 import sketch.compiler.ast.core.stmts.StmtAssign;
-import sketch.compiler.ast.core.stmts.StmtAtomicBlock;
 import sketch.compiler.ast.core.stmts.StmtBlock;
 import sketch.compiler.ast.core.stmts.StmtIfThen;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
 import sketch.compiler.ast.core.stmts.StmtWhile;
-import sketch.compiler.passes.printers.SimpleCodePrinter;
 
 public class RepairSketchInsertionReplacer extends FEReplacer {
 	private Statement insert_stmt = null;
@@ -35,7 +33,6 @@ public class RepairSketchInsertionReplacer extends FEReplacer {
 	}
 
 	public Object visitProgram(Program prog) {
-		System.out.println("insert replacer " + getAssign() + "," + prog.accept(new SimpleCodePrinter()));
 		int i = 0, j = 0;
 		for (; i < prog.getPackages().size(); i++) {
 			sketch.compiler.ast.core.Package pkg = prog.getPackages().get(i);
@@ -60,7 +57,6 @@ public class RepairSketchInsertionReplacer extends FEReplacer {
 	}
 
 	private Statement putAfterDefine(Function func, Statement ass) {
-		System.out.println("Repair sketch insert in block2===," + func + "," + ass);
 		Statement body = func.getBody();
 		List<Parameter> params = func.getParams();
 		HashSet<String> existVar = new HashSet<String>();
@@ -91,10 +87,8 @@ public class RepairSketchInsertionReplacer extends FEReplacer {
 				// HashSet<String> rhs =
 				// getVarInStmt(assign.getRHS().toString());
 				if (resolveLHS(existVar, definedVar, lhs)) {
-					System.out.println(
-							"Repair sketch insert in block2===," + ass + "," + origin + "," + origin.getClass());
 					allSList.add(ass);
-					return new StmtBlock(origin.getOrigin(), ass, origin);
+					return new StmtBlock(origin.getOrigin(), origin,ass);
 				}
 
 			}

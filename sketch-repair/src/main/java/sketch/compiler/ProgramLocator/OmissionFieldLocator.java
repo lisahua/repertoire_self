@@ -33,7 +33,6 @@ public class OmissionFieldLocator extends SuspiciousStmtLocator {
 		HashSet<String> lhsList = new HashSet<String>();
 		// VarDeclEntry suspField = sField.get(sField.size() - 1);
 		for (VarDeclEntry suspField : sField) {
-			System.out.println("=======Suspcious field omission field====== " + "," + func + "," + suspField);
 			HashSet<Expression> fields = utility.instantiateField(func, suspField.getName());
 
 			for (Expression exp : fields) {
@@ -52,7 +51,6 @@ public class OmissionFieldLocator extends SuspiciousStmtLocator {
 						rep += s;
 				}
 				lhsList.add(rep);
-				System.out.println("==omission field lhsList " + func + "," + rep);
 			}
 		}
 		return assigns;
@@ -78,7 +76,6 @@ public class OmissionFieldLocator extends SuspiciousStmtLocator {
 		}
 
 		for (Expression exp : lhs_set) {
-			System.out.println("===omission field exp lhs ==="+exp);
 			StmtAssign ass = new StmtAssign(exp, exp, 0);
 			controller = writeToFile(func, ass);
 			if (controller==null) {
@@ -100,10 +97,6 @@ public class OmissionFieldLocator extends SuspiciousStmtLocator {
 			List<StmtAssign> new_all_ass = new ArrayList<StmtAssign>();
 			List<StmtAssign> ass_fromProg = controller.getAssignMap().get(func);
 			for (StmtAssign assign : ass_fromProg) {
-				 System.out.println("==omission field return assigns " +
-				 func
-				 + ",assign " + assign);
-//				if (assign.getLHS().toString().equals(rep)) {
 					new_all_ass.add(assign);
 //				}
 			}
@@ -117,7 +110,6 @@ public class OmissionFieldLocator extends SuspiciousStmtLocator {
 					System.out.println("====omission field run sketch ===" + func+" "+a);
 					new SimpleCodePrinter().visitProgram(prog);
 					if (controller.solveSketch(prog)) {
-						System.out.println("====SketchExprGenerator === successful solve");
 						return true;
 					}
 				}
@@ -133,11 +125,6 @@ public class OmissionFieldLocator extends SuspiciousStmtLocator {
 	}
 
 	public boolean runSketch(List<StmtAssign> bugAssign, Program prog) {
-
-		System.out.println("====omission field run sketch before replace==="
-				+ new SimpleCodePrinter().visitProgram(controller.getProgram()));
-//		for (List<StmtAssign> ass : genAssign) {
-//			System.out.println("====omission field run sketch ===" + ass);
 			for (StmtAssign a : genAssign) {
 				RepairSketchReplacer replGen = new RepairSketchReplacer(a);
 				prog = (Program) replGen.visitProgram(controller.getProgram());

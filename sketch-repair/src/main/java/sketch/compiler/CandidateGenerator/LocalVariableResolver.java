@@ -212,7 +212,6 @@ public class LocalVariableResolver extends NameResolver {
 				res.add(expF);
 			}
 		}
-		System.out.println("====LocalVariableResolver instanciate field ===" + field + " node " + node);
 		for (Expression e : res)
 			System.out.println(e);
 		return res;
