@@ -22,7 +22,7 @@ import sketch.compiler.passes.printers.SimpleCodePrinter;
 
 public class OmissionFieldLocator extends SuspiciousStmtLocator {
 	RepairProgramController controller;
-	List<List<StmtAssign>> genAssign;
+	List<StmtAssign> genAssign;
 
 	public OmissionFieldLocator(RepairProgramController utility) {
 		super(utility);
@@ -81,6 +81,9 @@ public class OmissionFieldLocator extends SuspiciousStmtLocator {
 			System.out.println("===omission field exp lhs ==="+exp);
 			StmtAssign ass = new StmtAssign(exp, exp, 0);
 			controller = writeToFile(func, ass);
+			if (controller==null) {
+				continue;
+			}
 			String[] tokens = ass.getLHS().toString().split("\\.");
 			String rep = "";
 			// TODO hacky!!
@@ -107,8 +110,8 @@ public class OmissionFieldLocator extends SuspiciousStmtLocator {
 
 			SketchRepairCollector genCollector = new SketchRepairCollector(controller);
 			genAssign = genCollector.createCandidate(func, new_all_ass);
-			for (List<StmtAssign> ga : genAssign) {	
-				for (StmtAssign a : ga) {
+//			for (List<StmtAssign> ga : genAssign) {	
+				for (StmtAssign a : genAssign) {
 					RepairSketchReplacer replGen = new RepairSketchReplacer(a);
 					Program prog = (Program) replGen.visitProgram(controller.getProgram());
 					System.out.println("====omission field run sketch ===" + func+" "+a);
@@ -119,7 +122,7 @@ public class OmissionFieldLocator extends SuspiciousStmtLocator {
 					}
 				}
 			}
-		}
+//		}
 
 		return false;
 	}
@@ -133,16 +136,16 @@ public class OmissionFieldLocator extends SuspiciousStmtLocator {
 
 		System.out.println("====omission field run sketch before replace==="
 				+ new SimpleCodePrinter().visitProgram(controller.getProgram()));
-		for (List<StmtAssign> ass : genAssign) {
-			System.out.println("====omission field run sketch ===" + ass);
-			for (StmtAssign a : ass) {
+//		for (List<StmtAssign> ass : genAssign) {
+//			System.out.println("====omission field run sketch ===" + ass);
+			for (StmtAssign a : genAssign) {
 				RepairSketchReplacer replGen = new RepairSketchReplacer(a);
 				prog = (Program) replGen.visitProgram(controller.getProgram());
 				if (utility.solveSketch(prog)) {
 					System.out.println("====SketchExprGenerator === successful solve");
 					return true;
 				}
-			}
+//			}
 		}
 		return false;
 	}

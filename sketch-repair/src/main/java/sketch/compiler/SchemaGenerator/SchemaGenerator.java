@@ -10,11 +10,13 @@ import java.util.List;
 public class SchemaGenerator {
 
 	public static List<Integer> getAssignOperator() {
-		return Arrays.asList(1, 2, 3, 4);
+//		return Arrays.asList(1, 2, 3, 4);
+		return Arrays.asList(1,2,3);
 	}
 
 	public static List<Integer> getChoiceOperator() {
-		return Arrays.asList(1<<1, 1<<2, 1<<3, 1<<4,1<<5);
+//		return Arrays.asList(1<<1, 1<<2, 1<<3, 1<<4,1<<5);
+		return Arrays.asList(1<<1, 1<<2,1<<3);
 	}
 
 	public static List<StringBuilder> extendCandidateHorizon(StringBuilder builder, int hbound) {

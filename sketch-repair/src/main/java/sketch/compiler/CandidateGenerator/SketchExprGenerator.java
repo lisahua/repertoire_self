@@ -24,24 +24,24 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 	}
 
 	public List<String> runSketch(String func, List<StmtAssign> bugAssign) {
-		List<List<StmtAssign>> assignLine = createCandidate(func, bugAssign);
+		List<StmtAssign> assignLine = createCandidate(func, bugAssign);
 		// int index = 0;
 		List<String> files = new ArrayList<String>();
 		// String path = utility.getSketchFile();
-		for (List<StmtAssign> ass_list : assignLine) {
-			RepairSketchReplacer replGen = new RepairSketchReplacer(ass_list);
+//		for (List<StmtAssign> ass_list : assignLine) {
+			RepairSketchReplacer replGen = new RepairSketchReplacer(assignLine);
 			Program prog = (Program) replGen.visitProgram(utility.getProgram());
 			if (utility.solveSketch(prog)) {
 				System.out.println("====SketchExprGenerator === successful solve");
-				break;
+				return files;
 			}
 			// }
-		}
+//		}
 		return files;
 	}
 
-	public List<List<StmtAssign>> createCandidate(String func, List<StmtAssign> bugAssign) {
-		List<List<StmtAssign>> layerCandidate = new ArrayList<List<StmtAssign>>();
+	public List<StmtAssign> createCandidate(String func, List<StmtAssign> bugAssign) {
+		List<StmtAssign> layerCandidate = new ArrayList<StmtAssign>();
 		for (StmtAssign assign : bugAssign) {
 			List<VarDeclEntry> candType = utility.resolveFieldChain(func, assign.getLHS().toString());
 			if (candType != null) {
@@ -74,7 +74,7 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 				}
 				// change rhs
 				// if (layerCandidate.size() <= i)
-				layerCandidate.add(new ArrayList<StmtAssign>());
+//				layerCandidate.add(new ArrayList<StmtAssign>());
 				Expression n_rhs = null;
 				// if (gen.get(i) == null || rhs == null)
 				// continue;
@@ -89,7 +89,7 @@ public class SketchExprGenerator extends SketchRepairGenerator {
 					StmtAssign rep_assign = new StmtAssign(assign.getLHS(), n_rhs, assign.getOp());
 					System.out.println("====ExprGenerator create candidate node===" + rep_assign + "," + assign);
 
-					layerCandidate.get(0).add(rep_assign);
+					layerCandidate.add(rep_assign);
 				}
 			}
 			// }

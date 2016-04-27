@@ -25,7 +25,7 @@ public abstract class SketchRepairGenerator {
 	 * @param bugAssign
 	 * @return
 	 */
-	public abstract List<List<StmtAssign>> createCandidate(String func, List<StmtAssign> bugAssign) ;
+	public abstract List<StmtAssign> createCandidate(String func, List<StmtAssign> bugAssign) ;
 	
 	public HashMap<String, String> getFixPerFile() {
 		return fileFixMap;

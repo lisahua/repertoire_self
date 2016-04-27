@@ -22,18 +22,21 @@ public class SketchRepairCollector {
 		generatorList.add(new SketchPrimitiveGenerator(controller));
 	}
 
-	public List<List<StmtAssign>> createCandidate(String func, List<StmtAssign> bugAssign) {
-		List<List<StmtAssign>> candidates = new ArrayList<List<StmtAssign>>();
+	public List<StmtAssign> createCandidate(String func, List<StmtAssign> bugAssign) {
+		List<StmtAssign> candidates = new ArrayList<StmtAssign>();
 
 		boolean isPrimitive = false;
 
 		for (StmtAssign ass : bugAssign) {
 			System.out.println(ass);
+			// FIXME hacky!
+			if (ass.toString().trim().startsWith("__s"))
+				continue;
 			isPrimitive = controller.isPrimitiveType(func, ass.getLHS().toString());
 			System.out.println("Sketch repair Collector Is it primitive?" + isPrimitive);
 			if (isPrimitive) {
 				System.out.println("Sketch repair Collector add primitive generator");
-				candidates.get(0).addAll(new SketchPrimitiveGenerator(controller).createCandidate(func, ass));
+				candidates.addAll(new SketchPrimitiveGenerator(controller).createCandidate(func, ass));
 			} else {
 				candidates.addAll(new SketchExprGenerator(controller).createCandidate(func, bugAssign));
 			}

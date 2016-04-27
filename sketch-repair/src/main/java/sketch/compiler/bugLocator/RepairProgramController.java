@@ -131,7 +131,7 @@ public class RepairProgramController {
 	}
 
 	public boolean solveSketch(Program prog) {
-		System.out.println("solve sketch "+ options.sktmpdir().getAbsolutePath());
+		System.out.println("solve sketch " + options.sktmpdir().getAbsolutePath());
 		String path = options.sketchName + num++;
 		try {
 			new SimpleSketchFilePrinter(path).visitProgram(prog);
@@ -142,19 +142,25 @@ public class RepairProgramController {
 	}
 
 	public RepairProgramController writeFile(RepairSketchInsertionReplacer replacer) {
-			String path = options.sketchName + num++;
-			prog = new RepairStageRunner(options).readSketch(options.args[0]);
-			prog = (Program) replacer.visitProgram(prog);
-			try {
-				new SimpleSketchFilePrinter(path).visitProgram(prog);
-				prog = new RepairStageRunner(options).readSketch(path);
+		String path = options.sketchName + num++;
+		prog = new RepairStageRunner(options).readSketch(options.args[0]);
+		prog = (Program) replacer.visitProgram(prog);
+		try {
+			new SimpleSketchFilePrinter(path).visitProgram(prog);
+			prog = new RepairStageRunner(options).readSketch(path);
+			if (prog != null) {
 				RepairProgramController update_c = new RepairProgramController(prog, options);
 				return update_c;
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
-			return null;
+			else {
+				System.out.println("Expcetion controller null from omission field locator");
+				return null;
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public boolean isPrimitiveType(String func, String exp) {
@@ -164,6 +170,5 @@ public class RepairProgramController {
 	public HashSet<Expression> instantiateField(String func, String field) {
 		return resolver.instantiateField(func, field, null);
 	}
-	
-	
+
 }

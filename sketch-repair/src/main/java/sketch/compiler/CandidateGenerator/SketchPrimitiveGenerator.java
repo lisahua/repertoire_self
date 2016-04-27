@@ -21,8 +21,8 @@ public class SketchPrimitiveGenerator extends SketchRepairGenerator {
 		super(repairProgramUtility);
 	}
 
-	public List<List<StmtAssign>> createCandidate(String func, List<StmtAssign> bugAssign) {
-		List<List<StmtAssign>> layerCandidate = new ArrayList<List<StmtAssign>>();
+	public List<StmtAssign> createCandidate(String func, List<StmtAssign> bugAssign) {
+		List<StmtAssign> layerCandidate = new ArrayList<StmtAssign>();
 		for (StmtAssign assign : bugAssign) {
 			List<VarDeclEntry> candType = utility.resolveFieldChain(func, assign.getLHS().toString());
 			if (candType != null) {
@@ -31,11 +31,11 @@ public class SketchPrimitiveGenerator extends SketchRepairGenerator {
 				List<StringBuilder> gen = utility.genCandidateSetString(func, decl.getTypeS());
 				// gen constant hole
 				Expression n_rhs = new ExprStar(rhs.getOrigin());
-				layerCandidate.add(new ArrayList<StmtAssign>());
+				// layerCandidate.add(new ArrayList<StmtAssign>());
 				for (int op : SchemaGenerator.getAssignOperator()) {
 					StmtAssign ass = new StmtAssign(assign.getLHS(), n_rhs, op);
-					System.out.println("=====primitive generator create ===="+func+"," + ass);
-					layerCandidate.get(0).add(ass);
+					System.out.println("=====primitive generator create ====" + func + "," + ass);
+					layerCandidate.add(ass);
 				}
 
 				// for (int i = 0; i < gen.size(); i++) {
@@ -57,22 +57,28 @@ public class SketchPrimitiveGenerator extends SketchRepairGenerator {
 		}
 		return layerCandidate;
 	}
-	
+
 	public List<StmtAssign> createCandidate(String func, StmtAssign assign) {
 		List<StmtAssign> layerCandidate = new ArrayList<StmtAssign>();
-			List<VarDeclEntry> candType = utility.resolveFieldChain(func, assign.getLHS().toString());
-			if (candType != null) {
-				VarDeclEntry decl = candType.get(candType.size() - 1);
-				Expression rhs = assign.getRHS();
-				List<StringBuilder> gen = utility.genCandidateSetString(func, decl.getTypeS());
-				// gen constant hole
-				Expression n_rhs = new ExprStar(rhs.getOrigin());
-				
-				for (int op : SchemaGenerator.getAssignOperator()) {
-					StmtAssign ass = new StmtAssign(assign.getLHS(), n_rhs, op);
-					System.out.println("=====primitive generator create ===="+func+"," + ass);
-					layerCandidate.add(ass);
-				}
+		List<VarDeclEntry> candType = utility.resolveFieldChain(func, assign.getLHS().toString());
+		if (candType != null) {
+			VarDeclEntry decl = candType.get(candType.size() - 1);
+			System.out.println("=====primitive generator assign is null? ====" + func + "," + assign);
+			Expression rhs = assign.getRHS();
+			// a=0; rhs ==null
+			if (rhs == null)
+				return layerCandidate;
+			if (rhs.getOrigin() == null)
+				return layerCandidate;
+//			List<StringBuilder> gen = utility.genCandidateSetString(func, decl.getTypeS());
+			// gen constant hole
+			Expression n_rhs = new ExprStar(rhs.getOrigin());
+
+			for (int op : SchemaGenerator.getAssignOperator()) {
+				StmtAssign ass = new StmtAssign(assign.getLHS(), n_rhs, op);
+				System.out.println("=====primitive generator create ====" + func + "," + ass);
+				layerCandidate.add(ass);
+			}
 		}
 		return layerCandidate;
 	}
