@@ -38,6 +38,7 @@ public class SketchRepairCollector {
 				candidates.addAll(new SketchExprGenerator(controller).createCandidate(func, bugAssign));
 			}
 		}
+		
 		return candidates;
 	}
 

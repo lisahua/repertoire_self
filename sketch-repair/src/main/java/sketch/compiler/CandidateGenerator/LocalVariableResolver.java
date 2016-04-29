@@ -31,6 +31,7 @@ public class LocalVariableResolver extends NameResolver {
 		super(prog);
 		allStructs.addAll(structNamesList());
 		genAllFieldsPerType();
+
 	}
 
 	public void add(String name, StructDef struct, String func) {
@@ -123,7 +124,15 @@ public class LocalVariableResolver extends NameResolver {
 		}
 		return sList;
 	}
-
+public StringBuilder extractCandidateHoleAllS(String func, String type, int bound) {
+	List<StringBuilder> sList = extractCandidateSetAsHole(func,type,bound);
+	StringBuilder sb = sList.get(0);
+	for (int i=1;i<sList.size();i++) {
+		if (sList.get(i).length()==0) continue;
+		sb.append("|"+ sList.get(i));	
+	}
+	return sb;
+}
 	public List<HashSet<String>> extractCandidateList(String func, String type, int bound) {
 		HashMap<String, VarDeclEntry> map = funcVar.get(func);
 		HashMap<String, CandidateWrapper> first = new HashMap<String, CandidateWrapper>();
@@ -216,4 +225,36 @@ public class LocalVariableResolver extends NameResolver {
 			System.out.println(e);
 		return res;
 	}
+
+	private StringBuilder simplifiedExtractCandidateSet(String type, int bound) {
+		StringBuilder builder = new StringBuilder();
+		getTypeVars();
+
+		return builder;
+	}
+
+	private void getTypeVars() {
+		HashMap<String, HashMap<String, String>> funcTypeVars = new HashMap<String, HashMap<String, String>>();
+		for (String func : funcVar.keySet()) {
+			HashMap<String, String> typeVars = new HashMap<String, String>();
+			HashMap<String, VarDeclEntry> varType = funcVar.get(func);
+			for (String key : varType.keySet()) {
+				String type = varType.get(key).getTypeS();
+				String vars = "";
+				if (typeVars.containsKey(type))
+					vars = typeVars.get(type);
+				vars += key + "|";
+				typeVars.put(type, vars);
+			}
+			HashMap<String, String> typeVarTrim = new HashMap<String, String>();
+			for (String type : typeVars.keySet()) {
+				String names = typeVars.get(type);
+				typeVarTrim.put(type, names.substring(0, names.length() - 1));
+			}
+			funcTypeVars.put(func, typeVarTrim);
+		}
+	}
+	
+	
+
 }

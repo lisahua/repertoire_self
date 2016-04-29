@@ -1,7 +1,7 @@
 /**
  * @author Lisa Mar 19, 2016 ProgramRecord.java 
  */
-package sketch.compiler.bugLocator;
+package sketch.compiler.CandidateGenerator.multi;
 
 import java.io.FileNotFoundException;
 import java.util.HashMap;
@@ -23,22 +23,24 @@ import sketch.compiler.ast.core.exprs.Expression;
 import sketch.compiler.ast.core.stmts.StmtAssert;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
+import sketch.compiler.bugLocator.RepairFEFuncVisitor;
+import sketch.compiler.bugLocator.VarDeclEntry;
 import sketch.compiler.main.other.RepairSketchOptions;
 import sketch.compiler.main.other.RepairStageRunner;
 import sketch.compiler.main.other.SimpleSketchFilePrinter;
 
-public class RepairProgramController {
+public class RepairMultiController {
 	private HashMap<String, List<StmtAssert>> funcAssertMap = new HashMap<String, List<StmtAssert>>();
-	private HashMap<String, List<ExprFunCall>> funcCallMap = new HashMap<String, List<ExprFunCall>>();
-	private HashMap<String, List<StmtAssign>> assignMap = new HashMap<String, List<StmtAssign>>();
-	private HashMap<String, String> fileFixMap = null;
+//	private HashMap<String, List<ExprFunCall>> funcCallMap = new HashMap<String, List<ExprFunCall>>();
+//	private HashMap<String, List<StmtAssign>> assignMap = new HashMap<String, List<StmtAssign>>();
+//	private HashMap<String, String> fileFixMap = null;
 	private String buggyType = null;
 	private RepairSketchOptions options;
 	private LocalVariableResolver resolver;
 	private Program prog;
 	private int num = 0;
 
-	public RepairProgramController(final Program prog, final RepairSketchOptions options) {
+	public RepairMultiController(final Program prog, final RepairSketchOptions options) {
 		resolver = new LocalVariableResolver(prog);
 		initProgram(prog);
 		this.options = options;
@@ -52,7 +54,7 @@ public class RepairProgramController {
 				RepairFEFuncVisitor visitor = new RepairFEFuncVisitor();
 				func.accept(visitor);
 				funcAssertMap.put(func.getName(), visitor.getAsserts());
-				funcCallMap.put(func.getName(), visitor.getFunCall());
+//				funcCallMap.put(func.getName(), visitor.getFunCall());
 
 				for (Parameter para : visitor.getParameter()) {
 					resolver.add(para.getName(), resolver.getStruct(para.getType().toString()), func.getName());
@@ -64,7 +66,7 @@ public class RepairProgramController {
 						resolver.add(entry.getName(), resolver.getStruct(entry.getType().toString()), func.getName());
 					}
 				}
-				assignMap.put(func.getName(), visitor.getStmtAssign());
+//				assignMap.put(func.getName(), visitor.getStmtAssign());
 			}
 		}
 	}
@@ -102,22 +104,22 @@ public class RepairProgramController {
 	public Function getFuncMap(String name) {
 		return resolver.getFun(name);
 	}
-
+//
 	public HashMap<String, List<StmtAssert>> getFuncAssertMap() {
 		return funcAssertMap;
 	}
 
-	public HashMap<String, List<ExprFunCall>> getFuncCallMap() {
-		return funcCallMap;
-	}
+//	public HashMap<String, List<ExprFunCall>> getFuncCallMap() {
+//		return funcCallMap;
+//	}
 
-	public HashMap<String, List<StmtAssign>> getAssignMap() {
-		return assignMap;
-	}
+//	public HashMap<String, List<StmtAssign>> getAssignMap() {
+//		return assignMap;
+//	}
 
-	public HashMap<String, String> getFixPerFile() {
-		return fileFixMap;
-	}
+//	public HashMap<String, String> getFixPerFile() {
+//		return fileFixMap;
+//	}
 
 	public String getSketchFile() {
 		return options.args[0];
@@ -155,7 +157,7 @@ public class RepairProgramController {
 		return new RepairStageRunner(options).solveSketch(path);
 	}
 
-	public RepairProgramController writeFile(RepairSketchInsertionReplacer replacer) {
+	public RepairMultiController writeFile(RepairSketchInsertionReplacer replacer) {
 		String path = options.sketchName + num++;
 		prog = new RepairStageRunner(options).readSketch(options.args[0]);
 		prog = (Program) replacer.visitProgram(prog);
@@ -163,7 +165,7 @@ public class RepairProgramController {
 			new SimpleSketchFilePrinter(path).visitProgram(prog);
 			prog = new RepairStageRunner(options).readSketch(path);
 			if (prog != null) {
-				RepairProgramController update_c = new RepairProgramController(prog, options);
+				RepairMultiController update_c = new RepairMultiController(prog, options);
 				return update_c;
 			} else {
 				System.out.println("Expcetion controller null from omission field locator");

@@ -7,21 +7,30 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import sketch.compiler.CandidateGenerator.multi.RepairMultiController;
 import sketch.compiler.ast.core.stmts.StmtAssert;
 import sketch.compiler.bugLocator.RepairProgramController;
 import sketch.compiler.bugLocator.VarDeclEntry;
 
 public class FailAssertHandler {
 
-	private RepairProgramController utility;
+//	private RepairProgramController utility;
+	private RepairMultiController utility;
 	private String buggyHarness = null;
 	private StmtAssert failAssert = null;
-
+	private String buggyType = null;
 	private List<VarDeclEntry> fields = new ArrayList<VarDeclEntry>();
 
 	public FailAssertHandler(final RepairProgramController utility) {
-		this.utility = utility;
+//		this.utility = utility;
 	}
+
+	public FailAssertHandler(RepairMultiController repairMultiController) {
+		// TODO Auto-generated constructor stub
+		utility = repairMultiController;
+	}
+
+	
 
 	public StmtAssert findBuggyAssertion(String message) {
 		int index2 = message.indexOf("at");
@@ -59,12 +68,16 @@ public class FailAssertHandler {
 	}
 
 	public List<VarDeclEntry> getFailField() {
-		
+
 		return fields;
 	}
 
 	public StmtAssert getFailAssert() {
 		return failAssert;
+	}
+
+	public String getBuggyTypeS() {
+		return buggyType;
 	}
 
 	private void findFailField(StmtAssert ass) {
@@ -74,10 +87,13 @@ public class FailAssertHandler {
 		if (lhs.contains(".")) {
 
 			fields.addAll(utility.resolveFieldChain(buggyHarness, lhs));
+			buggyType = fields.get(fields.size() - 1).getTypeS();
 		}
 		if (rhs.contains("."))
 			fields.addAll(utility.resolveFieldChain(buggyHarness, rhs));
 
 	}
-
+//public List<String> getBuggyFunctions() {
+//	utility.
+//}
 }
