@@ -17,14 +17,6 @@ import sketch.compiler.ast.core.stmts.StmtLoop;
 
 public class SketchTypeLoopReplacer extends SketchTypeReplacer {
 
-	public SketchTypeLoopReplacer(RepairMultiController controller, String buggyType, String func) {
-		super(controller, buggyType, func);
-	}
-
-	public SketchTypeLoopReplacer(RepairMultiController controller, String buggyType) {
-		super(controller, buggyType);
-	}
-
 	public void putAfterDefine(FENode origin, StringBuilder sb) {
 
 		if (!isPrimitive) {

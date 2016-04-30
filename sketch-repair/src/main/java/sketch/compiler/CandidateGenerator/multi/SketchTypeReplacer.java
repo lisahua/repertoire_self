@@ -29,18 +29,7 @@ public abstract class SketchTypeReplacer extends FEReplacer {
 	HashSet<String> allVars;
 	boolean isBuggyTypeStmt = false;
 
-	public SketchTypeReplacer(RepairMultiController controller, String buggyType, String func) {
-		System.out.println("init replacer " + buggyType + "," + func);
-		this.controller = controller;
-		this.buggyType = buggyType;
-		bugFunc = new ArrayList<String>(Arrays.asList(func));
-		System.out.println("replacer check primitive " + controller.getAllStructNames() + ";" + buggyType);
-		if (!controller.getAllStructNames().contains(buggyType))
-			isPrimitive = true;
-
-	}
-
-	public SketchTypeReplacer(RepairMultiController controller, String buggyType) {
+	public void generateCandidate(RepairMultiController controller, String buggyType) {
 		System.out.println("init replacer " + buggyType);
 		this.controller = controller;
 		this.buggyType = buggyType;
@@ -48,24 +37,28 @@ public abstract class SketchTypeReplacer extends FEReplacer {
 		System.out.println("replacer check primitive " + controller.getAllStructNames() + ";" + buggyType);
 		if (!controller.getAllStructNames().contains(buggyType))
 			isPrimitive = true;
+	}
 
+	public void generateCandidate(RepairMultiController controller, String buggyType, String func) {
+		generateCandidate(controller, buggyType);
+		bugFunc = new ArrayList<String>(Arrays.asList(func));
 	}
 
 	public Object visitFunction(Function func) {
 		funcName = func.getName();
 		if (!bugFunc.contains(funcName))
 			return super.visitFunction(func);
-		
+
 		isBuggyTypeStmt = false;
 		StringBuilder sb = controller.genCandidateAllS(func.getName(), buggyType);
-		if (sb.length()<2) return func;
-//		if (sb.charAt(0) == '|') 
-//			sb = new StringBuilder(sb.substring(1));
-		 System.out.println("Sketch type replacer " + func.getName() + "," +
-		 buggyType + "," + sb);
-		putAfterDefine(func.getOrigin(),sb);
+		if (sb.length() < 2)
+			return func;
+		if (sb.charAt(0) == '|')
+			sb = new StringBuilder(sb.substring(1));
+		System.out.println("Sketch type replacer " + func.getName() + "," + buggyType + "," + sb);
+		putAfterDefine(func.getOrigin(), sb);
 		allVars = getVarInStmt(insertStmt.toString());
-//		Statement body = func.getBody();
+		// Statement body = func.getBody();
 		List<Parameter> params = func.getParams();
 		HashSet<String> existVar = new HashSet<String>();
 		HashSet<String> definedVar = new HashSet<String>();
@@ -74,11 +67,11 @@ public abstract class SketchTypeReplacer extends FEReplacer {
 		}
 		StmtBlock block = new StmtBlock(func.getOrigin(), insertRecur(func.getBody(), existVar, definedVar));
 		func = func.creator().body(block).create();
-//		System.out.println("replacer func, " + func.getBody());
+		// System.out.println("replacer func, " + func.getBody());
 		return super.visitFunction(func);
 	}
 
-	public abstract void  putAfterDefine(FENode origin, StringBuilder sb);
+	public abstract void putAfterDefine(FENode origin, StringBuilder sb);
 
 	Statement insertRecur(Statement origin, HashSet<String> existVar, HashSet<String> definedVar) {
 

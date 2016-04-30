@@ -19,13 +19,6 @@ import sketch.compiler.ast.core.stmts.StmtBlock;
 
 public class SketchTypeExprReplacer extends SketchTypeReplacer {
 
-	public SketchTypeExprReplacer(RepairMultiController controller, String buggyType, String func) {
-		super(controller, buggyType, func);
-	}
-
-	public SketchTypeExprReplacer(RepairMultiController controller, String buggyType) {
-		super(controller, buggyType);
-	}
 
 	public void putAfterDefine(FENode origin, StringBuilder sb) {
 //		System.out.println("put after define insert stmt1 " + sb);

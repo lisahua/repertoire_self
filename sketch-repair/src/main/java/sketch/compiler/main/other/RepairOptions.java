@@ -16,7 +16,7 @@ public class RepairOptions extends CliAnnotatedOptionGroup {
     public String repairSketch = null;
 
     @CliParameter(help = "Change the default bound for repair candidate generation from 3 to a different value.")
-    public int bound=2;
+    public int bound=3;
 
     @CliParameter(help = "Change the default file that outputs the repaired code in Sketch from $HOME/.repair/$Name.sk to a different value")
     public String outputRepair = null;

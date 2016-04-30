@@ -4,6 +4,8 @@
 package sketch.compiler.CandidateGenerator.multi;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -60,7 +62,7 @@ public class RepairMultiController {
 				funcCallMap.put(func.getName(), visitor.getFunCallS());
 
 				for (Parameter para : visitor.getParameter()) {
-					resolver.add(para.getName(),para.getType().toString(), func.getName());
+					resolver.add(para.getName(), para.getType().toString(), func.getName());
 				}
 				for (StmtVarDecl var : visitor.getVarDecl()) {
 					Iterator<StmtVarDecl.VarDeclEntry> iterator = var.iterator();
@@ -81,57 +83,27 @@ public class RepairMultiController {
 			System.out.println("Cannot identify failing assertion! Repair stop.");
 			return false;
 		}
-		// AssertionLocator assertLocator = new
-		// AssertionLocator(failHandler.getAllAsserts());
-		// List<StmtAssert> asserts =
-		// assertLocator.findAllAsserts(failHandler.getFailField());
-		// buggyType = failHandler.getBuggyTypeS();
-		List<String> types = failHandler.getBuggyTypeS();
-		List<String> funcs = failHandler.getSuspFunctions();
-		// Approach 1: correct but not efficient
-		// for (int i = types.size() - 1; i >= 0; i--) {
-		// SketchTypeExprReplacer replacer = new SketchTypeExprReplacer(this,
-		// types.get(i));
-		// prog.accept(replacer);
-		// boolean result = solveSketch((Program) replacer.visitProgram(prog));
-		// if (result)
-		// return true;
-		// }
-		// Approach 2:
-
-		for (int j = funcs.size() - 1; j >= 0; j--) {
-			for (int i = types.size() - 1; i >= 0; i--) {
-				SketchTypeExprReplacer replacer = new SketchTypeExprReplacer(this, types.get(i), funcs.get(j));
-				prog.accept(replacer);
-				boolean result = solveSketch((Program) replacer.visitProgram(prog));
-				if (result)
-					return true;
-			}
-		}
-		for (int j = funcs.size() - 1; j >= 0; j--) {
-			for (int i = types.size() - 1; i >= 0; i--) {
-				SketchTypeLoopReplacer replacer = new SketchTypeLoopReplacer(this, types.get(i), funcs.get(j));
-				prog.accept(replacer);
-				boolean result = solveSketch((Program) replacer.visitProgram(prog));
-				if (result)
-					return true;
-			}
-		}
-		// for (String func : failHandler.getSuspFunctions()) {
-		// replacer.visitFunction(funcMap.get(func));
-		// }
-		// SuspiciousFieldCollector suspLocator = new
-		// SuspiciousFieldCollector(this);
-		// boolean repair =
-		// suspLocator.findAllFieldsInMethod(failHandler.getFailField(),
-		// failHandler.getBuggyHarness());
-
-		return false;
+		return runCandidates();
 	}
 
-	// public String getBuggyTypeS() {
-	// return buggyType;
-	// }
+	private boolean runCandidates() {
+		List<String> types = failHandler.getBuggyTypeS();
+		List<String> funcs = failHandler.getSuspFunctions();
+		List<SketchTypeReplacer> replacer = new ArrayList<SketchTypeReplacer>(Arrays.asList(
+				new SketchTypeExprReplacer(), new SketchTypeLoopReplacer(), new SketchTypeDependentLoopReplacer()));
+		for (SketchTypeReplacer rep : replacer) {
+			for (int j = funcs.size() - 1; j >= 0; j--) {
+				for (int i = types.size() - 1; i >= 0; i--) {
+					rep.generateCandidate(this, types.get(i), funcs.get(j));
+					prog.accept(rep);
+					boolean result = solveSketch((Program) rep.visitProgram(prog));
+					if (result)
+						return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	public List<VarDeclEntry> resolveFieldChain(String func, String string) {
 		return resolver.resolveFieldChain(func, string);

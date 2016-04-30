@@ -39,7 +39,7 @@ public class LocalVariableResolver extends NameResolver {
 	public void add(String name, String struct, String func) {
 		HashMap<String, VarDeclEntry> map = funcVar.get(func);
 		map = (map == null) ? new HashMap<String, VarDeclEntry>() : map;
-
+		struct = struct.contains("@") ? struct.substring(0, struct.indexOf("@")) : struct;
 		VarDeclEntry entry = new VarDeclEntry(name, struct, func);
 		map.put(name, entry);
 		funcVar.put(func, map);
@@ -99,8 +99,7 @@ public class LocalVariableResolver extends NameResolver {
 			HashMap<String, VarDeclEntry> entryList = new HashMap<String, VarDeclEntry>();
 			while (iterator.hasNext()) {
 				Entry<String, Type> e = iterator.next();
-				VarDeclEntry new_e = new VarDeclEntry(struct + "." + e.getKey(), e.getValue().toString(),
-						null);
+				VarDeclEntry new_e = new VarDeclEntry(struct + "." + e.getKey(), e.getValue().toString(), null);
 				entryList.put(e.getKey(), new_e);
 			}
 			fieldPerStruct.put(struct, entryList);
@@ -135,7 +134,8 @@ public class LocalVariableResolver extends NameResolver {
 				continue;
 			sb.append("|" + sList.get(i));
 		}
-//		System.out.println("local var solver stringbuilder extract candidates "+sb);
+		// System.out.println("local var solver stringbuilder extract candidates
+		// "+sb);
 		return sb;
 	}
 
