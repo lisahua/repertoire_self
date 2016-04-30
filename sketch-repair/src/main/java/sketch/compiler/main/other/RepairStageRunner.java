@@ -65,7 +65,7 @@ public class RepairStageRunner extends RepairSketchMain {
 			String err = parseErr(e.getMessage());
 			// if (serr.equals("") || serr.equals(err)) {
 			System.out.println("===RepairStageRunner ===not solve");
-			new File(sketchF).delete();
+//			new File(sketchF).delete();
 			serr = err;
 			fix = sketchF;
 			return false;

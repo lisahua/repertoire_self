@@ -23,7 +23,7 @@ import sketch.compiler.ast.core.stmts.StmtReturn;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
 import sketch.compiler.ast.core.stmts.StmtWhile;
 
-public class SketchTypeExprReplacer extends FEReplacer {
+public class SketchTypeLoopReplacer extends FEReplacer {
 	private StmtLoop loop = null;
 	private String buggyType = null;
 	private RepairMultiController controller = null;
@@ -33,7 +33,7 @@ public class SketchTypeExprReplacer extends FEReplacer {
 	private HashSet<String> allVars;
 	private boolean isBuggyTypeStmt = false;
 
-	public SketchTypeExprReplacer(RepairMultiController controller, String buggyType, String func) {
+	public SketchTypeLoopReplacer(RepairMultiController controller, String buggyType, String func) {
 		System.out.println("init replacer " + buggyType + "," + func);
 		this.controller = controller;
 		this.buggyType = buggyType;
@@ -44,7 +44,7 @@ public class SketchTypeExprReplacer extends FEReplacer {
 
 	}
 
-	public SketchTypeExprReplacer(RepairMultiController controller, String buggyType) {
+	public SketchTypeLoopReplacer(RepairMultiController controller, String buggyType) {
 		System.out.println("init replacer " + buggyType);
 		this.controller = controller;
 		this.buggyType = buggyType;

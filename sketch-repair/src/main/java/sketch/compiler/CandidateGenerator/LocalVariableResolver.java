@@ -255,6 +255,8 @@ public StringBuilder extractCandidateHoleAllS(String func, String type, int boun
 		}
 	}
 	
-	
+	public HashSet<String> getStructNames() {
+		return allStructs;
+	}
 
 }

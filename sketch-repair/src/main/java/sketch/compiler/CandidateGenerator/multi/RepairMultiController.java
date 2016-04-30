@@ -10,20 +10,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import sketch.compiler.CandidateGenerator.LocalVariableResolver;
-import sketch.compiler.CandidateGenerator.RepairSketchInsertionReplacer;
-import sketch.compiler.ProgramLocator.SuspiciousFieldCollector;
-import sketch.compiler.assertionLocator.AssertionLocator;
-import sketch.compiler.assertionLocator.FailAssertHandler;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.Package;
 import sketch.compiler.ast.core.Parameter;
 import sketch.compiler.ast.core.Program;
-import sketch.compiler.ast.core.exprs.ExprFunCall;
-import sketch.compiler.ast.core.exprs.Expression;
 import sketch.compiler.ast.core.stmts.StmtAssert;
-import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
-import sketch.compiler.bugLocator.RepairFEFuncVisitor;
 import sketch.compiler.bugLocator.VarDeclEntry;
 import sketch.compiler.main.other.RepairSketchOptions;
 import sketch.compiler.main.other.RepairStageRunner;
@@ -31,14 +23,14 @@ import sketch.compiler.main.other.SimpleSketchFilePrinter;
 
 public class RepairMultiController {
 	private HashMap<String, List<StmtAssert>> funcAssertMap = new HashMap<String, List<StmtAssert>>();
-//	private HashMap<String, List<ExprFunCall>> funcCallMap = new HashMap<String, List<ExprFunCall>>();
-//	private HashMap<String, List<StmtAssign>> assignMap = new HashMap<String, List<StmtAssign>>();
-//	private HashMap<String, String> fileFixMap = null;
-	private String buggyType = null;
+	private HashMap<String, List<String>> funcCallMap = new HashMap<String, List<String>>();
+	private HashMap<String, Function> funcMap = new HashMap<String, Function>();
+	// private String buggyType = null;
 	private RepairSketchOptions options;
 	private LocalVariableResolver resolver;
 	private Program prog;
 	private int num = 0;
+	private FailureAssertHandler failHandler = null;
 
 	public RepairMultiController(final Program prog, final RepairSketchOptions options) {
 		resolver = new LocalVariableResolver(prog);
@@ -47,14 +39,26 @@ public class RepairMultiController {
 		this.prog = prog;
 	}
 
+	public HashSet<String> getAllStructNames() {
+		HashSet<String> structs = resolver.getStructNames();
+		HashSet<String> structNames = new HashSet<String>();
+		for (String name : structs)
+			structNames.add(name.substring(0, name.indexOf("@")));
+		return structNames;
+	}
+
 	private void initProgram(Program prog) {
 		for (Package pkg : prog.getPackages()) {
 
 			for (Function func : pkg.getFuncs()) {
-				RepairFEFuncVisitor visitor = new RepairFEFuncVisitor();
+				ProgramParseVisitor visitor = new ProgramParseVisitor();
+				// RepairFEFuncVisitor visitor = new RepairFEFuncVisitor();
 				func.accept(visitor);
+				funcMap.put(func.getFullName(), func);
 				funcAssertMap.put(func.getName(), visitor.getAsserts());
-//				funcCallMap.put(func.getName(), visitor.getFunCall());
+				// System.out.println("controller get func call
+				// s"+visitor.getFunCallS().get(0));
+				funcCallMap.put(func.getName(), visitor.getFunCallS());
 
 				for (Parameter para : visitor.getParameter()) {
 					resolver.add(para.getName(), resolver.getStruct(para.getType().toString()), func.getName());
@@ -66,60 +70,93 @@ public class RepairMultiController {
 						resolver.add(entry.getName(), resolver.getStruct(entry.getType().toString()), func.getName());
 					}
 				}
-//				assignMap.put(func.getName(), visitor.getStmtAssign());
+				// assignMap.put(func.getName(), visitor.getStmtAssign());
 			}
 		}
 	}
 
 	public boolean startRepair(String message) {
-		FailAssertHandler failHandler = new FailAssertHandler(this);
+		failHandler = new FailureAssertHandler(this);
 		StmtAssert failAssert = failHandler.findBuggyAssertion(message);
 		if (failAssert == null) {
 			System.out.println("Cannot identify failing assertion! Repair stop.");
 			return false;
 		}
-		AssertionLocator assertLocator = new AssertionLocator(failHandler.getAllAsserts());
-		List<StmtAssert> asserts = assertLocator.findAllAsserts(failHandler.getFailField());
-		buggyType = failHandler.getBuggyTypeS();
+		// AssertionLocator assertLocator = new
+		// AssertionLocator(failHandler.getAllAsserts());
+		// List<StmtAssert> asserts =
+		// assertLocator.findAllAsserts(failHandler.getFailField());
+		// buggyType = failHandler.getBuggyTypeS();
+		List<String> types = failHandler.getBuggyTypeS();
+		List<String> funcs = failHandler.getSuspFunctions();
+		// Approach 1: correct but not efficient
+		// for (int i = types.size() - 1; i >= 0; i--) {
+		// SketchTypeExprReplacer replacer = new SketchTypeExprReplacer(this,
+		// types.get(i));
+		// prog.accept(replacer);
+		// boolean result = solveSketch((Program) replacer.visitProgram(prog));
+		// if (result)
+		// return true;
+		// }
+		// Approach 2:
+		for (int j = funcs.size() - 1; j >= 0; j--) {
+			for (int i = types.size() - 1; i >= 0; i--) {
+				SketchTypeLoopReplacer replacer = new SketchTypeLoopReplacer(this, types.get(i), funcs.get(j));
+				prog.accept(replacer);
+				boolean result = solveSketch((Program) replacer.visitProgram(prog));
+				if (result)
+					return true;
+			}
+		}
 
-		SuspiciousFieldCollector suspLocator = new SuspiciousFieldCollector(this);
-		boolean repair = suspLocator.findAllFieldsInMethod(failHandler.getFailField(), failHandler.getBuggyHarness());
+		// for (String func : failHandler.getSuspFunctions()) {
+		// replacer.visitFunction(funcMap.get(func));
+		// }
+		// SuspiciousFieldCollector suspLocator = new
+		// SuspiciousFieldCollector(this);
+		// boolean repair =
+		// suspLocator.findAllFieldsInMethod(failHandler.getFailField(),
+		// failHandler.getBuggyHarness());
 
-		return repair;
+		return false;
 	}
 
-	public String getBuggyTypeS() {
-		return buggyType;
-	}
+	// public String getBuggyTypeS() {
+	// return buggyType;
+	// }
 
 	public List<VarDeclEntry> resolveFieldChain(String func, String string) {
 		return resolver.resolveFieldChain(func, string);
 	}
+
 	public String resolveFieldType(String func, String string) {
-		List<VarDeclEntry> list =  resolver.resolveFieldChain(func, string);
-		return list.get(list.size()-1).getTypeS();
+		List<VarDeclEntry> list = resolver.resolveFieldChain(func, string);
+		return list.get(list.size() - 1).getTypeS();
 	}
-	
-	
-	public Function getFuncMap(String name) {
-		return resolver.getFun(name);
-	}
-//
+
+	// public Function getFuncMap(String name) {
+	// return resolver.getFun(name);
+	// }
+	//
 	public HashMap<String, List<StmtAssert>> getFuncAssertMap() {
 		return funcAssertMap;
 	}
 
-//	public HashMap<String, List<ExprFunCall>> getFuncCallMap() {
-//		return funcCallMap;
-//	}
+	public HashMap<String, List<String>> getFuncCallMap() {
+		return funcCallMap;
+	}
 
-//	public HashMap<String, List<StmtAssign>> getAssignMap() {
-//		return assignMap;
-//	}
+	// public HashMap<String, List<StmtAssign>> getAssignMap() {
+	// return assignMap;
+	// }
 
-//	public HashMap<String, String> getFixPerFile() {
-//		return fileFixMap;
-//	}
+	// public HashMap<String, String> getFixPerFile() {
+	// return fileFixMap;
+	// }
+
+	public FailureAssertHandler getFailureHandler() {
+		return failHandler;
+	}
 
 	public String getSketchFile() {
 		return options.args[0];
@@ -132,16 +169,19 @@ public class RepairMultiController {
 		return bound;
 	}
 
-	public List<HashSet<String>> genCandidateList(String func, String typeS) {
-		return resolver.extractCandidateList(func, typeS, getRepairBound());
-	}
-
-	public List<StringBuilder> genCandidateSetString(String func, String typeS) {
-		return resolver.extractCandidateSetAsHole(func, typeS, getRepairBound());
-	}
+	// private List<HashSet<String>> genCandidateList(String func, String typeS)
+	// {
+	// return resolver.extractCandidateList(func, typeS, getRepairBound());
+	// }
+	//
+	// private List<StringBuilder> genCandidateSetString(String func, String
+	// typeS) {
+	// return resolver.extractCandidateSetAsHole(func, typeS, getRepairBound());
+	// }
 	public StringBuilder genCandidateAllS(String func, String typeS) {
 		return resolver.extractCandidateHoleAllS(func, typeS, getRepairBound());
 	}
+
 	public Program getProgram() {
 		return prog;
 	}
@@ -150,6 +190,7 @@ public class RepairMultiController {
 		System.out.println("solve sketch " + options.sktmpdir().getAbsolutePath());
 		String path = options.sketchName + num++;
 		try {
+
 			new SimpleSketchFilePrinter(path).visitProgram(prog);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -157,33 +198,36 @@ public class RepairMultiController {
 		return new RepairStageRunner(options).solveSketch(path);
 	}
 
-	public RepairMultiController writeFile(RepairSketchInsertionReplacer replacer) {
-		String path = options.sketchName + num++;
-		prog = new RepairStageRunner(options).readSketch(options.args[0]);
-		prog = (Program) replacer.visitProgram(prog);
-		try {
-			new SimpleSketchFilePrinter(path).visitProgram(prog);
-			prog = new RepairStageRunner(options).readSketch(path);
-			if (prog != null) {
-				RepairMultiController update_c = new RepairMultiController(prog, options);
-				return update_c;
-			} else {
-				System.out.println("Expcetion controller null from omission field locator");
-				return null;
-			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
+	// public RepairMultiController writeFile(RepairSketchInsertionReplacer
+	// replacer) {
+	// String path = options.sketchName + num++;
+	// prog = new RepairStageRunner(options).readSketch(options.args[0]);
+	// prog = (Program) replacer.visitProgram(prog);
+	// try {
+	// new SimpleSketchFilePrinter(path).visitProgram(prog);
+	// prog = new RepairStageRunner(options).readSketch(path);
+	// if (prog != null) {
+	// RepairMultiController update_c = new RepairMultiController(prog,
+	// options);
+	// return update_c;
+	// } else {
+	// System.out.println("Expcetion controller null from omission field
+	// locator");
+	// return null;
+	// }
+	// } catch (FileNotFoundException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// return null;
+	// }
 
 	public boolean isPrimitiveType(String func, String exp) {
 		return resolver.isPrimitiveType(func, exp);
 	}
 
-	public HashSet<Expression> instantiateField(String func, String field) {
-		return resolver.instantiateField(func, field, null);
-	}
+	// public HashSet<Expression> instantiateField(String func, String field) {
+	// return resolver.instantiateField(func, field, null);
+	// }
 
 }

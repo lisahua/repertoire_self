@@ -4,10 +4,9 @@
 package sketch.compiler.main.other;
 
 import java.util.HashMap;
-import java.util.List;
 
+import sketch.compiler.CandidateGenerator.multi.RepairMultiController;
 import sketch.compiler.ast.core.Program;
-import sketch.compiler.bugLocator.RepairProgramController;
 
 public class RepairStage {
 	static String se = "";
@@ -24,8 +23,8 @@ public class RepairStage {
 			return false;
 		}
 		
-		
-		RepairProgramController utility = new RepairProgramController(prog, options);
+		RepairMultiController utility = new RepairMultiController(prog, options);
+//		RepairProgramController utility = new RepairProgramController(prog, options);
 		if(  utility.startRepair(err)) {
 			String fix = RepairStageRunner.getFix();
 			if (fix ==null) return true;

@@ -14,8 +14,8 @@ import sketch.compiler.bugLocator.VarDeclEntry;
 
 public class FailAssertHandler {
 
-//	private RepairProgramController utility;
-	private RepairMultiController utility;
+	private RepairProgramController utility;
+//	private RepairMultiController utility;
 	private String buggyHarness = null;
 	private StmtAssert failAssert = null;
 	private String buggyType = null;
@@ -25,10 +25,10 @@ public class FailAssertHandler {
 //		this.utility = utility;
 	}
 
-	public FailAssertHandler(RepairMultiController repairMultiController) {
-		// TODO Auto-generated constructor stub
-		utility = repairMultiController;
-	}
+//	public FailAssertHandler(RepairMultiController repairMultiController) {
+//		// TODO Auto-generated constructor stub
+//		utility = repairMultiController;
+//	}
 
 	
 

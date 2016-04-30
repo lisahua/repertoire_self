@@ -1,8 +1,7 @@
 /**
  * @author Lisa Mar 17, 2016 SuspiciousTypeLocator.java 
  */
-package sketch.compiler.bugLocator;
-
+package sketch.compiler.CandidateGenerator.multi;
 
 import java.util.ArrayList;
 
@@ -15,14 +14,15 @@ import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtExpr;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
 
-public class RepairFEFuncVisitor extends FEReplacer {
+public class ProgramParseVisitor extends FEReplacer {
 	ArrayList<StmtAssert> asserts = new ArrayList<StmtAssert>();
 	ArrayList<StmtVarDecl> varDecl = new ArrayList<StmtVarDecl>();
-	ArrayList<ExprFunCall> funCall = new ArrayList<ExprFunCall>();
-//	ArrayList<String> funCall = new ArrayList<String>();
+	// ArrayList<ExprFunCall> funCall = new ArrayList<ExprFunCall>();
+	ArrayList<String> funCall = new ArrayList<String>();
 	ArrayList<StmtAssign> stmtAssign = new ArrayList<StmtAssign>();
-	
+
 	ArrayList<Parameter> parameter = new ArrayList<Parameter>();
+
 	public Object visitStmtAssert(StmtAssert stmt) {
 		asserts.add(stmt);
 		return super.visitStmtAssert(stmt);
@@ -36,15 +36,16 @@ public class RepairFEFuncVisitor extends FEReplacer {
 	public Object visitExprNew(ExprNew expNew) {
 		return super.visitExprNew(expNew);
 	}
-	
-	public Object  visitParameter(Parameter par)  {
+
+	public Object visitParameter(Parameter par) {
 		parameter.add(par);
 		return super.visitParameter(par);
 	}
-	
+
 	public Object visitStmtAssign(StmtAssign stmt) {
-//		System.out.println("=====RepairSketchReplacer ===find assign stmt " + stmt+","+stmt.getRHS()+"," +stmt.getRHS().getClass());
-		
+		// System.out.println("=====RepairSketchReplacer ===find assign stmt " +
+		// stmt+","+stmt.getRHS()+"," +stmt.getRHS().getClass());
+
 		stmtAssign.add(stmt);
 		return super.visitStmtAssign(stmt);
 	}
@@ -54,11 +55,13 @@ public class RepairFEFuncVisitor extends FEReplacer {
 	}
 
 	public Object visitExprFunCall(ExprFunCall exp) {
-		funCall.add(exp);
-//		System.out.println("visitor function call "+exp);
+
+		if (!funCall.contains(exp.getName()))
+			funCall.add(exp.getName());
+		// System.out.println("visitor function call "+exp.getName());
 		return super.visitExprFunCall(exp);
 	}
-	
+
 	public ArrayList<StmtAssert> getAsserts() {
 		return asserts;
 	}
@@ -67,12 +70,13 @@ public class RepairFEFuncVisitor extends FEReplacer {
 		return varDecl;
 	}
 
-	public ArrayList<ExprFunCall> getFunCall() {
+	// public ArrayList<ExprFunCall> getFunCall() {
+	// return funCall;
+	// }
+	public ArrayList<String> getFunCallS() {
 		return funCall;
 	}
-//	public ArrayList<String> getFunCallS() {
-//		return funCall;
-//	}
+
 	public ArrayList<StmtAssign> getStmtAssign() {
 		return stmtAssign;
 	}

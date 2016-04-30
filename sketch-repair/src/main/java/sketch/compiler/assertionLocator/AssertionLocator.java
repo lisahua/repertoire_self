@@ -7,7 +7,7 @@ import java.util.List;
 
 import sketch.compiler.ast.core.stmts.StmtAssert;
 import sketch.compiler.bugLocator.VarDeclEntry;
-
+@Deprecated 
 public class AssertionLocator {
 
 	private List<StmtAssert> assertList = null;
