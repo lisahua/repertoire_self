@@ -3,8 +3,6 @@
  */
 package sketch.compiler.CandidateGenerator.multi;
 
-import sketch.compiler.ast.core.typs.StructDef;
-
 public class VarDeclEntry {
 
 	private String name;

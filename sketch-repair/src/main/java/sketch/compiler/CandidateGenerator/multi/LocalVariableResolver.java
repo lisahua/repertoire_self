@@ -135,6 +135,7 @@ public class LocalVariableResolver extends NameResolver {
 				continue;
 			sb.append("|" + sList.get(i));
 		}
+//		System.out.println("local var solver stringbuilder extract candidates "+sb);
 		return sb;
 	}
 
