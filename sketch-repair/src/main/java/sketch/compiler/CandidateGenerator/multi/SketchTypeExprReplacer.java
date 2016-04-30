@@ -24,7 +24,7 @@ import sketch.compiler.ast.core.stmts.StmtVarDecl;
 import sketch.compiler.ast.core.stmts.StmtWhile;
 
 public class SketchTypeExprReplacer extends FEReplacer {
-	private StmtLoop loop = null;
+	private Statement insertStmt = null;
 	private String buggyType = null;
 	private RepairMultiController controller = null;
 	private String funcName = "";
@@ -76,21 +76,21 @@ public class SketchTypeExprReplacer extends FEReplacer {
 		if (!isPrimitive) {
 			Expression lhs = new ExprRegen(func.getOrigin(), "{|" + sb.toString() + "|}");
 			Expression rhs = new ExprRegen(func.getOrigin(), "{|" + sb.toString() + "|null|}");
-			StmtAssign assign = new StmtAssign(func.getOrigin(), lhs, rhs);
-			loop = new StmtLoop(func.getOrigin(), new ExprStar(func.getOrigin()), assign);
+			insertStmt = new StmtAssign(func.getOrigin(), lhs, rhs);
+			
 		} else {
 			Expression lhs = new ExprRegen(func.getOrigin(), "{" + sb.toString() + "|}");
 			Expression rhs = new ExprRegen(func.getOrigin(), "{" + sb.toString() + "|}");
 			// FIXME buggy!
 			List<Statement> stmts = new ArrayList<Statement>();
-			stmts.add(new StmtAssign(lhs, new ExprStar(func.getOrigin()), 1));
 			stmts.add(new StmtAssign(lhs, rhs, 0));
+			stmts.add(new StmtAssign(lhs, new ExprStar(func.getOrigin()), 1));
 			stmts.add(new StmtAssign(lhs, new ExprStar(func.getOrigin()), 2));
-			StmtBlock block = new StmtBlock(func.getOrigin(),stmts);
-			loop = new StmtLoop(func.getOrigin(), new ExprStar(func.getOrigin()), block);
+			insertStmt  = new StmtBlock(func.getOrigin(),stmts);
+		
 		}
 
-		allVars = getVarInStmt(loop.getBody().toString());
+		allVars = getVarInStmt(insertStmt.toString());
 
 		Statement body = func.getBody();
 		List<Parameter> params = func.getParams();
@@ -170,9 +170,10 @@ public class SketchTypeExprReplacer extends FEReplacer {
 			Statement rtn = insertRecur(list.get(i), existVar, definedVar);
 			allSList.add(rtn);
 		}
-		if (!isBuggyTypeStmt) {
-			allSList.add(loop);
-			isBuggyTypeStmt = true;
+		if (list.size()>3) {
+//		if (!isBuggyTypeStmt) {
+			allSList.add(insertStmt);
+//			isBuggyTypeStmt = true;
 		}
 		Statement rtn = insertRecur(list.get(list.size() - 1), existVar, definedVar);
 		allSList.add(rtn);

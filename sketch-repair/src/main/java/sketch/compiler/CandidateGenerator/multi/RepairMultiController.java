@@ -9,14 +9,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import sketch.compiler.CandidateGenerator.LocalVariableResolver;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.Package;
 import sketch.compiler.ast.core.Parameter;
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.stmts.StmtAssert;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
-import sketch.compiler.bugLocator.VarDeclEntry;
 import sketch.compiler.main.other.RepairSketchOptions;
 import sketch.compiler.main.other.RepairStageRunner;
 import sketch.compiler.main.other.SimpleSketchFilePrinter;
@@ -43,7 +41,8 @@ public class RepairMultiController {
 		HashSet<String> structs = resolver.getStructNames();
 		HashSet<String> structNames = new HashSet<String>();
 		for (String name : structs)
-			structNames.add(name.substring(0, name.indexOf("@")));
+			if (name.contains("@"))
+				structNames.add(name.substring(0, name.indexOf("@")));
 		return structNames;
 	}
 
@@ -61,13 +60,13 @@ public class RepairMultiController {
 				funcCallMap.put(func.getName(), visitor.getFunCallS());
 
 				for (Parameter para : visitor.getParameter()) {
-					resolver.add(para.getName(), resolver.getStruct(para.getType().toString()), func.getName());
+					resolver.add(para.getName(),para.getType().toString(), func.getName());
 				}
 				for (StmtVarDecl var : visitor.getVarDecl()) {
 					Iterator<StmtVarDecl.VarDeclEntry> iterator = var.iterator();
 					while (iterator.hasNext()) {
 						StmtVarDecl.VarDeclEntry entry = iterator.next();
-						resolver.add(entry.getName(), resolver.getStruct(entry.getType().toString()), func.getName());
+						resolver.add(entry.getName(), entry.getType().toString(), func.getName());
 					}
 				}
 				// assignMap.put(func.getName(), visitor.getStmtAssign());
@@ -99,6 +98,16 @@ public class RepairMultiController {
 		// return true;
 		// }
 		// Approach 2:
+
+		for (int j = funcs.size() - 1; j >= 0; j--) {
+			for (int i = types.size() - 1; i >= 0; i--) {
+				SketchTypeExprReplacer replacer = new SketchTypeExprReplacer(this, types.get(i), funcs.get(j));
+				prog.accept(replacer);
+				boolean result = solveSketch((Program) replacer.visitProgram(prog));
+				if (result)
+					return true;
+			}
+		}
 		for (int j = funcs.size() - 1; j >= 0; j--) {
 			for (int i = types.size() - 1; i >= 0; i--) {
 				SketchTypeLoopReplacer replacer = new SketchTypeLoopReplacer(this, types.get(i), funcs.get(j));
@@ -108,7 +117,6 @@ public class RepairMultiController {
 					return true;
 			}
 		}
-
 		// for (String func : failHandler.getSuspFunctions()) {
 		// replacer.visitFunction(funcMap.get(func));
 		// }

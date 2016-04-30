@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import sketch.compiler.ast.core.stmts.StmtAssert;
-import sketch.compiler.bugLocator.VarDeclEntry;
 
 public class FailureAssertHandler {
 

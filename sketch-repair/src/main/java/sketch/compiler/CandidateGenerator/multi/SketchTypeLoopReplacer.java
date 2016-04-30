@@ -81,7 +81,6 @@ public class SketchTypeLoopReplacer extends FEReplacer {
 		} else {
 			Expression lhs = new ExprRegen(func.getOrigin(), "{" + sb.toString() + "|}");
 			Expression rhs = new ExprRegen(func.getOrigin(), "{" + sb.toString() + "|}");
-			// FIXME buggy!
 			List<Statement> stmts = new ArrayList<Statement>();
 			stmts.add(new StmtAssign(lhs, new ExprStar(func.getOrigin()), 1));
 			stmts.add(new StmtAssign(lhs, rhs, 0));

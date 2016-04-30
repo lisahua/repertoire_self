@@ -1,7 +1,7 @@
 /**
  * @author Lisa Mar 21, 2016 LocalVariableResolver.java 
  */
-package sketch.compiler.CandidateGenerator;
+package sketch.compiler.CandidateGenerator.multi;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import sketch.compiler.CandidateGenerator.CandidateWrapper;
 import sketch.compiler.ast.core.FENode;
 import sketch.compiler.ast.core.NameResolver;
 import sketch.compiler.ast.core.Program;
@@ -19,7 +20,6 @@ import sketch.compiler.ast.core.exprs.ExprVar;
 import sketch.compiler.ast.core.exprs.Expression;
 import sketch.compiler.ast.core.typs.StructDef;
 import sketch.compiler.ast.core.typs.Type;
-import sketch.compiler.bugLocator.VarDeclEntry;
 import sketch.util.datastructures.ImmutableTypedHashMap;
 
 public class LocalVariableResolver extends NameResolver {
@@ -36,7 +36,7 @@ public class LocalVariableResolver extends NameResolver {
 
 	}
 
-	public void add(String name, StructDef struct, String func) {
+	public void add(String name, String struct, String func) {
 		HashMap<String, VarDeclEntry> map = funcVar.get(func);
 		map = (map == null) ? new HashMap<String, VarDeclEntry>() : map;
 
@@ -51,7 +51,7 @@ public class LocalVariableResolver extends NameResolver {
 	}
 
 	private VarDeclEntry getFieldTypeInStruct(VarDeclEntry entry, String t) {
-		StructDef strt = entry.getType();
+		StructDef strt = getStruct(entry.getType());
 		String origin = entry.getOrigin() + "." + t;
 		VarDeclEntry fieldEntry = getVarTypeInFunc(entry.getFunc(), origin);
 		if (fieldEntry != null)
@@ -99,7 +99,7 @@ public class LocalVariableResolver extends NameResolver {
 			HashMap<String, VarDeclEntry> entryList = new HashMap<String, VarDeclEntry>();
 			while (iterator.hasNext()) {
 				Entry<String, Type> e = iterator.next();
-				VarDeclEntry new_e = new VarDeclEntry(struct + "." + e.getKey(), getStruct(e.getValue().toString()),
+				VarDeclEntry new_e = new VarDeclEntry(struct + "." + e.getKey(), e.getValue().toString(),
 						null);
 				entryList.put(e.getKey(), new_e);
 			}
