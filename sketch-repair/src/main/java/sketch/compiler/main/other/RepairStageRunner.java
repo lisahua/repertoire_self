@@ -35,7 +35,7 @@ public class RepairStageRunner extends RepairSketchMain {
 
 	}
 
-	public boolean solveSketch(String sketchF) {
+	public String solveSketch(String sketchF) {
 		Program prog = null;
 		try {
 			System.out.println("===repair stage runner solve sketch =====");
@@ -59,16 +59,16 @@ public class RepairStageRunner extends RepairSketchMain {
 
 //			new CodeGenerator().testJavaWriter(substitutedCleaned);
 
-			return true;
+			return "";
 		} catch (SketchException e) {
 			// e.printStackTrace();
-			String err = parseErr(e.getMessage());
+//			String err = parseErr(e.getMessage());
 			// if (serr.equals("") || serr.equals(err)) {
-			System.out.println("===RepairStageRunner ===not solve");
+			System.out.println("===RepairStageRunner ===not solve"+e.getMessage());
 //			new File(sketchF).delete();
-			serr = err;
+//			serr = err;
 			fix = sketchF;
-			return false;
+			return e.getMessage();
 		}
 
 	}

@@ -93,13 +93,18 @@ public class RepairMultiController {
 				new SketchTypeExprReplacer(), new SketchTypeLoopReplacer(), new SketchTypeDependentLoopReplacer()));
 		for (SketchTypeReplacer rep : replacer) {
 			for (int j = funcs.size() - 1; j >= 0; j--) {
-				for (int i = types.size() - 1; i >= 0; i--) {
-					rep.generateCandidate(this, types.get(i), funcs.get(j));
-					prog.accept(rep);
-					boolean result = solveSketch((Program) rep.visitProgram(prog));
-					if (result)
+//				for (int i = types.size() - 1; i >= 0; i--) {
+					rep.generateCandidate(this, types, funcs.get(j));
+//					prog.accept(rep);
+//					Program updateProg = (Program) rep.visitProgram(prog);
+					String message = solveSketch((Program) rep.visitProgram(prog));
+
+					if (message.equals(""))
 						return true;
-				}
+//					failHandler.findBuggyAssertion(message);
+//					if (!failHandler.getBuggyTypeS().equals(types))
+//						prog = updateProg;
+//				}
 			}
 		}
 		return false;
@@ -166,7 +171,7 @@ public class RepairMultiController {
 		return prog;
 	}
 
-	public boolean solveSketch(Program prog) {
+	public String solveSketch(Program prog) {
 		System.out.println("solve sketch " + options.sktmpdir().getAbsolutePath());
 		String path = options.sketchName + num++;
 		try {

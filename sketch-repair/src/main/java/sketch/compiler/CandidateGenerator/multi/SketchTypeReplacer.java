@@ -20,43 +20,43 @@ import sketch.compiler.ast.core.stmts.StmtVarDecl;
 import sketch.compiler.ast.core.stmts.StmtWhile;
 
 public abstract class SketchTypeReplacer extends FEReplacer {
-	Statement insertStmt = null;
-	String buggyType = null;
+	List<Statement> insertStmt = new ArrayList<Statement>();
+	List<String> buggyType = null;
 	RepairMultiController controller = null;
 	String funcName = "";
 	List<String> bugFunc = null;
-	boolean isPrimitive = false;
 	HashSet<String> allVars;
-	boolean isBuggyTypeStmt = false;
+	int countInsert = 0;
 
-	public void generateCandidate(RepairMultiController controller, String buggyType) {
+	public void generateCandidate(RepairMultiController controller, List<String> buggyType) {
 		System.out.println("init replacer " + buggyType);
 		this.controller = controller;
 		this.buggyType = buggyType;
 		bugFunc = controller.getFailureHandler().getSuspFunctions();
-		System.out.println("replacer check primitive " + controller.getAllStructNames() + ";" + buggyType);
-		if (!controller.getAllStructNames().contains(buggyType))
-			isPrimitive = true;
+		if (bugFunc == null)
+			return;
+		// System.out.println("replacer check primitive " +
+		// controller.getAllStructNames() + ";" + buggyType);
+
 	}
 
-	public void generateCandidate(RepairMultiController controller, String buggyType, String func) {
+	public void generateCandidate(RepairMultiController controller, List<String> buggyType, String func) {
+		if (buggyType.size() == 0)
+			return;
+		buggyType.remove(0);
 		generateCandidate(controller, buggyType);
 		bugFunc = new ArrayList<String>(Arrays.asList(func));
 	}
 
 	public Object visitFunction(Function func) {
 		funcName = func.getName();
+		if (bugFunc == null)
+			return func;
 		if (!bugFunc.contains(funcName))
 			return super.visitFunction(func);
+		countInsert = 0;
+		generateInsertStmts(func);
 
-		isBuggyTypeStmt = false;
-		StringBuilder sb = controller.genCandidateAllS(func.getName(), buggyType);
-		if (sb.length() < 2)
-			return func;
-		if (sb.charAt(0) == '|')
-			sb = new StringBuilder(sb.substring(1));
-		System.out.println("Sketch type replacer " + func.getName() + "," + buggyType + "," + sb);
-		putAfterDefine(func.getOrigin(), sb);
 		allVars = getVarInStmt(insertStmt.toString());
 		// Statement body = func.getBody();
 		List<Parameter> params = func.getParams();
@@ -65,13 +65,24 @@ public abstract class SketchTypeReplacer extends FEReplacer {
 		for (Parameter p : params) {
 			existVar.add(p.getName());
 		}
+
 		StmtBlock block = new StmtBlock(func.getOrigin(), insertRecur(func.getBody(), existVar, definedVar));
 		func = func.creator().body(block).create();
 		// System.out.println("replacer func, " + func.getBody());
 		return super.visitFunction(func);
 	}
 
-	public abstract void putAfterDefine(FENode origin, StringBuilder sb);
+	private void generateInsertStmts(Function func) {
+		for (String type : buggyType) {
+			StringBuilder sb = controller.genCandidateAllS(func.getName(), type);
+			if (sb.charAt(0) == '|')
+				sb = new StringBuilder(sb.substring(1));
+			System.out.println("Sketch type replacer " + func.getName() + "," + buggyType + "," + sb);
+			putAfterDefine(func.getOrigin(), sb, !controller.getAllStructNames().contains(type));
+		}
+	}
+
+	public abstract void putAfterDefine(FENode origin, StringBuilder sb, boolean isPrimitive);
 
 	Statement insertRecur(Statement origin, HashSet<String> existVar, HashSet<String> definedVar) {
 
@@ -142,9 +153,11 @@ public abstract class SketchTypeReplacer extends FEReplacer {
 			allSList.add(rtn);
 		}
 		if (list.size() > 3) {
-			// if (!isBuggyTypeStmt) {
-			allSList.add(insertStmt);
-			// isBuggyTypeStmt = true;
+			if (countInsert == 0) {
+				allSList.addAll(insertStmt);
+				countInsert++;
+				// isBuggyTypeStmt = true;
+			}
 		}
 		Statement rtn = insertRecur(list.get(list.size() - 1), existVar, definedVar);
 		allSList.add(rtn);

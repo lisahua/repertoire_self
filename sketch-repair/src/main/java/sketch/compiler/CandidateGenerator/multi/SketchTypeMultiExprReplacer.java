@@ -14,11 +14,10 @@ import sketch.compiler.ast.core.stmts.Statement;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtBlock;
 
-public class SketchTypeExprReplacer extends SketchTypeReplacer {
-
+public class SketchTypeMultiExprReplacer extends SketchTypeReplacer {
 
 	public void putAfterDefine(FENode origin, StringBuilder sb,boolean isPrimitive) {
-//		System.out.println("put after define insert stmt1 " + sb);
+		// System.out.println("put after define insert stmt1 " + sb);
 		if (!isPrimitive) {
 			Expression lhs = new ExprRegen(origin, "{| " + sb.toString() + "|}");
 			Expression rhs = new ExprRegen(origin, "{| " + sb.toString() + "|null|}");

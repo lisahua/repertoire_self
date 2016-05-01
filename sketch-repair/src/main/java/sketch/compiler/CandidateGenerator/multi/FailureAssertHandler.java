@@ -31,9 +31,13 @@ public class FailureAssertHandler {
 	public StmtAssert findBuggyAssertion(String message) {
 		int index2 = message.indexOf("at");
 		int index3 = message.indexOf("(");
-		String context = message.substring(index2 + 3, index3);
-		System.out.println("=====fail assert ====" + context);
-		return findFailAssert(context.trim());
+		try {
+			String context = message.substring(index2 + 3, index3);
+			System.out.println("=====fail assert ====" + context);
+			return findFailAssert(context.trim());
+		} catch (Exception e) {
+			return null;
+		}
 	}
 
 	public String getBuggyHarness() {
