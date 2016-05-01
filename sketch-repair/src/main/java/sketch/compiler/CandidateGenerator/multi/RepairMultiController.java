@@ -179,7 +179,9 @@ public class RepairMultiController {
 	public String getSketchFile() {
 		return options.args[0];
 	}
-
+	public int getTimeOut() {
+		return options.repairOptions.timeout;
+	}
 	private int getRepairBound() {
 		int bound = options.repairOptions.bound;
 		if (bound == 0)

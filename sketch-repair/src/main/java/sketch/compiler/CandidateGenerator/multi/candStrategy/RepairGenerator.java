@@ -37,13 +37,18 @@ public class RepairGenerator {
 				FENode origin = controller.getFuncMap(funcs.get(j)).getOrigin();
 				List<AtomicRunModel> models = cand.getAtomicRunModel(origin, funcs.get(j), types);
 				for (AtomicRunModel md : models) {
-//					SketchAtomRunner worker = new SketchAtomRunner(controller);
-//					worker.runEvent(md);
-//					String message = controller.solveSketch((Program) worker.visitProgram(controller.getProgram()));
-					System.out.println("Atomic Run Model runner "+md);
+					// SketchAtomRunner worker = new
+					// SketchAtomRunner(controller);
+					// worker.runEvent(md);
+					// String message = controller.solveSketch((Program)
+					// worker.visitProgram(controller.getProgram()));
+					System.out.println("Atomic Run Model runner " + md);
 					String message = runAtomicModelWithTimeOut(md);
 					if (message.equals(""))
 						return true;
+//					else if (message.contains("Timeout"))
+//						//FIXME if one try in one function times out, jump to next function
+//						break;
 				}
 			}
 		}
@@ -54,7 +59,7 @@ public class RepairGenerator {
 		final SketchAtomRunner worker = new SketchAtomRunner(controller);
 		worker.runEvent(md);
 
-		final Duration timeout = Duration.ofSeconds(1200);
+		final Duration timeout = Duration.ofSeconds(controller.getTimeOut());
 		ExecutorService executor = Executors.newSingleThreadExecutor();
 		String result = "NONE";
 		@SuppressWarnings("unchecked")

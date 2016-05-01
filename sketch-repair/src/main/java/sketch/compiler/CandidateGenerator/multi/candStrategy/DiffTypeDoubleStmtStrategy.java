@@ -19,7 +19,7 @@ public class DiffTypeDoubleStmtStrategy extends CandidateStrategy {
 	}
 
 	@Override
-	public List<AtomicRunModel> generateModel(AtomicRunModel model, List<String> buggyTypes, HashMap<String, Statement> typeInsertMap) {
+	public List<AtomicRunModel> generateModel(AtomicRunModel model, List<String> buggTypes, HashMap<String, Statement> typeInsertMap) {
 		List<AtomicRunModel> models = new ArrayList<AtomicRunModel>();
 		List<String> types = new ArrayList<String>();
 		types.addAll(typeInsertMap.keySet());

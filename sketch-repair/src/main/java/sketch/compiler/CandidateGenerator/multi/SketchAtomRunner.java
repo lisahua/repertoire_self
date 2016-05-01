@@ -90,6 +90,7 @@ public class SketchAtomRunner extends FEReplacer {
 	}
 
 	private StmtWhile insertLoop(StmtWhile loop) {
+		model.location = model.location+2;
 		Statement lps = insertRecur(loop.getBody());
 		return new StmtWhile(loop.getOrigin(), loop.getCond(), lps);
 	}

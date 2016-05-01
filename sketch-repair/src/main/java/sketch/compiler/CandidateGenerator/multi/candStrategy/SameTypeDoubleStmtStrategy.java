@@ -22,7 +22,7 @@ public class SameTypeDoubleStmtStrategy extends CandidateStrategy {
 	@Override
 	public List<AtomicRunModel> generateModel(AtomicRunModel model, List<String> types, HashMap<String, Statement> typeInsertMap) {
 		List<AtomicRunModel> models = new ArrayList<AtomicRunModel>();
-		for (String type : typeInsertMap.keySet()) {
+		for (String type : types) {
 			StmtBlock stmt = (StmtBlock) typeInsertMap.get(type);
 			List<Statement> stmtList = stmt.getStmts();
 			List<Statement> newStmt = new ArrayList<Statement>();

@@ -21,5 +21,6 @@ public class RepairOptions extends CliAnnotatedOptionGroup {
     @CliParameter(help = "Change the default file that outputs the repaired code in Sketch from $HOME/.repair/$Name.sk to a different value")
     public String outputRepair = null;
     
-   
+    @CliParameter(help = "Change the default time out seconds  for a single repair candidate checking from 60 seconds to other value.")
+    public int timeout=60;
 }
