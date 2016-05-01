@@ -29,11 +29,12 @@ LinkedList newList() {
 
 void addFirst(LinkedList l, int v) {
     Entry e = newEntry();
+    Entry in = newEntry();
     e.element = v;
-  e.next = l.head.next;
-  e.previous = l.head;
-  e.previous.next = e;
-  e.next.previous = e;
+    e.next = l.head.next;
+   // e.previous = l.head;
+    e.previous.next = e;
+    e.next.previous = e;
     l.size = l.size+1;
 }
 

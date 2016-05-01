@@ -26,14 +26,13 @@ void insertSort (LinkedList l, int v) {
     Entry in = newEntry();
     in.element = v;
     Entry e = l.head;
-
     while (e.next != l.head && e.next.element < v) {
             e = e.next;
     }
-            in.next = e.next;
-            e.next = in;
-     
-            return;
+   // in.next = e.next;
+   // e.next = in;
+    l.size = l.size+1;
+    return;
 }
 
 harness void insertHarness() {

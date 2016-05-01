@@ -30,10 +30,9 @@ LinkedList newList() {
 void addFirst(LinkedList l, int v) {
     Entry e = newEntry();
     e.element = v;
-  e.next = l.head.next;
   e.previous = l.head;
-  e.previous.next = e;
-  e.next.previous = e;
+ //e.previous.next = e;
+  //e.next.previous = e;
     l.size = l.size+1;
 }
 
@@ -41,7 +40,7 @@ void addLast(LinkedList l, int v) {
     Entry e = newEntry();
     e.element = v;
     e.next = l.head;
-   // e.previous = l.head.previous;
+    e.previous = l.head.previous;
     e.previous.next = e;
     e.next.previous = e;
     l.size = l.size+1;
@@ -57,7 +56,7 @@ harness void addFrontHarness() {
      
      //insert 1
      l = newList();
-     addLast(l,8);
+     addFirst(l,8);
      assert l.head.next.element ==8;
      assert l.head.next.previous == l.head;
      assert l.head.next.next == l.head;
@@ -65,31 +64,31 @@ harness void addFrontHarness() {
      
      //insert 2
      l = newList();
-     addLast(l,8);
-     addLast(l,5);
-     assert l.head.next.element ==8;
+     addFirst(l,8);
+     addFirst(l,5);
+     assert l.head.next.element ==5;
      assert l.head.next.previous == l.head;
-     assert l.head.next.next.element == 5;
+     assert l.head.next.next.element == 8;
      
-     assert l.head.next.next.element ==5;
-     assert l.head.next.next.previous.element == 8;
+     assert l.head.next.next.element ==8;
+     assert l.head.next.next.previous.element == 5;
      assert l.head.next.next.next == l.head;     
      assert l.size ==2;
      
       //insert 3
      l = newList();
-     addLast(l,8);
-     addLast(l,5);
-     addLast(l,13);
-     assert l.head.next.element ==8;
+     addFirst(l,8);
+     addFirst(l,5);
+     addFirst(l,13);
+     assert l.head.next.element ==13;
      assert l.head.next.previous == l.head;
      assert l.head.next.next.element == 5;
      
      assert l.head.next.next.element ==5;
-     assert l.head.next.next.previous.element == 8;
-     assert l.head.next.next.next.element == 13;    
+     assert l.head.next.next.previous.element == 13;
+     assert l.head.next.next.next.element == 8;    
      
-     assert l.head.next.next.next.element ==13;
+     assert l.head.next.next.next.element ==8;
      assert l.head.next.next.next.previous.element == 5;
      assert l.head.next.next.next.next == l.head; 
      assert l.size ==3;
