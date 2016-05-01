@@ -11,11 +11,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import sketch.compiler.CandidateGenerator.multi.candStrategy.RepairGenerator;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.Package;
 import sketch.compiler.ast.core.Parameter;
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.stmts.StmtAssert;
+import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
 import sketch.compiler.main.other.RepairSketchOptions;
 import sketch.compiler.main.other.RepairStageRunner;
@@ -24,7 +26,8 @@ import sketch.compiler.main.other.SimpleSketchFilePrinter;
 public class RepairMultiController {
 	private HashMap<String, List<StmtAssert>> funcAssertMap = new HashMap<String, List<StmtAssert>>();
 	private HashMap<String, List<String>> funcCallMap = new HashMap<String, List<String>>();
-	private HashMap<String, Function> funcMap = new HashMap<String, Function>();
+//	private HashMap<String, Function> funcMap = new HashMap<String, Function>();
+	private HashMap<String, List<StmtAssign>> assignMap = new HashMap<String, List<StmtAssign>>();
 	// private String buggyType = null;
 	private RepairSketchOptions options;
 	private LocalVariableResolver resolver;
@@ -55,7 +58,7 @@ public class RepairMultiController {
 				ProgramParseVisitor visitor = new ProgramParseVisitor();
 				// RepairFEFuncVisitor visitor = new RepairFEFuncVisitor();
 				func.accept(visitor);
-				funcMap.put(func.getFullName(), func);
+//				funcMap.put(func.getFullName(), func);
 				funcAssertMap.put(func.getName(), visitor.getAsserts());
 				// System.out.println("controller get func call
 				// s"+visitor.getFunCallS().get(0));
@@ -71,7 +74,8 @@ public class RepairMultiController {
 						resolver.add(entry.getName(), entry.getType().toString(), func.getName());
 					}
 				}
-				// assignMap.put(func.getName(), visitor.getStmtAssign());
+
+				assignMap.put(func.getName(), visitor.getStmtAssign());
 			}
 		}
 	}
@@ -83,7 +87,8 @@ public class RepairMultiController {
 			System.out.println("Cannot identify failing assertion! Repair stop.");
 			return false;
 		}
-		return runCandidates();
+//		return runCandidates();
+		return runAtomicModel();
 	}
 
 	private boolean runCandidates() {
@@ -91,25 +96,53 @@ public class RepairMultiController {
 		List<String> funcs = failHandler.getSuspFunctions();
 		List<SketchTypeReplacer> replacer = new ArrayList<SketchTypeReplacer>(Arrays.asList(
 				new SketchTypeExprReplacer(), new SketchTypeLoopReplacer(), new SketchTypeDependentLoopReplacer()));
+		
 		for (SketchTypeReplacer rep : replacer) {
 			for (int j = funcs.size() - 1; j >= 0; j--) {
-//				for (int i = types.size() - 1; i >= 0; i--) {
-					rep.generateCandidate(this, types, funcs.get(j));
-//					prog.accept(rep);
-//					Program updateProg = (Program) rep.visitProgram(prog);
-					String message = solveSketch((Program) rep.visitProgram(prog));
+				// for (int i = types.size() - 1; i >= 0; i--) {
+				rep.generateCandidate(this, types, funcs.get(j));
+				// prog.accept(rep);
+				// Program updateProg = (Program) rep.visitProgram(prog);
+				String message = solveSketch((Program) rep.visitProgram(prog));
 
-					if (message.equals(""))
-						return true;
-//					failHandler.findBuggyAssertion(message);
-//					if (!failHandler.getBuggyTypeS().equals(types))
-//						prog = updateProg;
-//				}
+				if (message.equals(""))
+					return true;
+				// failHandler.findBuggyAssertion(message);
+				// if (!failHandler.getBuggyTypeS().equals(types))
+				// prog = updateProg;
+				// }
 			}
 		}
 		return false;
 	}
 
+	private boolean runAtomicModel() {
+		RepairGenerator generator = new RepairGenerator(this);
+		generator.generateAtomicRunModel();
+//		List<String> types = failHandler.getBuggyTypeS();
+//		List<String> funcs = failHandler.getSuspFunctions();
+//		List<SketchTypeReplacer> replacer = new ArrayList<SketchTypeReplacer>(Arrays.asList(
+//				new SketchTypeExprReplacer(), new SketchTypeLoopReplacer(), new SketchTypeDependentLoopReplacer()));
+//		
+//		for (SketchTypeReplacer rep : replacer) {
+//			for (int j = funcs.size() - 1; j >= 0; j--) {
+//				// for (int i = types.size() - 1; i >= 0; i--) {
+//				rep.generateCandidate(this, types, funcs.get(j));
+//				// prog.accept(rep);
+//				// Program updateProg = (Program) rep.visitProgram(prog);
+//				String message = solveSketch((Program) rep.visitProgram(prog));
+//
+//				if (message.equals(""))
+//					return true;
+//				// failHandler.findBuggyAssertion(message);
+//				// if (!failHandler.getBuggyTypeS().equals(types))
+//				// prog = updateProg;
+//				// }
+//			}
+//		}
+		return false;
+	}
+	
 	public List<VarDeclEntry> resolveFieldChain(String func, String string) {
 		return resolver.resolveFieldChain(func, string);
 	}
@@ -119,9 +152,9 @@ public class RepairMultiController {
 		return list.get(list.size() - 1).getTypeS();
 	}
 
-	// public Function getFuncMap(String name) {
-	// return resolver.getFun(name);
-	// }
+	 public Function getFuncMap(String name) {
+	 return resolver.getFun(name);
+	 }
 	//
 	public HashMap<String, List<StmtAssert>> getFuncAssertMap() {
 		return funcAssertMap;
@@ -131,9 +164,9 @@ public class RepairMultiController {
 		return funcCallMap;
 	}
 
-	// public HashMap<String, List<StmtAssign>> getAssignMap() {
-	// return assignMap;
-	// }
+	 public HashMap<String, List<StmtAssign>> getAssignMap() {
+	 return assignMap;
+	 }
 
 	// public HashMap<String, String> getFixPerFile() {
 	// return fileFixMap;
