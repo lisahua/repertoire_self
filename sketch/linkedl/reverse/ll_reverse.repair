@@ -1,0 +1,142 @@
+/* BEGIN PACKAGE ANONYMOUS*/
+struct Entry {
+    Entry next;
+    int element;
+}
+struct LinkedList {
+    Entry head;
+    int size;
+}
+/*ll_reverse.sk:64*/
+
+void insertHarness ()/*ll_reverse.sk:64*/
+{
+  LinkedList@ANONYMOUS l_s3 = null;
+  newList(l_s3);
+  assert ((l_s3.head.next) == (l_s3.head)); //Assert at ll_reverse.sk:68 (-7565290487300241098)
+  assert ((l_s3.size) == 0); //Assert at ll_reverse.sk:69 (-3939335550169734805)
+  LinkedList@ANONYMOUS l_s5 = null;
+  newList(l_s5);
+  insertSort(l_s5, 22);
+  reverse(l_s5);
+  assert ((l_s5.head.next.element) == 22); //Assert at ll_reverse.sk:75 (-5392386667885021731)
+  assert ((l_s5.head.next.next) == (l_s5.head)); //Assert at ll_reverse.sk:76 (-5490083633009824714)
+  assert ((l_s5.size) == 1); //Assert at ll_reverse.sk:77 (-568328839397730614)
+  LinkedList@ANONYMOUS l_s7 = null;
+  newList(l_s7);
+  insertSort(l_s7, 3);
+  insertSort(l_s7, 3);
+  reverse(l_s7);
+  assert ((l_s7.head.next.element) == 3); //Assert at ll_reverse.sk:84 (-5976094159775172851)
+  assert ((l_s7.head.next.next.element) == 3); //Assert at ll_reverse.sk:85 (3789203017206931079)
+  assert ((l_s7.head.next.next.next) == (l_s7.head)); //Assert at ll_reverse.sk:86 (396350119749133528)
+  assert ((l_s7.size) == 2); //Assert at ll_reverse.sk:87 (-2689054645015322384)
+  LinkedList@ANONYMOUS l_s9 = null;
+  newList(l_s9);
+  insertSort(l_s9, 0);
+  insertSort(l_s9, -3);
+  reverse(l_s9);
+  assert ((l_s9.head.next.element) == 0); //Assert at ll_reverse.sk:94 (474526805820620802)
+  assert ((l_s9.head.next.next.element) == -3); //Assert at ll_reverse.sk:95 (7571558468422036429)
+  assert ((l_s9.head.next.next.next) == (l_s9.head)); //Assert at ll_reverse.sk:96 (4960605045668044800)
+  assert ((l_s9.size) == 2); //Assert at ll_reverse.sk:97 (-4100763353639641727)
+  LinkedList@ANONYMOUS l_s11 = null;
+  newList(l_s11);
+  insertSort(l_s11, 4);
+  insertSort(l_s11, 3);
+  insertSort(l_s11, 1);
+  insertSort(l_s11, 6);
+  reverse(l_s11);
+  assert ((l_s11.head.next.element) == 6); //Assert at ll_reverse.sk:106 (7915059096844194278)
+  assert ((l_s11.head.next.next.element) == 4); //Assert at ll_reverse.sk:107 (-8907169605908697013)
+  assert ((l_s11.head.next.next.next.element) == 3); //Assert at ll_reverse.sk:108 (1412968164045052887)
+  assert ((l_s11.head.next.next.next.next.element) == 1); //Assert at ll_reverse.sk:109 (-6524449598199689053)
+  assert ((l_s11.head.next.next.next.next.next) == (l_s11.head)); //Assert at ll_reverse.sk:110 (4626779341240913465)
+  assert ((l_s11.size) == 4); //Assert at ll_reverse.sk:111 (3031975513098361280)
+}
+/*ll_reverse.sk:64*/
+
+void insertHarness__Wrapper ()  implements insertHarness__WrapperNospec/*ll_reverse.sk:64*/
+{
+  insertHarness();
+}
+/*ll_reverse.sk:64*/
+
+void insertHarness__WrapperNospec ()/*ll_reverse.sk:64*/
+{ }
+/*ll_reverse.sk:25*/
+
+void insertSort (LinkedList l, int v)/*ll_reverse.sk:25*/
+{
+  Entry@ANONYMOUS in_s13 = null;
+  newEntry(in_s13);
+  in_s13.element = v;
+  Entry@ANONYMOUS e;
+  e = l.head;
+  bit __sa0 = (e.next) != (l.head);
+  while(__sa0)
+  {
+    if((e.next.element) < v)/*ll_reverse.sk:30*/
+    {
+      e = e.next;
+    }
+    else
+    {
+      in_s13.next = e.next;
+      e.next = in_s13;
+      l.size = (l.size) + 1;
+      return;
+    }
+    __sa0 = (e.next) != (l.head);
+  }
+  in_s13.next = e.next;
+  e.next = in_s13;
+  l.size = (l.size) + 1;
+  return;
+}
+/*ll_reverse.sk:11*/
+
+void newEntry (ref Entry _out)/*ll_reverse.sk:11*/
+{
+  _out = null;
+  _out = new Entry();
+  _out.next = null;
+  return;
+}
+/*ll_reverse.sk:17*/
+
+void newList (ref LinkedList _out)/*ll_reverse.sk:17*/
+{
+  _out = null;
+  _out = new LinkedList();
+  _out.head = new Entry();
+  _out.head.next = _out.head;
+  _out.size = 0;
+  return;
+}
+/*ll_reverse.sk:45*/
+
+void reverse (LinkedList l)/*ll_reverse.sk:45*/
+{
+  if((l.head.next) == (l.head))/*ll_reverse.sk:46*/
+  {
+    return;
+  }
+  Entry@ANONYMOUS ln1 = l.head.next;
+  Entry@ANONYMOUS ln2 = l.head.next.next;
+  Entry@ANONYMOUS ln3 = l.head;
+  bit __sa1 = ln2 != (l.head);
+  Entry@ANONYMOUS ln4 = null;
+  while(__sa1)
+  {
+    ln4 = ln2.next;
+    ln1.next = ln3;
+    ln3 = ln1;
+    ln1 = ln2;
+    ln2 = ln4;
+    __sa1 = ln4 != (l.head);
+  }
+  l.head.next = ln1;
+  ln1.next = ln3;
+}
+/* END PACKAGE ANONYMOUS*/

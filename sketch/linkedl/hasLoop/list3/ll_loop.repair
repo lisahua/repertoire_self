@@ -1,0 +1,119 @@
+/* BEGIN PACKAGE ANONYMOUS*/
+struct Entry {
+    Entry next;
+    int element;
+}
+struct LinkedList {
+    Entry head;
+    int size;
+}
+/*ll_loop.sk106:12*/
+
+void hasLoop (LinkedList l_10, ref bit _out_11)/*ll_loop.sk106:12*/
+{
+  _out_11 = 0;
+  Entry@ANONYMOUS ln1_12 = l_10.head;
+  Entry@ANONYMOUS _tmprhs_s1 = ln1_12.next.next;
+  while(1)
+  {
+    ln1_12 = ln1_12.next;
+    if(((_tmprhs_s1.next) == (l_10.head)) || ((_tmprhs_s1.next.next) == (l_10.head)))/*ll_loop.sk106:29*/
+    {
+      _out_11 = 1;
+      return;
+    }
+    if(ln1_12 == _tmprhs_s1)/*ll_loop.sk106:37*/
+    {
+      _out_11 = 0;
+      return;
+    }
+  }
+  _out_11 = 1;
+  return;
+}
+/*ll_loop.sk106:55*/
+
+void insertHarness ()/*ll_loop.sk106:55*/
+{
+  LinkedList@ANONYMOUS l_s1_1 = null;
+  newList(l_s1_1);
+  bit _out_s3_2 = 0;
+  hasLoop(l_s1_1, _out_s3_2);
+  assert (_out_s3_2 == 1); //Assert at ll_loop.sk106:64 (-4333709246295784927)
+  assert ((l_s1_1.head.next) == (l_s1_1.head)); //Assert at ll_loop.sk106:65 (404381453495082981)
+  LinkedList@ANONYMOUS l_s5_3 = null;
+  newList(l_s5_3);
+  Entry@ANONYMOUS n1_4 = new Entry();
+  n1_4.element = 22;
+  n1_4.next = l_s5_3.head;
+  l_s5_3.head.next = n1_4;
+  bit _out_s7_5 = 0;
+  hasLoop(l_s5_3, _out_s7_5);
+  assert (_out_s7_5 == 1); //Assert at ll_loop.sk106:76 (1466876693879902255)
+  assert ((l_s5_3.head.next.element) == 22); //Assert at ll_loop.sk106:77 (-2298949212366544829)
+  assert ((l_s5_3.head.next.next) == (l_s5_3.head)); //Assert at ll_loop.sk106:78 (-1508893255911652428)
+  n1_4.next = n1_4;
+  bit _out_s9_6 = 0;
+  hasLoop(l_s5_3, _out_s9_6);
+  assert (_out_s9_6 == 0); //Assert at ll_loop.sk106:82 (315673915799030522)
+  LinkedList@ANONYMOUS l_s11_7 = null;
+  newList(l_s11_7);
+  n1_4 = new Entry();
+  n1_4.element = 22;
+  Entry@ANONYMOUS n2_8 = new Entry();
+  n2_8.element = 3;
+  l_s11_7.head.next = n2_8;
+  n2_8.next = n1_4;
+  n1_4.next = l_s11_7.head;
+  bit _out_s13_9 = 0;
+  hasLoop(l_s11_7, _out_s13_9);
+  assert (_out_s13_9 == 1); //Assert at ll_loop.sk106:96 (4714194383030543320)
+  assert ((l_s11_7.head.next) == n2_8); //Assert at ll_loop.sk106:97 (6532721526228313852)
+  assert ((l_s11_7.head.next.next) == n1_4); //Assert at ll_loop.sk106:98 (-6962268709808248660)
+  assert ((l_s11_7.head.next.next.next) == (l_s11_7.head)); //Assert at ll_loop.sk106:99 (-1923608308517033170)
+  n1_4.next = n2_8;
+  bit _out_s15_a = 0;
+  hasLoop(l_s11_7, _out_s15_a);
+  assert (_out_s15_a == 0); //Assert at ll_loop.sk106:103 (-8081274375442999944)
+  LinkedList@ANONYMOUS l_s17_b = null;
+  newList(l_s17_b);
+  n1_4 = new Entry();
+  n1_4.element = 22;
+  n2_8 = new Entry();
+  n2_8.element = 3;
+  Entry@ANONYMOUS n3_c = new Entry();
+  n3_c.element = 5;
+  l_s17_b.head.next = n3_c;
+  n3_c.next = n2_8;
+  n2_8.next = n1_4;
+  n1_4.next = l_s17_b.head;
+  bit _out_s19_d = 0;
+  hasLoop(l_s17_b, _out_s19_d);
+  assert (_out_s19_d == 1); //Assert at ll_loop.sk106:120 (2564896275304111002)
+  n1_4.next = n3_c;
+  bit _out_s21_e = 0;
+  hasLoop(l_s17_b, _out_s21_e);
+  assert (_out_s21_e == 0); //Assert at ll_loop.sk106:124 (-6668168851251321484)
+}
+/*ll_loop.sk106:128*/
+
+void insertHarness__Wrapper ()  implements insertHarness__WrapperNospec/*ll_loop.sk106:128*/
+{
+  insertHarness();
+}
+/*ll_loop.sk106:134*/
+
+void insertHarness__WrapperNospec ()/*ll_loop.sk106:134*/
+{ }
+/*ll_loop.sk106:139*/
+
+void newList (ref LinkedList _out_f)/*ll_loop.sk106:139*/
+{
+  _out_f = null;
+  _out_f = new LinkedList();
+  _out_f.head = new Entry();
+  _out_f.head.next = _out_f.head;
+  _out_f.size = 0;
+  return;
+}
+/* END PACKAGE ANONYMOUS*/

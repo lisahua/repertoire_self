@@ -70,7 +70,7 @@ public abstract class CandidateStrategy {
 			stmt.add(new StmtAssign(origin, lhs, rhs));
 		} else {
 			Expression lhs = new ExprRegen(origin, "{| " + sb.toString() + "|}");
-			Expression rhs = new ExprRegen(origin, "{| " + sb.toString() + "|}");
+			Expression rhs = new ExprRegen(origin, "{| " + sb.toString() + "|0|1|}");
 			List<Statement> stmts = new ArrayList<Statement>();
 			stmts.add(new StmtAssign(lhs, rhs, 0));
 			stmts.add(new StmtAssign(lhs, new ExprStar(origin), 1));

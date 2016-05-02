@@ -154,6 +154,7 @@ public class RepairMultiController {
 
 	public String resolveFieldType(String func, String string) {
 		List<VarDeclareEntry> list = resolver.resolveFieldChain(func, string);
+	
 		return list.get(list.size() - 1).getTypeS();
 	}
 
