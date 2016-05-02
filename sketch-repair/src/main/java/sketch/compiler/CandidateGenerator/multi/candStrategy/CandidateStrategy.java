@@ -36,6 +36,7 @@ public abstract class CandidateStrategy {
 		for (String type : controller.getAllStructNames()) {
 			// for (String type : types) {
 			StringBuilder sb = controller.genCandidateAllS(func, type);
+			if (sb.length()==0) continue;
 			if (sb.charAt(0) == '|')
 				sb = new StringBuilder(sb.substring(1));
 			System.out.println("candidate strategy " + func + "," + types + "," + sb);

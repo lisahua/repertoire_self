@@ -24,6 +24,7 @@ public class SameTypeDoubleStmtStrategy extends CandidateStrategy {
 		List<AtomicRunModel> models = new ArrayList<AtomicRunModel>();
 		for (String type : types) {
 			StmtBlock stmt = (StmtBlock) typeInsertMap.get(type);
+			if (stmt==null) continue;
 			List<Statement> stmtList = stmt.getStmts();
 			List<Statement> newStmt = new ArrayList<Statement>();
 			newStmt.addAll(stmtList);

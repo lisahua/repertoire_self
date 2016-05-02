@@ -25,7 +25,7 @@ import sketch.util.datastructures.ImmutableTypedHashMap;
 public class LocalVariableResolver extends NameResolver {
 	private HashMap<String, HashMap<String, VarDeclareEntry>> funcVar = new HashMap<String, HashMap<String, VarDeclareEntry>>();
 	private HashMap<String, HashMap<String, Type>> funcVarTypes = new HashMap<String, HashMap<String, Type>>();
-	
+
 	private HashMap<String, HashMap<String, VarDeclareEntry>> fieldPerStruct;
 	private HashSet<String> allStructs = new HashSet<String>();
 
@@ -46,10 +46,10 @@ public class LocalVariableResolver extends NameResolver {
 		VarDeclareEntry entry = new VarDeclareEntry(name, struct, func);
 		map.put(name, entry);
 		funcVar.put(func, map);
-		
+
 		HashMap<String, Type> tmap = funcVarTypes.get(func);
 		tmap = (tmap == null) ? new HashMap<String, Type>() : tmap;
-	
+
 		tmap.put(name, type);
 		funcVarTypes.put(func, tmap);
 	}
@@ -57,6 +57,7 @@ public class LocalVariableResolver extends NameResolver {
 	public HashMap<String, Type> getTypeMap(String func) {
 		return funcVarTypes.get(func);
 	}
+
 	private VarDeclareEntry getVarTypeInFunc(String func, String t) {
 		return funcVar.get(func).get(t);
 	}
@@ -143,6 +144,8 @@ public class LocalVariableResolver extends NameResolver {
 
 	public StringBuilder extractCandidateHoleAllS(String func, String type, int bound) {
 		List<StringBuilder> sList = extractCandidateSetAsHole(func, type, bound);
+		if (sList.size() == 0)
+			return new StringBuilder();
 		StringBuilder sb = sList.get(0);
 		for (int i = 1; i < sList.size(); i++) {
 			if (sList.get(i).length() == 0)
@@ -157,6 +160,10 @@ public class LocalVariableResolver extends NameResolver {
 	public List<HashSet<String>> extractCandidateList(String func, String type, int bound) {
 		HashMap<String, VarDeclareEntry> map = funcVar.get(func);
 		HashMap<String, CandidateWrapper> first = new HashMap<String, CandidateWrapper>();
+		List<HashMap<String, CandidateWrapper>> table = new ArrayList<HashMap<String, CandidateWrapper>>();
+		List<HashSet<String>> canList = new ArrayList<HashSet<String>>();
+		if (map == null)
+			return canList;
 		for (Map.Entry<String, VarDeclareEntry> entry : map.entrySet()) {
 			String typ = entry.getValue().getTypeS();
 			CandidateWrapper wp = first.get(typ);
@@ -167,11 +174,10 @@ public class LocalVariableResolver extends NameResolver {
 				first.put(typ, wp);
 			}
 		}
-		List<HashMap<String, CandidateWrapper>> table = new ArrayList<HashMap<String, CandidateWrapper>>();
 		table.add(first);
 		for (int i = 1; i < bound; i++)
 			table.add(genNextLayerCandidateList(table.get(i - 1)));
-		List<HashSet<String>> canList = genCandStringList(table, type);
+		canList = genCandStringList(table, type);
 		return canList;
 	}
 

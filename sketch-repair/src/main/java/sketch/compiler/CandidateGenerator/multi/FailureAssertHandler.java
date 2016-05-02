@@ -12,12 +12,12 @@ import sketch.compiler.ast.core.stmts.StmtAssert;
 public class FailureAssertHandler {
 
 	// private RepairProgramController utility;
-	private RepairMultiController utility;
-	private String buggyHarness = null;
-	private StmtAssert failAssert = null;
-	private List<String> buggyType = new ArrayList<String>();
+	 RepairMultiController utility;
+	 String buggyHarness = null;
+	 StmtAssert failAssert = null;
+	 List<String> buggyType = new ArrayList<String>();
 	// private List<VarDeclEntry> fields = new ArrayList<VarDeclEntry>();
-	private List<String> suspFunc = null;
+	List<String> suspFunc = null;
 
 	public FailureAssertHandler(RepairMultiController repairMultiController) {
 		// TODO Auto-generated constructor stub
