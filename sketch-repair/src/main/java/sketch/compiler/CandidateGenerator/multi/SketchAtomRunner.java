@@ -52,17 +52,20 @@ public class SketchAtomRunner extends FEReplacer {
 	}
 
 	public Object visitProgram(Program prog) {
-		if (model.insertFunction == null)
-			return super.visitProgram(prog);
+		List<sketch.compiler.ast.core.Package> newPkg = new ArrayList<sketch.compiler.ast.core.Package>();
+		for (sketch.compiler.ast.core.Package pkg : prog.getPackages()) {
 
-		sketch.compiler.ast.core.Package pkg = prog.getPackages().get(0);
-		List<Function> funcs = pkg.getFuncs();
-		funcs.add(model.insertFunction);
-		pkg = new sketch.compiler.ast.core.Package(pkg.getOrigin(), pkg.getName(), pkg.getStructs(), pkg.getVars(),
-				funcs, pkg.getSpAsserts());
-		List<sketch.compiler.ast.core.Package> pkgs = prog.getPackages();
-		pkgs.set(0, pkg);
-		return prog.creator().streams(pkgs).create();
+			List<Function> funcList = new ArrayList<Function>();
+			for (Function func : pkg.getFuncs()) {
+				funcList.add((Function) visitFunction(func));
+				if (model.insertFunction != null && model.insertFunction.getBody() != null) {
+					funcList.add(model.insertFunction);
+				}
+			}
+			newPkg.add(new sketch.compiler.ast.core.Package(pkg.getOrigin(), pkg.getName(), pkg.getStructs(),
+					pkg.getVars(), funcList, pkg.getSpAsserts()));
+		}
+		return prog.creator().streams(newPkg).create();
 	}
 
 	private Statement insertRecur(Statement origin) {
@@ -117,9 +120,12 @@ public class SketchAtomRunner extends FEReplacer {
 		for (int i = 0; i < list.size(); i++) {
 			Statement rtn = insertRecur(list.get(i));
 			allSList.add(rtn);
+//			if (stmtCount != model.location)
+//				System.out.println("not insert because count wrong " + stmtCount + "," + model.location);
 			if (!hasInsert && stmtCount == model.location) {
 				allSList.add(model.insertStmt);
 				hasInsert = true;
+				model.insertSucc = true;
 			}
 		}
 		return new StmtBlock(allSList);
@@ -166,7 +172,7 @@ public class SketchAtomRunner extends FEReplacer {
 			return true;
 		for (String s : allVars) {
 			if (!exist.contains(s)) {
-				System.out.println("resolve LHS false " + exist + "," + defined + "," + allVars);
+//				System.out.println("resolve LHS false " + exist + "," + defined + "," + allVars);
 				return false;
 			}
 		}

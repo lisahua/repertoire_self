@@ -14,6 +14,7 @@ public class AtomicRunModel {
 	Statement insertStmt;
 	int location;
 	Function insertFunction;
+	boolean insertSucc = false;
 
 	public AtomicRunModel(String func, List<String> type, Statement insertStmt, int loc) {
 		this.func = func;
@@ -23,7 +24,18 @@ public class AtomicRunModel {
 	}
 
 	public String toString() {
-		return "[AtomicModel] " + func + "," + type + "," + insertStmt + "," + location;
+		String rtn = "[AtomicModel] " + func + "," + type + "," + insertStmt + "," + location + ",";
+		if (insertFunction != null)
+			rtn += insertFunction.getName() + "," + insertFunction.getBody();
+		return rtn;
+	}
+
+	public boolean isInsertSucc() {
+		return insertSucc;
+	}
+
+	public void setInsertSucc(boolean insertSucc) {
+		this.insertSucc = insertSucc;
 	}
 
 	public String getFunc() {
@@ -63,6 +75,7 @@ public class AtomicRunModel {
 	}
 
 	public void setInsertFunction(Function insertFunction) {
+		// System.out.println("insert function "+insertFunction);
 		this.insertFunction = insertFunction;
 	}
 

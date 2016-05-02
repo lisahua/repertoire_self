@@ -32,7 +32,7 @@ public class SameTypeDoubleStmtStrategy extends CandidateStrategy {
 			stmt = new StmtBlock(stmt.getOrigin(), newStmt);
 			for (int i = model.getLocation(); i > 0; i--) {
 				models.add(new AtomicRunModel(model.getFunc(), new ArrayList<String>(Arrays.asList(type)), stmt, i));
-				System.out.println(models);
+//				System.out.println(models);
 			}
 		}
 

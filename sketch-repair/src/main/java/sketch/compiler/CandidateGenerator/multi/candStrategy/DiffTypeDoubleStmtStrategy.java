@@ -19,8 +19,7 @@ public class DiffTypeDoubleStmtStrategy extends CandidateStrategy {
 	}
 
 	@Override
-	public List<AtomicRunModel> generateModel(AtomicRunModel model, List<String> buggTypes,
-			HashMap<String, Statement> typeInsertMap) {
+	public List<AtomicRunModel> generateModel(AtomicRunModel model, List<String> buggTypes, HashMap<String, Statement> typeInsertMap) {
 		List<AtomicRunModel> models = new ArrayList<AtomicRunModel>();
 		List<String> types = new ArrayList<String>();
 		types.addAll(typeInsertMap.keySet());
@@ -30,10 +29,10 @@ public class DiffTypeDoubleStmtStrategy extends CandidateStrategy {
 			for (int n = m + 1; n < types.size(); n++) {
 				StmtBlock stmt = (StmtBlock) typeInsertMap.get(types.get(m));
 				StmtBlock stmt2 = (StmtBlock) typeInsertMap.get(types.get(n));
-
+				
 				List<Statement> newStmt = new ArrayList<Statement>();
-				if (stmt != null)
-					newStmt.addAll(stmt.getStmts());
+				if (stmt!=null)
+				newStmt.addAll(stmt.getStmts());
 				if (stmt2 != null)
 					newStmt.addAll(stmt2.getStmts());
 				stmt = new StmtBlock(stmt.getOrigin(), newStmt);

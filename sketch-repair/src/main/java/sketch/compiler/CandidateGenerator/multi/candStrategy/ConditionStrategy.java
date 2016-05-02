@@ -37,52 +37,89 @@ public class ConditionStrategy extends CandidateStrategy {
 	@Override
 	public List<AtomicRunModel> generateModel(AtomicRunModel model, List<String> types,
 			HashMap<String, Statement> typeInsertMap) {
-		this.typeInsertMap = typeInsertMap;
+		
 		List<AtomicRunModel> models = new ArrayList<AtomicRunModel>();
+		//FIXME hacky!
+		if (model.getFunc().contains("_") || model.getFunc().contains("Harness")|| model.getFunc().contains("new"))
+			return models;
+		this.typeInsertMap = typeInsertMap;
 
 		Function func = controller.getFuncMap(model.getFunc());
 		HashMap<String, Type> varTypes = controller.getNameResolver().getTypeMap(model.getFunc());
 		HashMap<String, Type> typeMap = new HashMap<String, Type>();
 		List<Parameter> paraList = new ArrayList<Parameter>();
+		if (varTypes == null)
+			return models;
+//		System.out.println("condition var type is " + varTypes);
 		for (String name : varTypes.keySet()) {
 			paraList.add(new Parameter(func.getOrigin(), varTypes.get(name), name));
-			typeMap.put(varTypes.get(name).toString(), varTypes.get(name));
+			String typeName = varTypes.get(name).toString();
+			if (typeName.contains("@"))
+				typeMap.put(typeName.substring(0, typeName.indexOf("@")), varTypes.get(name));
+			else
+				typeMap.put(typeName, varTypes.get(name));
 		}
 		typeMap.put("int", TypePrimitive.int32type);
 		typeMap.put("double", TypePrimitive.doubletype);
 		typeMap.put("bit", TypePrimitive.bittype);
-		FunctionCreator creator = func.creator().params(paraList);
-		creator = func.creator().name(insertFuncName);
-		creator = func.creator().returnType(TypePrimitive.bittype);
+
+		FunctionCreator creator = new FunctionCreator(func.getOrigin());
+		creator = creator.name(insertFuncName);
+		creator = creator.returnType(TypePrimitive.bittype);
+		creator = creator.params(paraList);
+		
 		// FIXME maybe buggy
+		//System.out.println("condition type is" + types + "," + typeMap);
 		for (String type : types) {
-			generateConditionFunc(model, typeMap.get(type), typeInsertMap.get(type), creator);
+
+			creator = generateConditionFunc(model, typeMap.get(type), typeInsertMap.get(type), creator);
 			model.setInsertFunction(creator.create());
+			if (model.getInsertFunction() == null)
+				continue;
+			if (model.getInsertFunction().getBody() == null)
+				continue;
 			List<Statement> ifStmts = generateIfInsert(model, paraList);
 			for (Statement ifSt : ifStmts) {
 				model.setInsertStmt(ifSt);
+		
+				// System.out.println("into condition strategy " + model + "
+				// [func]"
+				// + model.getInsertFunction() + ",");
+				// + model.getInsertFunction().getBody());
+
 				for (int i = model.getLocation(); i > 0; i--) {
 					AtomicRunModel md = model.clone();
 					md.setLocation(i);
+//					 System.out.println("into condition strategy " + model + " [func]"
+//					 + model.getInsertFunction() + ","
+//					 + model.getInsertFunction().getBody());
 					models.add(md);
+
 				}
 			}
 		}
 		return models;
 	}
 
-	private void generateConditionFunc(AtomicRunModel model, Type type, Statement typeInsert, FunctionCreator creator) {
+	private FunctionCreator generateConditionFunc(AtomicRunModel model, Type type, Statement typeInsert,
+			FunctionCreator creator) {
 		List<Statement> stmts = new ArrayList<Statement>();
-		if (!(typeInsert instanceof StmtAssign))
-			return;
-
-		StmtAssign assign = (StmtAssign) typeInsert;
+		// System.out.println("generate condition "+ typeInsert.getClass());
+		// if (!(typeInsert instanceof StmtAssign))
+		// return creator;
+		if (type == null)
+			return creator;
+		Statement tmp = typeInsert;
+		while (tmp instanceof StmtBlock)
+			tmp = ((StmtBlock) tmp).getStmts().get(0);
+		StmtAssign assign = (StmtAssign) tmp;
+		//System.out.println("generate if condition " + type + "," + assign);
 		stmts.add(new StmtVarDecl(typeInsert.getOrigin(), type, "lhs", assign.getRHS()));
 		stmts.add(new StmtVarDecl(typeInsert.getOrigin(), type, "rhs", assign.getRHS()));
 		ExprRegen exp = new ExprRegen(typeInsert.getOrigin(), "{| lhs== rhs|lhs != rhs| true |}");
 		stmts.add(new StmtVarDecl(typeInsert.getOrigin(), TypePrimitive.bittype, "rst", exp));
 		stmts.add(new StmtReturn(typeInsert.getOrigin(), new ExprVar(typeInsert.getOrigin(), "rst")));
-		creator = creator.body(new StmtBlock(typeInsert.getOrigin(), stmts));
+		return creator.body(new StmtBlock(typeInsert.getOrigin(), stmts));
 
 	}
 

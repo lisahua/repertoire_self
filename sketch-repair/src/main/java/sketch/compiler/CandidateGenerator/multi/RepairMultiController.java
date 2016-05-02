@@ -58,7 +58,11 @@ public class RepairMultiController {
 				ProgramParseVisitor visitor = new ProgramParseVisitor();
 				// RepairFEFuncVisitor visitor = new RepairFEFuncVisitor();
 				func.accept(visitor);
-				funcMap.put(func.getName(), func);
+				String name = func.getName();
+				if (name.contains("@"))
+					funcMap.put(name.substring(0, name.indexOf("@")), func);
+				else
+					funcMap.put(name, func);
 				funcAssertMap.put(func.getName(), visitor.getAsserts());
 				// System.out.println("controller get func call
 				// s"+visitor.getFunCallS().get(0));

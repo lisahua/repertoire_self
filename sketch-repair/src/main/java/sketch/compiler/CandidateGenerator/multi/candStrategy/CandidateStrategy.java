@@ -39,7 +39,7 @@ public abstract class CandidateStrategy {
 			if (sb.length()==0) continue;
 			if (sb.charAt(0) == '|')
 				sb = new StringBuilder(sb.substring(1));
-			System.out.println("candidate strategy " + func + "," + types + "," + sb);
+//			System.out.println("candidate strategy " + func + "," + types + "," + sb);
 			// Statement stmt = createInsertStmt(origin, sb,
 			// !controller.getAllStructNames().contains(type));
 			Statement stmt = createInsertStmt(origin, sb, false);

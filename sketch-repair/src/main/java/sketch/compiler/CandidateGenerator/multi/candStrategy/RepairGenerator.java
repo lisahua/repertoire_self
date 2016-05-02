@@ -31,7 +31,7 @@ public class RepairGenerator {
 		List<String> funcs = controller.getFailureHandler().getSuspFunctions();
 		List<CandidateStrategy> candidates = new ArrayList<CandidateStrategy>(
 				Arrays.asList(new SingleTypeStmtStrategy(controller), new SameTypeDoubleStmtStrategy(controller),
-						new DiffTypeDoubleStmtStrategy(controller)));
+						new DiffTypeDoubleStmtStrategy(controller),new ConditionStrategy(controller)));
 		for (CandidateStrategy cand : candidates) {
 			for (int j = funcs.size() - 1; j >= 0; j--) {
 				FENode origin = controller.getFuncMap(funcs.get(j)).getOrigin();
@@ -42,7 +42,8 @@ public class RepairGenerator {
 					// worker.runEvent(md);
 					// String message = controller.solveSketch((Program)
 					// worker.visitProgram(controller.getProgram()));
-					System.out.println("Atomic Run Model runner " + md);
+//					if (!md.isInsertSucc()) continue;
+//					System.out.println("Atomic Run Model runner " + md);
 					String message = runAtomicModelWithTimeOut(md);
 					if (message.equals(""))
 						return true;
@@ -56,6 +57,7 @@ public class RepairGenerator {
 	}
 
 	private String runAtomicModelWithTimeOut(AtomicRunModel md) {
+		
 		final SketchAtomRunner worker = new SketchAtomRunner(controller);
 		worker.runEvent(md);
 
