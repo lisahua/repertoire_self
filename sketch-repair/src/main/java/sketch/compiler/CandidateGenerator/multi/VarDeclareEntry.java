@@ -3,7 +3,7 @@
  */
 package sketch.compiler.CandidateGenerator.multi;
 
-public class VarDeclEntry {
+public class VarDeclareEntry {
 
 	private String name;
 	private String func;
@@ -11,12 +11,12 @@ public class VarDeclEntry {
 	private int bound=0;
 	private String origin;
 
-	public VarDeclEntry(String name, String type, String func) {
+	public VarDeclareEntry(String name, String type, String func) {
 		this(name,name,type,func);
 		
 	}
 
-	public VarDeclEntry(String name, String origin, String type, String func) {
+	public VarDeclareEntry(String name, String origin, String type, String func) {
 		this.name = name;
 		this.func = func;
 		this.type = type;
@@ -77,8 +77,8 @@ public class VarDeclEntry {
 		return "[" + func + "] [" + type + "] [" + origin + "] [" + name + "]  [" + bound + "]";
 	}
 
-	public VarDeclEntry clone() {
-		VarDeclEntry entry = new VarDeclEntry(name,origin, type,func);
+	public VarDeclareEntry clone() {
+		VarDeclareEntry entry = new VarDeclareEntry(name,origin, type,func);
 		entry.bound = bound;
 		return entry;
 		

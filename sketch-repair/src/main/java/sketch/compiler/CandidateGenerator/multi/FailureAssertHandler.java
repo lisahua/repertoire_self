@@ -85,8 +85,8 @@ public class FailureAssertHandler {
 		String[] token = ass.toString().replace("assert", "").split("==");
 		String lhs = token[0].replace("(", "").replace(")", "").trim();
 		// String rhs = token[1].replace("(", "").replace(")", "").trim();
-		List<VarDeclEntry> typeList = utility.resolveFieldChain(func, lhs);
-		for (VarDeclEntry type : typeList) {
+		List<VarDeclareEntry> typeList = utility.resolveFieldChain(func, lhs);
+		for (VarDeclareEntry type : typeList) {
 			if (buggyType.contains(type.getTypeS()))
 				continue;
 			buggyType.add(type.getTypeS());

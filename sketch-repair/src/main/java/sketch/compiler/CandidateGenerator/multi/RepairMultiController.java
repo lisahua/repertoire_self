@@ -65,13 +65,13 @@ public class RepairMultiController {
 				funcCallMap.put(func.getName(), visitor.getFunCallS());
 
 				for (Parameter para : visitor.getParameter()) {
-					resolver.add(para.getName(), para.getType().toString(), func.getName());
+					resolver.add(para.getName(), para.getType(), func.getName());
 				}
 				for (StmtVarDecl var : visitor.getVarDecl()) {
 					Iterator<StmtVarDecl.VarDeclEntry> iterator = var.iterator();
 					while (iterator.hasNext()) {
 						StmtVarDecl.VarDeclEntry entry = iterator.next();
-						resolver.add(entry.getName(), entry.getType().toString(), func.getName());
+						resolver.add(entry.getName(), entry.getType(), func.getName());
 					}
 				}
 
@@ -143,12 +143,12 @@ public class RepairMultiController {
 		return false;
 	}
 	
-	public List<VarDeclEntry> resolveFieldChain(String func, String string) {
+	public List<VarDeclareEntry> resolveFieldChain(String func, String string) {
 		return resolver.resolveFieldChain(func, string);
 	}
 
 	public String resolveFieldType(String func, String string) {
-		List<VarDeclEntry> list = resolver.resolveFieldChain(func, string);
+		List<VarDeclareEntry> list = resolver.resolveFieldChain(func, string);
 		return list.get(list.size() - 1).getTypeS();
 	}
 
@@ -168,9 +168,9 @@ public class RepairMultiController {
 	 return assignMap;
 	 }
 
-	// public HashMap<String, String> getFixPerFile() {
-	// return fileFixMap;
-	// }
+	 public LocalVariableResolver getNameResolver() {
+	 return resolver;
+	 }
 
 	public FailureAssertHandler getFailureHandler() {
 		return failHandler;

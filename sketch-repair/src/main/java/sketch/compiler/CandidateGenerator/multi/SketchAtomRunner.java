@@ -11,6 +11,7 @@ import java.util.List;
 import sketch.compiler.ast.core.FEReplacer;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.Parameter;
+import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.stmts.Statement;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtBlock;
@@ -48,6 +49,20 @@ public class SketchAtomRunner extends FEReplacer {
 		StmtBlock block = new StmtBlock(func.getOrigin(), insertRecur(func.getBody()));
 		func = func.creator().body(block).create();
 		return func;
+	}
+
+	public Object visitProgram(Program prog) {
+		if (model.insertFunction == null)
+			return super.visitProgram(prog);
+
+		sketch.compiler.ast.core.Package pkg = prog.getPackages().get(0);
+		List<Function> funcs = pkg.getFuncs();
+		funcs.add(model.insertFunction);
+		pkg = new sketch.compiler.ast.core.Package(pkg.getOrigin(), pkg.getName(), pkg.getStructs(), pkg.getVars(),
+				funcs, pkg.getSpAsserts());
+		List<sketch.compiler.ast.core.Package> pkgs = prog.getPackages();
+		pkgs.set(0, pkg);
+		return prog.creator().streams(pkgs).create();
 	}
 
 	private Statement insertRecur(Statement origin) {
@@ -90,7 +105,7 @@ public class SketchAtomRunner extends FEReplacer {
 	}
 
 	private StmtWhile insertLoop(StmtWhile loop) {
-		model.location = model.location+2;
+		model.location = model.location + 2;
 		Statement lps = insertRecur(loop.getBody());
 		return new StmtWhile(loop.getOrigin(), loop.getCond(), lps);
 	}
@@ -98,11 +113,11 @@ public class SketchAtomRunner extends FEReplacer {
 	private StmtBlock insertBlock(StmtBlock block) {
 		List<Statement> allSList = new ArrayList<Statement>();
 		List<Statement> list = ((StmtBlock) block).getStmts();
-//		boolean resolved = resolveLHS(existVar, definedVar, allVars);
+		// boolean resolved = resolveLHS(existVar, definedVar, allVars);
 		for (int i = 0; i < list.size(); i++) {
 			Statement rtn = insertRecur(list.get(i));
 			allSList.add(rtn);
-			if (!hasInsert && stmtCount == model.location ) {
+			if (!hasInsert && stmtCount == model.location) {
 				allSList.add(model.insertStmt);
 				hasInsert = true;
 			}

@@ -1,0 +1,106 @@
+/* BEGIN PACKAGE ANONYMOUS*/
+struct Entry {
+    int element;
+    Entry next;
+    Entry previous;
+}
+struct LinkedList {
+    Entry head;
+    int size;
+}
+/*dll_add.sk49:13*/
+
+void addFirst (LinkedList l_7, int v_8_0)/*dll_add.sk49:13*/
+{
+  Entry@ANONYMOUS e_s9_a = null;
+  newEntry(e_s9_a);
+  e_s9_a.element = v_8_0;
+  e_s9_a.next = l_7.head.next;
+  e_s9_a.previous = l_7.head;
+  e_s9_a.previous.next = e_s9_a;
+  e_s9_a.next.previous = e_s9_a;
+  int _tmprhs_s4 = l_7.size;
+  e_s9_a.previous.element = _tmprhs_s4;
+  int _tmprhs_s7 = (l_7.head.element) + 9;
+  l_7.head.element = _tmprhs_s7;
+  int _tmprhs_s10 = (l_7.head.element) - 8;
+  l_7.size = _tmprhs_s10;
+}
+/*dll_add.sk49:36*/
+
+void addFrontHarness ()/*dll_add.sk49:36*/
+{
+  LinkedList@ANONYMOUS l_s1_1 = null;
+  newList(l_s1_1);
+  assert ((l_s1_1.size) == 0); //Assert at dll_add.sk49:42 (7951221068567020327)
+  assert ((l_s1_1.head.next) == (l_s1_1.head)); //Assert at dll_add.sk49:43 (-6502167740533566059)
+  assert ((l_s1_1.head.previous) == (l_s1_1.head)); //Assert at dll_add.sk49:44 (9219299056668434200)
+  LinkedList@ANONYMOUS l_s3_2 = null;
+  newList(l_s3_2);
+  addFirst(l_s3_2, 8);
+  assert ((l_s3_2.head.next.element) == 8); //Assert at dll_add.sk49:49 (7539331494459321493)
+  assert ((l_s3_2.head.next.previous) == (l_s3_2.head)); //Assert at dll_add.sk49:50 (-6689865887258846415)
+  assert ((l_s3_2.head.next.next) == (l_s3_2.head)); //Assert at dll_add.sk49:51 (-5243257159422206203)
+  assert ((l_s3_2.size) == 1); //Assert at dll_add.sk49:52 (4854221675683195581)
+  LinkedList@ANONYMOUS l_s5_3 = null;
+  newList(l_s5_3);
+  addFirst(l_s5_3, 8);
+  addFirst(l_s5_3, 5);
+  assert ((l_s5_3.head.next.element) == 5); //Assert at dll_add.sk49:58 (-3953688362019642009)
+  assert ((l_s5_3.head.next.previous) == (l_s5_3.head)); //Assert at dll_add.sk49:59 (6235783917624534698)
+  assert ((l_s5_3.head.next.next.element) == 8); //Assert at dll_add.sk49:60 (-8275867588896160023)
+  assert ((l_s5_3.head.next.next.element) == 8); //Assert at dll_add.sk49:61 (2324875699502164425)
+  assert ((l_s5_3.head.next.next.previous.element) == 5); //Assert at dll_add.sk49:62 (-8357451829422169988)
+  assert ((l_s5_3.head.next.next.next) == (l_s5_3.head)); //Assert at dll_add.sk49:63 (3592263964352151006)
+  assert ((l_s5_3.size) == 2); //Assert at dll_add.sk49:64 (-9066833687046003166)
+  LinkedList@ANONYMOUS l_s7_4 = null;
+  newList(l_s7_4);
+  addFirst(l_s7_4, 8);
+  addFirst(l_s7_4, 5);
+  addFirst(l_s7_4, 13);
+  assert ((l_s7_4.head.next.element) == 13); //Assert at dll_add.sk49:71 (3845849944642757781)
+  assert ((l_s7_4.head.next.previous) == (l_s7_4.head)); //Assert at dll_add.sk49:72 (8204830432541387439)
+  assert ((l_s7_4.head.next.next.element) == 5); //Assert at dll_add.sk49:73 (4522405534256115879)
+  assert ((l_s7_4.head.next.next.element) == 5); //Assert at dll_add.sk49:74 (2384378979255216726)
+  assert ((l_s7_4.head.next.next.previous.element) == 13); //Assert at dll_add.sk49:75 (3033149545917944293)
+  assert ((l_s7_4.head.next.next.next.element) == 8); //Assert at dll_add.sk49:76 (-6374101040249966454)
+  assert ((l_s7_4.head.next.next.next.element) == 8); //Assert at dll_add.sk49:77 (-2195581263280993012)
+  assert ((l_s7_4.head.next.next.next.previous.element) == 5); //Assert at dll_add.sk49:78 (-1828156424683708687)
+  assert ((l_s7_4.head.next.next.next.next) == (l_s7_4.head)); //Assert at dll_add.sk49:79 (7900340217649680196)
+  assert ((l_s7_4.size) == 3); //Assert at dll_add.sk49:80 (-1775691522528900559)
+}
+/*dll_add.sk49:84*/
+
+void addFrontHarness__Wrapper ()  implements addFrontHarness__WrapperNospec/*dll_add.sk49:84*/
+{
+  addFrontHarness();
+}
+/*dll_add.sk49:90*/
+
+void addFrontHarness__WrapperNospec ()/*dll_add.sk49:90*/
+{ }
+/*dll_add.sk49:95*/
+
+void newEntry (ref Entry _out_b)/*dll_add.sk49:95*/
+{
+  _out_b = null;
+  _out_b = new Entry();
+  _out_b.previous = null;
+  _out_b.next = null;
+  return;
+}
+/*dll_add.sk49:105*/
+
+void newList (ref LinkedList _out_5)/*dll_add.sk49:105*/
+{
+  _out_5 = null;
+  _out_5 = new LinkedList();
+  Entry@ANONYMOUS _out_s11_6 = null;
+  newEntry(_out_s11_6);
+  _out_5.head = _out_s11_6;
+  _out_5.head.next = _out_5.head;
+  _out_5.head.previous = _out_5.head;
+  _out_5.size = 0;
+  return;
+}
+/* END PACKAGE ANONYMOUS*/

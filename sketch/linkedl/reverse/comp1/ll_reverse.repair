@@ -1,0 +1,140 @@
+/* BEGIN PACKAGE ANONYMOUS*/
+struct Entry {
+    Entry next;
+    int element;
+}
+struct LinkedList {
+    Entry head;
+    int size;
+}
+/*ll_reverse.sk14:12*/
+
+void insertHarness ()/*ll_reverse.sk14:12*/
+{
+  LinkedList@ANONYMOUS l_s3_1 = null;
+  newList(l_s3_1);
+  assert ((l_s3_1.head.next) == (l_s3_1.head)); //Assert at ll_reverse.sk14:19 (-4057220190112074518)
+  assert ((l_s3_1.size) == 0); //Assert at ll_reverse.sk14:20 (-1714088357042791765)
+  LinkedList@ANONYMOUS l_s5_2 = null;
+  newList(l_s5_2);
+  insertSort(l_s5_2, 22);
+  reverse(l_s5_2);
+  assert ((l_s5_2.head.next.element) == 22); //Assert at ll_reverse.sk14:26 (4893923481370126062)
+  assert ((l_s5_2.head.next.next) == (l_s5_2.head)); //Assert at ll_reverse.sk14:27 (-6884384133377758842)
+  assert ((l_s5_2.size) == 1); //Assert at ll_reverse.sk14:28 (6558628397554718892)
+  LinkedList@ANONYMOUS l_s7_3 = null;
+  newList(l_s7_3);
+  insertSort(l_s7_3, 3);
+  insertSort(l_s7_3, 3);
+  reverse(l_s7_3);
+  assert ((l_s7_3.head.next.element) == 3); //Assert at ll_reverse.sk14:35 (5106667134579154362)
+  assert ((l_s7_3.head.next.next.element) == 3); //Assert at ll_reverse.sk14:36 (3719827593053497815)
+  assert ((l_s7_3.head.next.next.next) == (l_s7_3.head)); //Assert at ll_reverse.sk14:37 (6352649434279595406)
+  assert ((l_s7_3.size) == 2); //Assert at ll_reverse.sk14:38 (-7411905021060884925)
+  LinkedList@ANONYMOUS l_s9_4 = null;
+  newList(l_s9_4);
+  insertSort(l_s9_4, 0);
+  insertSort(l_s9_4, -3);
+  reverse(l_s9_4);
+  assert ((l_s9_4.head.next.element) == 0); //Assert at ll_reverse.sk14:45 (3999117293812021020)
+  assert ((l_s9_4.head.next.next.element) == -3); //Assert at ll_reverse.sk14:46 (-8374636607485747160)
+  assert ((l_s9_4.head.next.next.next) == (l_s9_4.head)); //Assert at ll_reverse.sk14:47 (3566035123300143456)
+  assert ((l_s9_4.size) == 2); //Assert at ll_reverse.sk14:48 (-1377421554298766450)
+  LinkedList@ANONYMOUS l_s11_5 = null;
+  newList(l_s11_5);
+  insertSort(l_s11_5, 4);
+  insertSort(l_s11_5, 3);
+  insertSort(l_s11_5, 1);
+  insertSort(l_s11_5, 6);
+  reverse(l_s11_5);
+  assert ((l_s11_5.head.next.element) == 6); //Assert at ll_reverse.sk14:57 (763654657208323930)
+  assert ((l_s11_5.head.next.next.element) == 4); //Assert at ll_reverse.sk14:58 (8055633451201392720)
+  assert ((l_s11_5.head.next.next.next.element) == 3); //Assert at ll_reverse.sk14:59 (-1410388274131078306)
+  assert ((l_s11_5.head.next.next.next.next.element) == 1); //Assert at ll_reverse.sk14:60 (-532864778182467324)
+  assert ((l_s11_5.head.next.next.next.next.next) == (l_s11_5.head)); //Assert at ll_reverse.sk14:61 (-6032909617164966733)
+  assert ((l_s11_5.size) == 4); //Assert at ll_reverse.sk14:62 (-6023869218555237047)
+}
+/*ll_reverse.sk14:66*/
+
+void insertHarness__Wrapper ()  implements insertHarness__WrapperNospec/*ll_reverse.sk14:66*/
+{
+  insertHarness();
+}
+/*ll_reverse.sk14:72*/
+
+void insertHarness__WrapperNospec ()/*ll_reverse.sk14:72*/
+{ }
+/*ll_reverse.sk14:77*/
+
+void insertSort (LinkedList l_7, int v_8)/*ll_reverse.sk14:77*/
+{
+  Entry@ANONYMOUS in_s13_a = null;
+  newEntry(in_s13_a);
+  in_s13_a.element = v_8;
+  Entry@ANONYMOUS e_b = l_7.head;
+  bit __sa0_c = (e_b.next) != (l_7.head);
+  while(__sa0_c)
+  {
+    if((e_b.next.element) < v_8)/*ll_reverse.sk14:94*/
+    {
+      e_b = e_b.next;
+    }
+    else
+    {
+      in_s13_a.next = e_b.next;
+      e_b.next = in_s13_a;
+      l_7.size = (l_7.size) + 1;
+      return;
+    }
+    __sa0_c = (e_b.next) != (l_7.head);
+  }
+  in_s13_a.next = e_b.next;
+  e_b.next = in_s13_a;
+  l_7.size = (l_7.size) + 1;
+  return;
+}
+/*ll_reverse.sk14:120*/
+
+void newEntry (ref Entry _out_13)/*ll_reverse.sk14:120*/
+{
+  _out_13 = null;
+  _out_13 = new Entry();
+  _out_13.next = null;
+  return;
+}
+/*ll_reverse.sk14:129*/
+
+void newList (ref LinkedList _out_6)/*ll_reverse.sk14:129*/
+{
+  _out_6 = null;
+  _out_6 = new LinkedList();
+  _out_6.head = new Entry();
+  _out_6.head.next = _out_6.head;
+  _out_6.size = 0;
+  return;
+}
+/*ll_reverse.sk14:140*/
+
+void reverse (LinkedList l_d)/*ll_reverse.sk14:140*/
+{
+  if((l_d.head.next) == (l_d.head))/*ll_reverse.sk14:143*/
+  {
+    return;
+  }
+  Entry@ANONYMOUS ln1_e = l_d.head.next;
+  Entry@ANONYMOUS ln2_f = l_d.head.next.next;
+  Entry@ANONYMOUS ln3_10 = l_d.head;
+  bit __sa1_12 = ln2_f != (l_d.head);
+  Entry@ANONYMOUS ln4_11 = null;
+  while(__sa1_12)
+  {
+    ln4_11 = ln2_f.next;
+    ln1_e.next = ln3_10;
+    ln3_10 = ln1_e;
+    ln1_e = ln2_f;
+    ln2_f = ln4_11;
+    l_d.head = ln3_10;
+    __sa1_12 = ln4_11 != (l_d.head);
+  }
+}
+/* END PACKAGE ANONYMOUS*/

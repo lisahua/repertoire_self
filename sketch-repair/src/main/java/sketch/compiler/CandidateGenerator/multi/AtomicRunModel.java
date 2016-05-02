@@ -5,6 +5,7 @@ package sketch.compiler.CandidateGenerator.multi;
 
 import java.util.List;
 
+import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.stmts.Statement;
 
 public class AtomicRunModel {
@@ -12,6 +13,7 @@ public class AtomicRunModel {
 	List<String> type;
 	Statement insertStmt;
 	int location;
+	Function insertFunction;
 
 	public AtomicRunModel(String func, List<String> type, Statement insertStmt, int loc) {
 		this.func = func;
@@ -56,4 +58,17 @@ public class AtomicRunModel {
 		this.location = location;
 	}
 
+	public Function getInsertFunction() {
+		return insertFunction;
+	}
+
+	public void setInsertFunction(Function insertFunction) {
+		this.insertFunction = insertFunction;
+	}
+
+	public AtomicRunModel clone() {
+		AtomicRunModel model = new AtomicRunModel(func, type, insertStmt, location);
+		model.setInsertFunction(insertFunction);
+		return model;
+	}
 }
