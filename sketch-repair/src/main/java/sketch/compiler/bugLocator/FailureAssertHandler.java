@@ -1,12 +1,14 @@
 /**
  * @author Lisa Mar 18, 2016 RepairTypeResolver.java 
  */
-package sketch.compiler.CandidateGenerator.multi;
+package sketch.compiler.bugLocator;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import sketch.compiler.CandidateGenerator.multi.RepairMultiController;
+import sketch.compiler.CandidateGenerator.multi.VarDeclareEntry;
 import sketch.compiler.ast.core.stmts.StmtAssert;
 
 public class FailureAssertHandler {

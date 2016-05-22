@@ -23,6 +23,10 @@ import sketch.compiler.main.passes.CleanupFinalCode;
 import sketch.compiler.main.passes.ParseProgramStage;
 import sketch.compiler.main.passes.SubstituteSolution;
 import sketch.compiler.main.seq.SequentialSketchMain;
+import sketch.compiler.main.seq.SequentialSketchMain.SketchLoweringResult;
+import sketch.compiler.main.seq.SequentialSketchMain.SynthesisResult;
+import sketch.compiler.solvers.SATBackend;
+import sketch.compiler.solvers.parallel.StrategicalBackend;
 import sketch.util.exceptions.ProgramParseException;
 import sketch.util.exceptions.SketchException;
 
@@ -75,7 +79,8 @@ public class RepairSketchMain extends SequentialSketchMain {
 			}
 //			se.printStackTrace();
 		} catch (RuntimeException re) {
-			throw new ProgramParseException("Sketch failed to parse: " + re.getMessage());
+			re.printStackTrace();
+//			throw new ProgramParseException("Sketch failed to parse: " + re.getMessage());
 		}
 	
 		return false;
@@ -146,25 +151,6 @@ public class RepairSketchMain extends SequentialSketchMain {
 	protected void parseProgram(Program prog, String e) {
 		RepairStage rStage = new RepairStage(options);
 		boolean result = rStage.startRepair(prog, e);
-		// if (files == null || files.size() == 0)
-		// return;
-		//
-		// for (int i = 0; i < files.size(); i++) {
-		// String f = files.get(i);
-		// String[] new_arg = options.args;
-		// new_arg[0] = f;
-		// options = new RepairSketchOptions(new_arg);
-		// if (recurRun()) {
-		// System.out.println(
-		// "======Repair End===" + options.repairOptions.outputRepair + "," +
-		// rStage.getFixPerFile(f));
-		// while (++i < files.size())
-		// new File(files.get(i)).delete();
-		// break;
-		// } else {
-		// // new File(f).delete();
-		// }
-		// }
 	}
 
 	protected Program parseProgram() {
@@ -179,7 +165,7 @@ public class RepairSketchMain extends SequentialSketchMain {
 
 		(new OutputSketchCode(varGen, options)).visitProgram(prog);
 	}
-
+	
 }
 
 enum RPSTATUS {

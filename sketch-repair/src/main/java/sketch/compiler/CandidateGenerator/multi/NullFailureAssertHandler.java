@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import sketch.compiler.ast.core.stmts.StmtAssert;
+import sketch.compiler.bugLocator.FailureAssertHandler;
 
 public class NullFailureAssertHandler extends FailureAssertHandler {
 	private List<String> funcs = new ArrayList<String>();
@@ -15,10 +16,10 @@ public class NullFailureAssertHandler extends FailureAssertHandler {
 
 	public NullFailureAssertHandler(RepairMultiController repairMultiController) {
 		super(repairMultiController);
-		for (String s : utility.getFunctionNameMap().keySet())
+		for (String s : repairMultiController.getFunctionNameMap().keySet())
 			funcs.add(s);
 
-		for (String s : utility.getAllStructNames())
+		for (String s : repairMultiController.getAllStructNames())
 			allTypes.add(s);
 		allTypes.add("int");
 	}

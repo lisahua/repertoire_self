@@ -19,9 +19,11 @@ import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.stmts.StmtAssert;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
+import sketch.compiler.bugLocator.FailureAssertHandler;
 import sketch.compiler.main.other.RepairSketchOptions;
 import sketch.compiler.main.other.RepairStageRunner;
 import sketch.compiler.main.other.SimpleSketchFilePrinter;
+import sketch.compiler.nameResolver.BlockNameResolver;
 
 public class RepairMultiController {
 	private HashMap<String, List<StmtAssert>> funcAssertMap = new HashMap<String, List<StmtAssert>>();
@@ -37,6 +39,7 @@ public class RepairMultiController {
 
 	public RepairMultiController(final Program prog, final RepairSketchOptions options) {
 		resolver = new LocalVariableResolver(prog);
+		BlockNameResolver blockResolver = new BlockNameResolver(prog,options.repairOptions.bound);
 		initProgram(prog);
 		this.options = options;
 		this.prog = prog;
