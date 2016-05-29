@@ -3,27 +3,28 @@
  */
 package sketch.compiler.nameResolver;
 
-import java.util.HashMap;
-import java.util.HashSet;
-
 import sketch.compiler.ast.core.typs.Type;
 
 public class QueryWrapper {
 	String func;
 	int loc;
-	HashMap<Type, HashSet<String>> deviatedNames;
+	Type type;
+	StringBuilder builder;
 
-	public QueryWrapper(String func2, int loc2, HashMap<Type, HashSet<String>> deviatedNames2) {
+	public QueryWrapper(String func2, int loc2, Type type, StringBuilder builder) {
 		func = func2;
 		loc = loc2;
-		deviatedNames = deviatedNames2;
+		this.type = type;
+		this.builder = builder;
 	}
 
-	public HashMap<Type, HashSet<String>> existNames(String func, int loc) {
+	public StringBuilder existNames(String func, int loc, Type type) {
 		if (!this.func.equals(func))
 			return null;
+		if (!this.type.equals(type))
+			return null;
 		if (Math.abs(loc - this.loc) < 2)
-			return deviatedNames;
+			return builder;
 		return null;
 	}
 

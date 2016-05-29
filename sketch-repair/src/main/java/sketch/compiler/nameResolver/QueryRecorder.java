@@ -3,7 +3,6 @@
  */
 package sketch.compiler.nameResolver;
 
-import java.util.HashMap;
 import java.util.HashSet;
 
 import sketch.compiler.ast.core.typs.Type;
@@ -11,18 +10,18 @@ import sketch.compiler.ast.core.typs.Type;
 public class QueryRecorder {
 	HashSet<QueryWrapper> queryRecords = new HashSet<QueryWrapper>();
 	
-	public HashMap<Type, HashSet<String>> getRecord(String func, int loc) {
-		HashMap<Type, HashSet<String>> record = null;
+	public StringBuilder getRecord(String func, int loc,Type type) {
+		StringBuilder record = null;
 		for (QueryWrapper query : queryRecords) {
-			record = query.existNames(func, loc);
+			record = query.existNames(func, loc,type);
 			if (record != null)
 				return record;
 		}
 		return record;
 	}
 	
-	public void addRecorder(String func, int loc, HashMap<Type, HashSet<String>> deviatedNames) {
-		QueryWrapper query = new QueryWrapper(func, loc, deviatedNames);
+	public void addRecorder(String func, int loc, Type type, StringBuilder builder) {
+		QueryWrapper query = new QueryWrapper(func, loc,type, builder);
 		queryRecords.add(query);
 	}
 }

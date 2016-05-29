@@ -101,22 +101,25 @@ public class BlockNameResolver {
 		return blockName;
 	}
 
-	public HashMap<Type, HashSet<BlockNameResolverModel>> getVar(String func,  int loc) {
+	public HashMap<Type, HashSet<BlockNameResolverModel>> getVar(String func, int loc) {
 		HashMap<Type, HashSet<BlockNameResolverModel>> names = new HashMap<Type, HashSet<BlockNameResolverModel>>();
 		for (BlockNameResolverModel model : funcNames.get(func)) {
-				if (model.start <= loc && model.end >= loc) {
-					HashSet<BlockNameResolverModel> tmp = names.get(model.type);
-					if (tmp == null)
-						tmp = new HashSet<BlockNameResolverModel>();
-					tmp.add(model);
-				}
+			if (model.start <= loc && model.end >= loc) {
+				HashSet<BlockNameResolverModel> tmp = names.get(model.type);
+				if (tmp == null)
+					tmp = new HashSet<BlockNameResolverModel>();
+				tmp.add(model);
+			}
 		}
 		return names;
 	}
 
 	public StringBuilder getAllCandidates(String func, Type type, int loc) {
-		StringBuilder builder = new StringBuilder();
-		HashMap<Type, HashSet<BlockNameResolverModel>> vars = getVar(func,  loc);
+		StringBuilder builder = queryRecorder.getRecord(func, loc, type);
+		if (builder != null)
+			return builder;
+		builder = new StringBuilder();
+		HashMap<Type, HashSet<BlockNameResolverModel>> vars = getVar(func, loc);
 		HashMap<Type, HashSet<String>> names = new HashMap<Type, HashSet<String>>();
 		for (Type varType : vars.keySet()) {
 			// TEST resolver.getStruct
