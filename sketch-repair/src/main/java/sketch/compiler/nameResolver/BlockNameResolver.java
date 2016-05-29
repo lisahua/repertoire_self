@@ -30,12 +30,15 @@ public class BlockNameResolver {
 	int count = 0;
 	// this is hacky
 	HashMap<String, Type> typeBank = new HashMap<String, Type>();
-	HashMap<Type, List<FieldWrapper>> dereference = null;
+	HashMap<Type, HashSet<String>> nameBank = new HashMap<Type, HashSet<String>>();
+	private final int bound;
+	QueryRecorder queryRecorder = new QueryRecorder();
 
 	public BlockNameResolver(Program prog, int bound) {
 		resolver = new NameResolver(prog);
 		initBlockModel(prog);
-		getDereference(prog, bound);
+		this.bound = bound;
+		// dereference = getDereference(prog, bound);
 	}
 
 	private void initBlockModel(Program prog) {
@@ -98,28 +101,51 @@ public class BlockNameResolver {
 		return blockName;
 	}
 
-	private HashSet<BlockNameResolverModel> getVar(String func, Type type, int loc) {
-		HashSet<BlockNameResolverModel> names = new HashSet<BlockNameResolverModel>();
+	public HashMap<Type, HashSet<BlockNameResolverModel>> getVar(String func,  int loc) {
+		HashMap<Type, HashSet<BlockNameResolverModel>> names = new HashMap<Type, HashSet<BlockNameResolverModel>>();
 		for (BlockNameResolverModel model : funcNames.get(func)) {
-			if (model.type.equals(type)) {
 				if (model.start <= loc && model.end >= loc) {
-					names.add(model);
+					HashSet<BlockNameResolverModel> tmp = names.get(model.type);
+					if (tmp == null)
+						tmp = new HashSet<BlockNameResolverModel>();
+					tmp.add(model);
 				}
-			}
 		}
 		return names;
 	}
 
 	public StringBuilder getAllCandidates(String func, Type type, int loc) {
 		StringBuilder builder = new StringBuilder();
-		HashSet<BlockNameResolverModel> vars = getVar(func, type, loc);
-		for (FieldWrapper wrap : dereference.get(type)) {
-			Type origin = wrap.origin;
-
+		HashMap<Type, HashSet<BlockNameResolverModel>> vars = getVar(func,  loc);
+		HashMap<Type, HashSet<String>> names = new HashMap<Type, HashSet<String>>();
+		for (Type varType : vars.keySet()) {
+			// TEST resolver.getStruct
+			HashSet<String> typeNames = new HashSet<String>();
+			for (BlockNameResolverModel name : vars.get(varType)) {
+				typeNames.add(name.name);
+			}
+			names.put(varType, typeNames);
+			for (int i = 0; i < bound; i++) {
+				for (StructFieldEnt field : resolver.getStruct(varType.toString()).getFieldEntries()) {
+					HashSet<String> allName = names.get(field.getType());
+					if (allName == null)
+						allName = new HashSet<String>();
+					for (String name : typeNames) {
+						String derivedName = name + "." + field.getName();
+						allName.add(derivedName);
+					}
+					names.put(field.getType(), allName);
+				}
+			}
 		}
+		for (String name : names.get(type)) {
+			builder.append("|" + name);
+		}
+		builder.append("|");
 		return builder;
 	}
 
+	@Deprecated
 	private HashMap<Type, List<FieldWrapper>> getDereference(Program prog, int bound) {
 		HashMap<Type, List<FieldWrapper>> destMap = new HashMap<Type, List<FieldWrapper>>();
 		for (sketch.compiler.ast.core.Package pkg : prog.getPackages()) {
