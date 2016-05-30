@@ -36,6 +36,9 @@ public abstract class CandidateStrategy {
 		for (String type : controller.getAllStructNames()) {
 			// for (String type : types) {
 			StringBuilder sb = controller.genCandidateAllS(func, type);
+			StringBuilder test = controller.genCandidateAllS(func, model.getLocation(),type);
+			System.out.println("[Test scope resolver] "+test+"\n [Compare with] "+sb);
+			sb = test;
 			if (sb.length()==0) continue;
 			if (sb.charAt(0) == '|')
 				sb = new StringBuilder(sb.substring(1));
@@ -48,6 +51,9 @@ public abstract class CandidateStrategy {
 		String[] primitiveType = { "int", "bit" };
 		for (String type : primitiveType) {
 			StringBuilder sb = controller.genCandidateAllS(func, type);
+			StringBuilder test = controller.genCandidateAllS(func,  model.getLocation(),type);
+			System.out.println("[Test scope resolver] "+test+"\n[Compare with] "+sb);
+			sb = test;
 			if (sb.length() < 1)
 				continue;
 			if (sb.charAt(0) == '|')

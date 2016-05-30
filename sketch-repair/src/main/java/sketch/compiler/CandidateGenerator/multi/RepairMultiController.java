@@ -19,6 +19,7 @@ import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.stmts.StmtAssert;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
+import sketch.compiler.ast.core.typs.Type;
 import sketch.compiler.bugLocator.FailureAssertHandler;
 import sketch.compiler.main.other.RepairSketchOptions;
 import sketch.compiler.main.other.RepairStageRunner;
@@ -36,10 +37,11 @@ public class RepairMultiController {
 	private Program prog;
 	private int num = 0;
 	private FailureAssertHandler failHandler = null;
+	private BlockNameResolver blockResolver;
 
 	public RepairMultiController(final Program prog, final RepairSketchOptions options) {
 		resolver = new LocalVariableResolver(prog);
-		BlockNameResolver blockResolver = new BlockNameResolver(prog,options.repairOptions.bound);
+		blockResolver = new BlockNameResolver(prog, options.repairOptions.bound);
 		initProgram(prog);
 		this.options = options;
 		this.prog = prog;
@@ -157,7 +159,7 @@ public class RepairMultiController {
 
 	public String resolveFieldType(String func, String string) {
 		List<VarDeclareEntry> list = resolver.resolveFieldChain(func, string);
-	
+
 		return list.get(list.size() - 1).getTypeS();
 	}
 
@@ -213,6 +215,12 @@ public class RepairMultiController {
 	// typeS) {
 	// return resolver.extractCandidateSetAsHole(func, typeS, getRepairBound());
 	// }
+	public StringBuilder genCandidateAllS(String func, int loc, String type) {
+		return blockResolver.getAllCandidates(func, type, loc);
+		// return resolver.extractCandidateHoleAllS(func, typeS,
+		// getRepairBound());
+	}
+
 	public StringBuilder genCandidateAllS(String func, String typeS) {
 		return resolver.extractCandidateHoleAllS(func, typeS, getRepairBound());
 	}

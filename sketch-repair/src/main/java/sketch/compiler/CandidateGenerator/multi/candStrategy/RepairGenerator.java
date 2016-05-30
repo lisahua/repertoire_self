@@ -31,7 +31,7 @@ public class RepairGenerator {
 		List<String> funcs = controller.getFailureHandler().getSuspFunctions();
 		List<CandidateStrategy> candidates = new ArrayList<CandidateStrategy>(
 				Arrays.asList(new SingleTypeStmtStrategy(controller), new SameTypeDoubleStmtStrategy(controller),
-						new DiffTypeDoubleStmtStrategy(controller),new ConditionStrategy(controller)));
+						new DiffTypeDoubleStmtStrategy(controller), new ConditionStrategy(controller)));
 		for (CandidateStrategy cand : candidates) {
 			for (int j = funcs.size() - 1; j >= 0; j--) {
 				FENode origin = controller.getFuncMap(funcs.get(j)).getOrigin();
@@ -42,14 +42,15 @@ public class RepairGenerator {
 					// worker.runEvent(md);
 					// String message = controller.solveSketch((Program)
 					// worker.visitProgram(controller.getProgram()));
-//					if (!md.isInsertSucc()) continue;
-//					System.out.println("Atomic Run Model runner " + md);
+					// if (!md.isInsertSucc()) continue;
+					// System.out.println("Atomic Run Model runner " + md);
 					String message = runAtomicModelWithTimeOut(md);
 					if (message.equals(""))
 						return true;
-//					else if (message.contains("Timeout"))
-//						//FIXME if one try in one function times out, jump to next function
-//						break;
+					// else if (message.contains("Timeout"))
+					// //FIXME if one try in one function times out, jump to
+					// next function
+					// break;
 				}
 			}
 		}
@@ -57,7 +58,7 @@ public class RepairGenerator {
 	}
 
 	private String runAtomicModelWithTimeOut(AtomicRunModel md) {
-		
+
 		final SketchAtomRunner worker = new SketchAtomRunner(controller);
 		worker.runEvent(md);
 
@@ -73,9 +74,12 @@ public class RepairGenerator {
 		});
 		try {
 			result = handler.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
+		} catch (NullPointerException nullE) {
+			System.out.println("[Candidates not satisfied]");
 		} catch (Exception e) {
 			System.out.println("[Timeout]");
-			e.printStackTrace();
+			// FIXME hide exceptions
+			// e.printStackTrace();
 		}
 		executor.shutdownNow();
 		return result;

@@ -22,4 +22,8 @@ public class FieldWrapper {
 	public String getConcreteValue(String var) {
 		return var + "." + name;
 	}
+
+	public String toString() {
+		return origin + "," + destination + "," + name + "," + degree;
+	}
 }

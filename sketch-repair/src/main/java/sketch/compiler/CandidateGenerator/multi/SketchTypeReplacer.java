@@ -75,6 +75,7 @@ public abstract class SketchTypeReplacer extends FEReplacer {
 	private void generateInsertStmts(Function func) {
 		for (String type : buggyType) {
 			StringBuilder sb = controller.genCandidateAllS(func.getName(), type);
+
 			if (sb.charAt(0) == '|')
 				sb = new StringBuilder(sb.substring(1));
 			System.out.println("Sketch type replacer " + func.getName() + "," + buggyType + "," + sb);
