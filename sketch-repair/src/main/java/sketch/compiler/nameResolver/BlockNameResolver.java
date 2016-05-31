@@ -62,7 +62,9 @@ public class BlockNameResolver {
 				if (funcNS.contains("@"))
 					funcNS = func.getName().substring(0, func.getName().indexOf("@"));
 				for (Parameter para : func.getParams()) {
-
+					//FIXME may be error because return value is not set.
+					if (para.getName().startsWith("_"))
+						continue;
 					BlockNameResolverModel model = new BlockNameResolverModel(funcNS, para.getName(), para.getType(),
 							-1, -1);
 					blockName.add(model);
@@ -187,9 +189,9 @@ public class BlockNameResolver {
 			return builder;
 		}
 		for (String name : nSet) {
-			builder.append(name+"|");
+			builder.append(name + "|");
 		}
-		StringBuilder trim = new StringBuilder(builder.substring(0, builder.length()-1));
+		StringBuilder trim = new StringBuilder(builder.substring(0, builder.length() - 1));
 		return trim;
 
 	}
@@ -279,7 +281,7 @@ public class BlockNameResolver {
 						destType = typeBank.get(field.getType().toString() + "@ANONYMOUS");
 					if (destType == null) {
 						destType = field.getType();
-						//FIXME Hacky
+						// FIXME Hacky
 						typeBank.put(field.getType().toString(), field.getType());
 					}
 					List<FieldWrapper> typeList = destMap.get(destType);
@@ -310,7 +312,7 @@ public class BlockNameResolver {
 						FieldWrapper newW = new FieldWrapper(wp.origin, wrap.destination, wp.name + "." + wrap.name,
 								wp.degree);
 						list.add(newW);
-//						System.out.println("[combine wrap] " + newW);
+						// System.out.println("[combine wrap] " + newW);
 					}
 				}
 			}

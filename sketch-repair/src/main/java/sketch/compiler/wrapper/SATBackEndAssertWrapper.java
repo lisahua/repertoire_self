@@ -29,8 +29,14 @@ public class SATBackEndAssertWrapper extends SATBackend {
 
 	protected void partialEval(Program prog, OutputStream outStream) {
 		PrintStream pstream = new PrintStream(outStream, false);
-		sketch.compiler.dataflow.nodesToSB.ProduceBooleanFunctions partialEval = new sketch.compiler.dataflow.nodesToSB.ProduceBooleanFunctions(
-				varGen, oracle, pstream, options.bndOpts.unrollAmnt, options.bndOpts.arrSize, rcontrol, tracing);
+//		 sketch.compiler.dataflow.nodesToSB.ProduceBooleanFunctions
+//		 partialEval = new
+//		 sketch.compiler.dataflow.nodesToSB.ProduceBooleanFunctions(
+//		 varGen, oracle, pstream, options.bndOpts.unrollAmnt,
+//		 options.bndOpts.arrSize, rcontrol, tracing);
+		ProduceBooleanFunctionWrapper partialEval = new ProduceBooleanFunctionWrapper(varGen, oracle, pstream,
+				options.bndOpts.unrollAmnt, options.bndOpts.arrSize, rcontrol, tracing);
+
 		log("MAX LOOP UNROLLING = " + options.bndOpts.unrollAmnt);
 		log("MAX FUNC INLINING  = " + options.bndOpts.inlineAmnt);
 		prog.accept(partialEval);
@@ -38,4 +44,5 @@ public class SATBackEndAssertWrapper extends SATBackend {
 		pstream.flush();
 		log("After prog.accept(partialEval)");
 	}
+
 }

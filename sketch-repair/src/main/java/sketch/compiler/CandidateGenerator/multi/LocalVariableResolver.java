@@ -35,7 +35,6 @@ public class LocalVariableResolver extends NameResolver {
 		allStructs.add("int");
 		allStructs.add("bit");
 		genAllFieldsPerType();
-
 	}
 
 	public void add(String name, Type type, String func) {

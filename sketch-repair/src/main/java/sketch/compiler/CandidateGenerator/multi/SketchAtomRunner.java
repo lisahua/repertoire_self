@@ -39,6 +39,8 @@ public class SketchAtomRunner extends FEReplacer {
 	public Object visitFunction(Function func) {
 		if (!func.getName().equals(model.func))
 			return super.visitFunction(func);
+		if (model.insertStmt == null)
+			return super.visitFunction(func);
 		allVars = getVarInStmt(model.insertStmt.toString());
 		List<Parameter> params = func.getParams();
 		existVar = new HashSet<String>();
@@ -108,7 +110,7 @@ public class SketchAtomRunner extends FEReplacer {
 	}
 
 	private StmtWhile insertLoop(StmtWhile loop) {
-		model.location = model.location ;
+		model.location = model.location;
 		Statement lps = insertRecur(loop.getBody());
 		return new StmtWhile(loop.getOrigin(), loop.getCond(), lps);
 	}
@@ -120,8 +122,9 @@ public class SketchAtomRunner extends FEReplacer {
 		for (int i = 0; i < list.size(); i++) {
 			Statement rtn = insertRecur(list.get(i));
 			allSList.add(rtn);
-//			if (stmtCount != model.location)
-//				System.out.println("not insert because count wrong " + stmtCount + "," + model.location);
+			// if (stmtCount != model.location)
+			// System.out.println("not insert because count wrong " + stmtCount
+			// + "," + model.location);
 			if (!hasInsert && stmtCount == model.location) {
 				allSList.add(model.insertStmt);
 				hasInsert = true;
@@ -172,7 +175,8 @@ public class SketchAtomRunner extends FEReplacer {
 			return true;
 		for (String s : allVars) {
 			if (!exist.contains(s)) {
-//				System.out.println("resolve LHS false " + exist + "," + defined + "," + allVars);
+				// System.out.println("resolve LHS false " + exist + "," +
+				// defined + "," + allVars);
 				return false;
 			}
 		}

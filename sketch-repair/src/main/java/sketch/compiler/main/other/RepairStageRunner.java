@@ -21,7 +21,7 @@ public class RepairStageRunner extends RepairSketchMain {
 	TempVarGen varGen = new TempVarGen();
 	static int index = 0;
 	static String fix = null;
-	static Program fixProg = null;
+	 Program prog = null;
 
 	public RepairStageRunner(RepairSketchOptions options) {
 		super(options);
@@ -36,7 +36,7 @@ public class RepairStageRunner extends RepairSketchMain {
 	}
 
 	public String solveSketch(String sketchF) {
-		Program prog = null;
+//		Program prog = null;
 		try {
 			System.out.println("===repair stage runner solve sketch =====");
 			// new SimpleCodePrinter().visitProgram(origin);
@@ -103,7 +103,7 @@ public class RepairStageRunner extends RepairSketchMain {
 		return fix;
 	}
 
-	public static Program getFixProg() {
-		return fixProg;
+	public  Program getFixProg() {
+		return prog;
 	}
 }

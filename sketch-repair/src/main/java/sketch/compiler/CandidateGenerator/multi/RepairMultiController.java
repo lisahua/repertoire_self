@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import sketch.compiler.CandidateGenerator.multi.candStrategy.RepairGenerator;
+import sketch.compiler.assertionLocator.AssertIsolator;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.Package;
 import sketch.compiler.ast.core.Parameter;
@@ -19,7 +20,6 @@ import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.stmts.StmtAssert;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
-import sketch.compiler.ast.core.typs.Type;
 import sketch.compiler.bugLocator.FailureAssertHandler;
 import sketch.compiler.main.other.RepairSketchOptions;
 import sketch.compiler.main.other.RepairStageRunner;
@@ -33,18 +33,21 @@ public class RepairMultiController {
 	private HashMap<String, List<StmtAssign>> assignMap = new HashMap<String, List<StmtAssign>>();
 	// private String buggyType = null;
 	private RepairSketchOptions options;
+
 	private LocalVariableResolver resolver;
 	private Program prog;
 	private int num = 0;
 	private FailureAssertHandler failHandler = null;
 	private BlockNameResolver blockResolver;
+	private Program parsedProg = null;
 
 	public RepairMultiController(final Program prog, final RepairSketchOptions options) {
 		resolver = new LocalVariableResolver(prog);
-		blockResolver = new BlockNameResolver(prog, options.repairOptions.bound);
-		initProgram(prog);
 		this.options = options;
 		this.prog = prog;
+		blockResolver = new BlockNameResolver(prog, options.repairOptions.bound);
+
+		initProgram(prog);
 	}
 
 	public HashSet<String> getAllStructNames() {
@@ -57,6 +60,7 @@ public class RepairMultiController {
 	}
 
 	private void initProgram(Program prog) {
+
 		for (Package pkg : prog.getPackages()) {
 
 			for (Function func : pkg.getFuncs()) {
@@ -126,30 +130,8 @@ public class RepairMultiController {
 
 	private boolean runAtomicModel() {
 		RepairGenerator generator = new RepairGenerator(this);
-		generator.generateAtomicRunModel();
-		// List<String> types = failHandler.getBuggyTypeS();
-		// List<String> funcs = failHandler.getSuspFunctions();
-		// List<SketchTypeReplacer> replacer = new
-		// ArrayList<SketchTypeReplacer>(Arrays.asList(
-		// new SketchTypeExprReplacer(), new SketchTypeLoopReplacer(), new
-		// SketchTypeDependentLoopReplacer()));
-		//
-		// for (SketchTypeReplacer rep : replacer) {
-		// for (int j = funcs.size() - 1; j >= 0; j--) {
-		// // for (int i = types.size() - 1; i >= 0; i--) {
-		// rep.generateCandidate(this, types, funcs.get(j));
-		// // prog.accept(rep);
-		// // Program updateProg = (Program) rep.visitProgram(prog);
-		// String message = solveSketch((Program) rep.visitProgram(prog));
-		//
-		// if (message.equals(""))
-		// return true;
-		// // failHandler.findBuggyAssertion(message);
-		// // if (!failHandler.getBuggyTypeS().equals(types))
-		// // prog = updateProg;
-		// // }
-		// }
-		// }
+		String res = generator.generateAtomicRunModel(options.sketchName + num);
+
 		return false;
 	}
 
@@ -206,21 +188,13 @@ public class RepairMultiController {
 		return bound;
 	}
 
-	// private List<HashSet<String>> genCandidateList(String func, String typeS)
-	// {
-	// return resolver.extractCandidateList(func, typeS, getRepairBound());
-	// }
-	//
-	// private List<StringBuilder> genCandidateSetString(String func, String
-	// typeS) {
-	// return resolver.extractCandidateSetAsHole(func, typeS, getRepairBound());
-	// }
 	public StringBuilder genCandidateAllS(String func, int loc, String type) {
 		return blockResolver.getAllCandidates(func, type, loc);
 		// return resolver.extractCandidateHoleAllS(func, typeS,
 		// getRepairBound());
 	}
 
+	@Deprecated
 	public StringBuilder genCandidateAllS(String func, String typeS) {
 		return resolver.extractCandidateHoleAllS(func, typeS, getRepairBound());
 	}
@@ -231,46 +205,35 @@ public class RepairMultiController {
 
 	public String solveSketch(Program prog) {
 		System.out.println("solve sketch " + options.sktmpdir().getAbsolutePath());
-		String path = options.sketchName + num++;
+		String path = options.sketchName + ++num;
 		try {
 
 			new SimpleSketchFilePrinter(path).visitProgram(prog);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-		return new RepairStageRunner(options).solveSketch(path);
+
+		RepairStageRunner runner = new RepairStageRunner(options);
+		String res = runner.solveSketch(path);
+		parsedProg = runner.getFixProg();
+//		System.out.println("[controller parsedprog]"+parsedProg);
+		return res;
 	}
 
-	// public RepairMultiController writeFile(RepairSketchInsertionReplacer
-	// replacer) {
-	// String path = options.sketchName + num++;
-	// prog = new RepairStageRunner(options).readSketch(options.args[0]);
-	// prog = (Program) replacer.visitProgram(prog);
-	// try {
-	// new SimpleSketchFilePrinter(path).visitProgram(prog);
-	// prog = new RepairStageRunner(options).readSketch(path);
-	// if (prog != null) {
-	// RepairMultiController update_c = new RepairMultiController(prog,
-	// options);
-	// return update_c;
-	// } else {
-	// System.out.println("Expcetion controller null from omission field
-	// locator");
-	// return null;
-	// }
-	// } catch (FileNotFoundException e) {
-	// // TODO Auto-generated catch block
-	// e.printStackTrace();
-	// }
-	// return null;
-	// }
+	public void deleteCandidates() {
+
+	}
+
+	public Program getParsedProg() {
+		return parsedProg;
+	}
 
 	public boolean isPrimitiveType(String func, String exp) {
 		return resolver.isPrimitiveType(func, exp);
 	}
 
-	// public HashSet<Expression> instantiateField(String func, String field) {
-	// return resolver.instantiateField(func, field, null);
-	// }
+	public RepairSketchOptions getOptions() {
+		return options;
+	}
 
 }
