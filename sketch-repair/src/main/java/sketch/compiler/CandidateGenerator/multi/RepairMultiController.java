@@ -49,6 +49,21 @@ public class RepairMultiController {
 
 		initProgram(prog);
 	}
+	
+	public RepairMultiController(final Program prog, final RepairSketchOptions options,String message) {
+		resolver = new LocalVariableResolver(prog);
+		this.options = options;
+		this.prog = prog;
+		blockResolver = new BlockNameResolver(prog, options.repairOptions.bound);
+
+		initProgram(prog);
+		failHandler = new FailureAssertHandler(this);
+		StmtAssert failAssert = failHandler.findBuggyAssertion(message);
+		if (failAssert == null) {
+			failHandler = new NullFailureAssertHandler(this);
+		}
+		
+	}
 
 	public HashSet<String> getAllStructNames() {
 		HashSet<String> structs = resolver.getStructNames();

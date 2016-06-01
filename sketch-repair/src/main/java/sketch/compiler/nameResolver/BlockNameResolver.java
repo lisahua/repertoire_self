@@ -62,7 +62,7 @@ public class BlockNameResolver {
 				if (funcNS.contains("@"))
 					funcNS = func.getName().substring(0, func.getName().indexOf("@"));
 				for (Parameter para : func.getParams()) {
-					//FIXME may be error because return value is not set.
+					// FIXME may be error because return value is not set.
 					if (para.getName().startsWith("_"))
 						continue;
 					BlockNameResolverModel model = new BlockNameResolverModel(funcNS, para.getName(), para.getType(),
@@ -131,23 +131,35 @@ public class BlockNameResolver {
 		// field
 		if (funcNames.get("") != null) {
 			for (BlockNameResolverModel model : funcNames.get("")) {
+				String typeS = model.type.toString();
+				if (!typeS.contains("@") && typeBank.containsKey(typeS + "@ANONYMOUS"))
+					model.type = typeBank.get(model.type.toString() + "@ANONYMOUS");
 				HashSet<BlockNameResolverModel> tmp = names.get(model.type);
 				if (tmp == null)
 					tmp = new HashSet<BlockNameResolverModel>();
 				tmp.add(model);
+			
 				names.put(model.type, tmp);
 			}
 		}
 		for (BlockNameResolverModel model : funcNames.get(func)) {
+			String typeS = model.type.toString();
+			if (!typeS.contains("@") && typeBank.containsKey(typeS + "@ANONYMOUS"))
+				model.type = typeBank.get(model.type.toString() + "@ANONYMOUS");
 			HashSet<BlockNameResolverModel> tmp = names.get(model.type);
 			if (model.start == -1 || (model.start <= loc && model.end >= loc)) {
 				if (tmp == null)
 					tmp = new HashSet<BlockNameResolverModel>();
 				tmp.add(model);
+				
 				names.put(model.type, tmp);
 			}
 		}
-
+		for (Type t : names.keySet()) {
+			for (BlockNameResolverModel name : names.get(t)) {
+				System.out.println("[var Names] " + t + "," + name);
+			}
+		}
 		return names;
 	}
 
@@ -156,6 +168,7 @@ public class BlockNameResolver {
 		Type strType = typeBank.get(typeS);
 		if (strType == null && !typeS.contains("@"))
 			strType = typeBank.get(typeS + "@ANONYMOUS");
+
 		System.out.println("[input type] " + typeS + "," + strType);
 		StringBuilder builder = queryRecorder.getRecord(func, loc, strType);
 		if (builder != null)
@@ -179,10 +192,12 @@ public class BlockNameResolver {
 			return builder;
 		}
 		for (FieldWrapper wrap : dereference.get(strType)) {
+			System.out.println("[type ]" + wrap);
 			if (vars.get(wrap.origin) == null)
 				continue;
 			for (BlockNameResolverModel model : vars.get(wrap.origin)) {
 				nSet.add(model.name + "." + wrap.name);
+				System.out.println("[fields ] " + model + "," + wrap);
 			}
 		}
 		if (nSet.size() == 0) {
@@ -295,12 +310,18 @@ public class BlockNameResolver {
 				}
 			}
 		}
+		for (Type t : destMap.keySet()) {
+			for (FieldWrapper name : destMap.get(t)) {
+				System.out.println("[dest Names] " + t + "," + name);
+			}
+		}
 		// combine fields;
 		HashMap<Type, List<FieldWrapper>> combinedMap = new HashMap<Type, List<FieldWrapper>>();
 		for (Type type : destMap.keySet()) {
 			// System.out.println("[map wrap] " + type + "," +
 			// destMap.get(type));
 			List<FieldWrapper> list = new ArrayList<FieldWrapper>();
+			list.addAll(destMap.get(type));
 			for (FieldWrapper wrap : destMap.get(type)) {
 				for (int j = bound; j > -1; j--) {
 					if (destMap.get(wrap.origin) == null) {
@@ -318,6 +339,12 @@ public class BlockNameResolver {
 			}
 			combinedMap.put(type, list);
 		}
+		for (Type t : combinedMap.keySet()) {
+			for (FieldWrapper name : combinedMap.get(t)) {
+				System.out.println("[Names] " + t + "," + name);
+			}
+		}
+
 		return combinedMap;
 	}
 }

@@ -19,7 +19,7 @@ public class AssertReplacer extends FEReplacer {
 	HashSet<StmtAssert> removeList = new HashSet<StmtAssert>();
 	private RepairSketchOptions options = null;
 	private Program updatedProg;
-
+private String field ="";
 	public AssertReplacer(RepairSketchOptions options) {
 		this.options = options;
 	}
@@ -33,7 +33,11 @@ public class AssertReplacer extends FEReplacer {
 		updatedProg = (Program) this.visitProgram(prog);
 		return solveSketch(updatedProg);
 	}
-
+	public String removeStmtAsserts(String field, Program prog) {
+		this.field = field;
+		updatedProg = (Program) this.visitProgram(prog);
+		return solveSketch(updatedProg);
+	}
 	public String removeStmtAssert(StmtAssert ass, Program prog) {
 //		removeList = new HashSet<StmtAssert>();
 		removeList.add(ass);
@@ -42,9 +46,12 @@ public class AssertReplacer extends FEReplacer {
 
 	public Object visitStmtAssert(StmtAssert stmtAss) {
 		assList.add(stmtAss);
-		if (removeList.contains(stmtAss)) {
+		if (stmtAss.toString().contains(field)) {
+			System.out.println("[add assert] "+field+","+stmtAss);
+//		if (removeList.contains(stmtAss)) {
 			return super.visitStmtAssert(stmtAss);
 		} else {
+			System.out.println("[no assert] "+field+","+stmtAss);
 			return new StmtEmpty(stmtAss.getOrigin());
 		}
 	}

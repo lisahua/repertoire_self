@@ -15,36 +15,58 @@ import sketch.compiler.CandidateGenerator.multi.candStrategy.ConditionStrategy;
 import sketch.compiler.CandidateGenerator.multi.candStrategy.DiffTypeDoubleStmtStrategy;
 import sketch.compiler.CandidateGenerator.multi.candStrategy.SameTypeDoubleStmtStrategy;
 import sketch.compiler.CandidateGenerator.multi.candStrategy.SingleTypeStmtStrategy;
+import sketch.compiler.ast.core.FENode;
 import sketch.compiler.ast.core.Program;
 
 public abstract class FixStrategy {
 	RepairMultiController controller = null;
 	Program updatedProg = null;
-	List<String> types = null;
-	List<String> funcs = null;
+//	List<String> types = null;
+//	List<String> funcs = null;
 	List<CandidateStrategy> candidates = null;
 
 	public FixStrategy(RepairMultiController controller) {
 		this.controller = controller;
-		types = controller.getFailureHandler().getBuggyTypeS();
-		funcs = controller.getFailureHandler().getSuspFunctions();
+//		types = controller.getFailureHandler().getBuggyTypeS();
+//		funcs = controller.getFailureHandler().getSuspFunctions();
 		// candidates = new ArrayList<CandidateStrategy>(
 		// Arrays.asList(new SingleTypeStmtStrategy(controller), new
 		// SameTypeDoubleStmtStrategy(controller),
 		// new DiffTypeDoubleStmtStrategy(controller), new
 		// ConditionStrategy(controller)));
 		candidates = new ArrayList<CandidateStrategy>(Arrays.asList(new SingleTypeStmtStrategy(controller)));
-
+		updatedProg = controller.getProgram();
 	}
 
 	protected String runAtomicModel(AtomicRunModel md) {
-		final SketchAtomRunner worker = new SketchAtomRunner(controller);
+	
+		final SketchAtomRunner worker = new SketchAtomRunner();
 		worker.runEvent(md);
-		updatedProg = (Program) worker.visitProgram(controller.getProgram());
-		String res = controller.solveSketch(updatedProg);
-		updatedProg = controller.getParsedProg();
+//		updatedProg = (Program) worker.visitProgram(updatedProg);
+		String res = controller.solveSketch((Program) worker.visitProgram(updatedProg));
+//		updatedProg = controller.getParsedProg();
 		return res;
 	}
 
 	public abstract String generateAtomicRunModel();
+	
+	protected String generateFix(CandidateStrategy cand) {
+		String message = "";
+//		controller = new RepairMultiController(updatedProg, controller.getOptions());
+		List<String> types = controller.getFailureHandler().getBuggyTypeS();
+		List<String> funcs = controller.getFailureHandler().getSuspFunctions();
+		for (int j = funcs.size() - 1; j >= 0; j--) {
+			FENode origin = controller.getFuncMap(funcs.get(j)).getOrigin();
+			List<AtomicRunModel> models = cand.getAtomicRunModel(origin, funcs.get(j),
+					types);
+			for (AtomicRunModel md : models) {
+				message = runAtomicModel(md);
+				if (message.equals("")) {
+//					md.setFixed(msssage);
+					return message;
+				}
+			}
+		}
+		return message;
+	}
 }

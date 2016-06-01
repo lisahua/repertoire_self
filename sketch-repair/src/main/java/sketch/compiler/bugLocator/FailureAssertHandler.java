@@ -14,10 +14,10 @@ import sketch.compiler.ast.core.stmts.StmtAssert;
 public class FailureAssertHandler {
 
 	// private RepairProgramController utility;
-	 RepairMultiController utility;
-	 String buggyHarness = null;
-	 StmtAssert failAssert = null;
-	 List<String> buggyType = new ArrayList<String>();
+	RepairMultiController utility;
+	String buggyHarness = null;
+	StmtAssert failAssert = null;
+	List<String> buggyType = new ArrayList<String>();
 	// private List<VarDeclEntry> fields = new ArrayList<VarDeclEntry>();
 	List<String> suspFunc = null;
 
@@ -28,6 +28,10 @@ public class FailureAssertHandler {
 
 	public List<String> getSuspFunctions() {
 		return suspFunc;
+	}
+
+	public StmtAssert getFailAssert() {
+		return failAssert;
 	}
 
 	public StmtAssert findBuggyAssertion(String message) {

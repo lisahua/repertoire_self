@@ -36,5 +36,7 @@ public class NullFailureAssertHandler extends FailureAssertHandler {
 
 		return allTypes;
 	}
-
+	public StmtAssert getFailAssert() {
+		return null;
+	}
 }

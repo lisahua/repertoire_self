@@ -15,6 +15,7 @@ public class AtomicRunModel {
 	int location;
 	Function insertFunction;
 	boolean insertSucc = false;
+	String fixed ="";
 
 	public AtomicRunModel(String func, List<String> type, Statement insertStmt, int loc) {
 		this.func = func;
@@ -84,4 +85,13 @@ public class AtomicRunModel {
 		model.setInsertFunction(insertFunction);
 		return model;
 	}
+
+	public String isFixed() {
+		return fixed;
+	}
+
+	public void setFixed(String fixed) {
+		this.fixed = fixed;
+	}
+
 }

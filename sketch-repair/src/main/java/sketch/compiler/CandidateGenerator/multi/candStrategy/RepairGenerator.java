@@ -29,50 +29,42 @@ public class RepairGenerator {
 	}
 
 	public String generateAtomicRunModel() {
-		FixStrategy strategy = new OneCycleFixStrategy(controller);
+//		FixStrategy strategy = new OneCycleFixStrategy(controller);
+//		String message = strategy.generateAtomicRunModel();
+//		if (message.equals("")) return "";
+		FixStrategy strategy = new IncrementalFixStrategy(controller);
 		String message = strategy.generateAtomicRunModel();
-		if (message.equals("")) return "";
-		strategy = new IncrementalFixStrategy(controller);
-		message = strategy.generateAtomicRunModel();
 		return message;
 	}
 
 	
 
-	private String runAtomicModelWithTimeOut(AtomicRunModel md) {
-		final SketchAtomRunner worker = new SketchAtomRunner(controller);
-		worker.runEvent(md);
+//	private String runAtomicModelWithTimeOut(AtomicRunModel md) {
+//		final SketchAtomRunner worker = new SketchAtomRunner(controller);
+//		worker.runEvent(md);
+//
+//		final Duration timeout = Duration.ofSeconds(controller.getTimeOut());
+//		ExecutorService executor = Executors.newSingleThreadExecutor();
+//		String result = "NONE";
+//		@SuppressWarnings("unchecked")
+//		final Future<String> handler = executor.submit(new Callable() {
+//			@Override
+//			public String call() throws Exception {
+//				updatedProg = (Program) worker.visitProgram(controller.getProgram());
+//				return controller.solveSketch(updatedProg);
+//			}
+//		});
+//		try {
+//			result = handler.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
+//		} catch (SketchException se) {
+//			result = se.getMessage();
+//		} catch (Exception e) {
+//			result = e.getMessage();
+//			// FIXME hide exceptions
+//			// e.printStackTrace();
+//		}
+//		executor.shutdownNow();
+//		return result;
+//	}
 
-		final Duration timeout = Duration.ofSeconds(controller.getTimeOut());
-		ExecutorService executor = Executors.newSingleThreadExecutor();
-		String result = "NONE";
-		@SuppressWarnings("unchecked")
-		final Future<String> handler = executor.submit(new Callable() {
-			@Override
-			public String call() throws Exception {
-				updatedProg = (Program) worker.visitProgram(controller.getProgram());
-				return controller.solveSketch(updatedProg);
-			}
-		});
-		try {
-			result = handler.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
-		} catch (SketchException se) {
-			result = se.getMessage();
-		} catch (Exception e) {
-			result = e.getMessage();
-			// FIXME hide exceptions
-			// e.printStackTrace();
-		}
-		executor.shutdownNow();
-		return result;
-	}
-
-	private String runAtomicModel(AtomicRunModel md) {
-		final SketchAtomRunner worker = new SketchAtomRunner(controller);
-		worker.runEvent(md);
-		updatedProg = (Program) worker.visitProgram(controller.getProgram());
-		String res = controller.solveSketch(updatedProg);
-		updatedProg = controller.getParsedProg();
-		return res;
-	}
 }

@@ -5,6 +5,8 @@ package sketch.compiler.assertionLocator;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
 
 import sketch.compiler.ast.core.FEReplacer;
 import sketch.compiler.ast.core.Program;
@@ -13,6 +15,7 @@ import sketch.compiler.ast.core.stmts.StmtAssert;
 public class AssertIdentifier extends FEReplacer {
 	HashSet<StmtAssert> assList = new HashSet<StmtAssert>();
 	HashMap<String, HashSet<StmtAssert>> fieldCategory = new HashMap<String, HashSet<StmtAssert>>();
+	LinkedList<String> fields = new LinkedList<String>();
 
 	public StmtAssert getAssert(String msg, Program prog) {
 		this.visitProgram(prog);
@@ -33,7 +36,7 @@ public class AssertIdentifier extends FEReplacer {
 		return null;
 	}
 
-	public HashSet<StmtAssert> getSimilarAsserts(StmtAssert ass) {
+	private HashSet<StmtAssert> getSimilarAsserts(StmtAssert ass) {
 		String field = ass.toString().replace("(", "").replace("assert", "").replace(")", "").trim();
 		field = field.substring(0, field.indexOf("==")).trim();
 		if (field.contains(".")) {
@@ -47,6 +50,17 @@ public class AssertIdentifier extends FEReplacer {
 		return assSet;
 
 	}
+	
+	public HashSet<StmtAssert> getSimilarAsserts(String field, Program prog) {
+		this.visitProgram(prog);
+//		HashSet<StmtAssert> assSet = fieldCategory.get(field);
+//		if (assSet == null)
+//			assSet = new HashSet<StmtAssert>();
+//		assSet.add(ass);
+		return  fieldCategory.get(field);
+
+	}
+
 
 	public Object visitStmtAssert(StmtAssert stmtAss) {
 		assList.add(stmtAss);
@@ -58,13 +72,20 @@ public class AssertIdentifier extends FEReplacer {
 			String[] tkns = field.split("\\.");
 			field = tkns[tkns.length - 1];
 		}
-		System.out.println("[find field] " + field + "," + stmtAss);
+		
 		HashSet<StmtAssert> assSet = fieldCategory.get(field);
-		if (assSet == null)
+		if (assSet == null) {
 			assSet = new HashSet<StmtAssert>();
+			fields.add(field);
+		}
 		assSet.add(stmtAss);
 		fieldCategory.put(field, assSet);
+		
 		return super.visitStmtAssert(stmtAss);
 	}
 
+	public LinkedList<String> getAllAssertField(Program prog) {
+		this.visitProgram(prog);
+		return fields;
+	}
 }

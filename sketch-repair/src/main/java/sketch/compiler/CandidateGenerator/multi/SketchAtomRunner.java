@@ -21,19 +21,24 @@ import sketch.compiler.ast.core.stmts.StmtWhile;
 
 public class SketchAtomRunner extends FEReplacer {
 	private AtomicRunModel model;
-	private RepairMultiController controller;
+	// private RepairMultiController controller;
 	private HashSet<String> existVar = new HashSet<String>();
 	private HashSet<String> definedVar = new HashSet<String>();
 	private HashSet<String> allVars = new HashSet<String>();
 	private int stmtCount = 0;
 	private boolean hasInsert = false;
 
-	public SketchAtomRunner(RepairMultiController controller) {
-		this.controller = controller;
-	}
+	// public SketchAtomRunner(RepairMultiController controller) {
+	//// this.controller = controller;
+	// }
 
 	public void runEvent(AtomicRunModel model) {
 		this.model = model;
+	}
+
+	public void runEvent(AtomicRunModel model, Program prog) {
+		this.model = model;
+		this.visitProgram(prog);
 	}
 
 	public Object visitFunction(Function func) {
@@ -89,16 +94,17 @@ public class SketchAtomRunner extends FEReplacer {
 					existVar.add(var);
 				}
 			}
-			String type = controller.resolveFieldType(model.func, assign.getLHS().toString());
+			// String type = controller.resolveFieldType(model.func,
+			// assign.getLHS().toString());
 			stmtCount++;
-			if (model.type.contains(type)) {
-				// isBuggyTypeStmt = true;
-				return origin;
-			} else {
-				// System.out.println("replacer tell me why not loop " + assign
-				// + "," + buggyType + ","
-				// + resolveLHS(existVar, definedVar));
-			}
+			// if (model.type.contains(type)) {
+			// // isBuggyTypeStmt = true;
+			// return origin;
+			// } else {
+			// // System.out.println("replacer tell me why not loop " + assign
+			// // + "," + buggyType + ","
+			// // + resolveLHS(existVar, definedVar));
+			// }
 		}
 		return origin;
 	}
@@ -126,6 +132,7 @@ public class SketchAtomRunner extends FEReplacer {
 			// System.out.println("not insert because count wrong " + stmtCount
 			// + "," + model.location);
 			if (!hasInsert && stmtCount == model.location) {
+				System.out.println("[insert stmt] "+model.insertStmt);
 				allSList.add(model.insertStmt);
 				hasInsert = true;
 				model.insertSucc = true;
