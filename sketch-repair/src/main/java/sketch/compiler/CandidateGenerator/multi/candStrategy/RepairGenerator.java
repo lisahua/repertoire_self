@@ -4,11 +4,6 @@
 package sketch.compiler.CandidateGenerator.multi.candStrategy;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,11 +13,10 @@ import java.util.concurrent.TimeUnit;
 import sketch.compiler.CandidateGenerator.multi.AtomicRunModel;
 import sketch.compiler.CandidateGenerator.multi.RepairMultiController;
 import sketch.compiler.CandidateGenerator.multi.SketchAtomRunner;
-import sketch.compiler.assertionLocator.AssertIdentifier;
-import sketch.compiler.assertionLocator.AssertIsolator;
-import sketch.compiler.ast.core.FENode;
+import sketch.compiler.CandidateGenerator.multi.fixStrategy.FixStrategy;
+import sketch.compiler.CandidateGenerator.multi.fixStrategy.IncrementalFixStrategy;
+import sketch.compiler.CandidateGenerator.multi.fixStrategy.OneCycleFixStrategy;
 import sketch.compiler.ast.core.Program;
-import sketch.compiler.ast.core.stmts.StmtAssert;
 import sketch.util.exceptions.SketchException;
 
 public class RepairGenerator {
@@ -34,60 +28,16 @@ public class RepairGenerator {
 		// prog = controller.getProgram();
 	}
 
-	public String generateAtomicRunModel(String filePath) {
-		List<String> types = controller.getFailureHandler().getBuggyTypeS();
-		List<String> funcs = controller.getFailureHandler().getSuspFunctions();
-		List<CandidateStrategy> candidates = new ArrayList<CandidateStrategy>(
-				Arrays.asList(new SingleTypeStmtStrategy(controller), new SameTypeDoubleStmtStrategy(controller),
-						new DiffTypeDoubleStmtStrategy(controller), new ConditionStrategy(controller)));
-		String message = "";
-		AssertIdentifier assertIdentifier = new AssertIdentifier();
-		StmtAssert prevFailAssert = null;
-		AssertIsolator assIsolator = new AssertIsolator(controller.getOptions());
-		assIsolator.checkEachAssert(controller.getProgram());
-		HashMap<String, StmtAssert> failAsserts = assIsolator.getFailAsserts();
-
-		for (CandidateStrategy cand : candidates) {
-			for (int j = funcs.size() - 1; j >= 0; j--) {
-				FENode origin = controller.getFuncMap(funcs.get(j)).getOrigin();
-				List<AtomicRunModel> models = cand.getAtomicRunModel(origin, funcs.get(j), types);
-				for (AtomicRunModel md : models) {
-					// message = runAtomicModelWithTimeOut(md);
-					message = runAtomicModel(md);
-					if (message.equals(""))
-						return "";
-					assertIdentifier.visitProgram(updatedProg);
-					StmtAssert failAssert = assertIdentifier.getAssert(message);
-//					System.out.println("[asserts] " + failAssert+","+ prevFailAssert);
-					if (prevFailAssert == null) {
-						prevFailAssert = failAssert;
-						continue;
-					} else if (failAssert ==null) continue;
-					else if (prevFailAssert.toString().equals(failAssert.toString())) {
-						System.out.println("[Same assert] " + failAssert);
-						continue;
-					}
-				else {
-						// is it a partial fix?
-						assIsolator.visitProgram(updatedProg);
-						assIsolator.checkEachAssert(updatedProg);
-						HashMap<String, StmtAssert> fails = assIsolator.getFailAsserts();
-						if (fails.size() >= failAsserts.size()) {
-							System.out.println("[Same error] " + fails.size());
-							continue;
-						}
-						if (failAsserts.keySet().contains(fails.keySet())) {
-							System.out.println("[Partial Fix] " + fails.size());
-							return "[Partial] " + message;
-						}
-						
-					}
-
-				}
-			}
-		}
+	public String generateAtomicRunModel() {
+		FixStrategy strategy = new OneCycleFixStrategy(controller);
+		String message = strategy.generateAtomicRunModel();
+		if (message.equals("")) return "";
+		strategy = new IncrementalFixStrategy(controller);
+		message = strategy.generateAtomicRunModel();
 		return message;
 	}
+
+	
 
 	private String runAtomicModelWithTimeOut(AtomicRunModel md) {
 		final SketchAtomRunner worker = new SketchAtomRunner(controller);

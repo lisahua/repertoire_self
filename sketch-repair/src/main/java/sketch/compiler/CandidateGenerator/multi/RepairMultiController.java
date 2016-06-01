@@ -130,7 +130,7 @@ public class RepairMultiController {
 
 	private boolean runAtomicModel() {
 		RepairGenerator generator = new RepairGenerator(this);
-		String res = generator.generateAtomicRunModel(options.sketchName + num);
+		String res = generator.generateAtomicRunModel();
 
 		return false;
 	}

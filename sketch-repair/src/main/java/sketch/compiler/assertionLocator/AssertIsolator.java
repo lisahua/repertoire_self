@@ -13,13 +13,13 @@ import sketch.compiler.ast.core.stmts.StmtAssert;
 import sketch.compiler.main.other.RepairSketchOptions;
 import sketch.compiler.main.other.RepairStageRunner;
 import sketch.compiler.main.other.SimpleSketchFilePrinter;
-
+@Deprecated // because its too expensive
 public class AssertIsolator extends FEReplacer {
 	HashSet<StmtAssert> assList = new HashSet<StmtAssert>();
 	HashSet<StmtAssert> correctList = new HashSet<StmtAssert>();
 	HashSet<StmtAssert> failList = new HashSet<StmtAssert>();
 	private RepairSketchOptions options = null;
-	private AssertReplacer replacer = new AssertReplacer();
+//	private AssertReplacer replacer = new AssertReplacer();
 
 	public AssertIsolator(RepairSketchOptions options) {
 		this.options = options;
@@ -39,11 +39,11 @@ public class AssertIsolator extends FEReplacer {
 		this.visitProgram(prog);
 		for (StmtAssert ass : assList) {
 			correctList.add(ass);
-			replacer.setStmtAsserts(correctList);
-			Program newProg = (Program) replacer.visitProgram(prog);
-			String res = solveSketch(newProg);
-			if (!res.equals(""))
-				correctList.remove(ass);
+//			replacer.setStmtAsserts(correctList);
+//			Program newProg = (Program) replacer.visitProgram(prog);
+//			String res = solveSketch(newProg);
+//			if (!res.equals(""))
+//				correctList.remove(ass);
 		}
 		for (StmtAssert ass : assList) {
 			if (correctList.contains(ass))
@@ -73,5 +73,7 @@ public class AssertIsolator extends FEReplacer {
 		System.out.println("[Fail asserts] " + failAsserts.size());
 		return failAsserts;
 	}
+	
+	
 
 }
