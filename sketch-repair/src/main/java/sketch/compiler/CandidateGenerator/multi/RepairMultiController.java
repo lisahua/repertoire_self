@@ -49,8 +49,8 @@ public class RepairMultiController {
 
 		initProgram(prog);
 	}
-	
-	public RepairMultiController(final Program prog, final RepairSketchOptions options,String message) {
+
+	public RepairMultiController(final Program prog, final RepairSketchOptions options, String message) {
 		resolver = new LocalVariableResolver(prog);
 		this.options = options;
 		this.prog = prog;
@@ -62,7 +62,7 @@ public class RepairMultiController {
 		if (failAssert == null) {
 			failHandler = new NullFailureAssertHandler(this);
 		}
-		
+
 	}
 
 	public HashSet<String> getAllStructNames() {
@@ -146,7 +146,8 @@ public class RepairMultiController {
 	private boolean runAtomicModel() {
 		RepairGenerator generator = new RepairGenerator(this);
 		String res = generator.generateAtomicRunModel();
-
+		if (res.equals(""))
+			return true;
 		return false;
 	}
 
@@ -231,7 +232,7 @@ public class RepairMultiController {
 		RepairStageRunner runner = new RepairStageRunner(options);
 		String res = runner.solveSketch(path);
 		parsedProg = runner.getFixProg();
-//		System.out.println("[controller parsedprog]"+parsedProg);
+		// System.out.println("[controller parsedprog]"+parsedProg);
 		return res;
 	}
 

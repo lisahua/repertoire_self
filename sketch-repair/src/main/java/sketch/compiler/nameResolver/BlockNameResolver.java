@@ -155,11 +155,11 @@ public class BlockNameResolver {
 				names.put(model.type, tmp);
 			}
 		}
-		for (Type t : names.keySet()) {
-			for (BlockNameResolverModel name : names.get(t)) {
-				System.out.println("[var Names] " + t + "," + name);
-			}
-		}
+//		for (Type t : names.keySet()) {
+//			for (BlockNameResolverModel name : names.get(t)) {
+//				System.out.println("[var Names] " + t + "," + name);
+//			}
+//		}
 		return names;
 	}
 
@@ -169,7 +169,7 @@ public class BlockNameResolver {
 		if (strType == null && !typeS.contains("@"))
 			strType = typeBank.get(typeS + "@ANONYMOUS");
 
-		System.out.println("[input type] " + typeS + "," + strType);
+//		System.out.println("[input type] " + typeS + "," + strType);
 		StringBuilder builder = queryRecorder.getRecord(func, loc, strType);
 		if (builder != null)
 			return builder;
@@ -310,11 +310,11 @@ public class BlockNameResolver {
 				}
 			}
 		}
-		for (Type t : destMap.keySet()) {
-			for (FieldWrapper name : destMap.get(t)) {
-				System.out.println("[dest Names] " + t + "," + name);
-			}
-		}
+//		for (Type t : destMap.keySet()) {
+//			for (FieldWrapper name : destMap.get(t)) {
+//				System.out.println("[dest Names] " + t + "," + name);
+//			}
+//		}
 		// combine fields;
 		HashMap<Type, List<FieldWrapper>> combinedMap = new HashMap<Type, List<FieldWrapper>>();
 		for (Type type : destMap.keySet()) {
@@ -339,11 +339,11 @@ public class BlockNameResolver {
 			}
 			combinedMap.put(type, list);
 		}
-		for (Type t : combinedMap.keySet()) {
-			for (FieldWrapper name : combinedMap.get(t)) {
-				System.out.println("[Names] " + t + "," + name);
-			}
-		}
+//		for (Type t : combinedMap.keySet()) {
+//			for (FieldWrapper name : combinedMap.get(t)) {
+//				System.out.println("[Names] " + t + "," + name);
+//			}
+//		}
 
 		return combinedMap;
 	}

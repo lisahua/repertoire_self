@@ -36,11 +36,6 @@ public class SketchAtomRunner extends FEReplacer {
 		this.model = model;
 	}
 
-	public void runEvent(AtomicRunModel model, Program prog) {
-		this.model = model;
-		this.visitProgram(prog);
-	}
-
 	public Object visitFunction(Function func) {
 		if (!func.getName().equals(model.func))
 			return super.visitFunction(func);

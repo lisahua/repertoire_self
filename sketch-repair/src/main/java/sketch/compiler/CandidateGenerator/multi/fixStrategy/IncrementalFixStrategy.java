@@ -16,10 +16,11 @@ import sketch.compiler.assertionLocator.AssertReplacer;
 import sketch.compiler.ast.core.Program;
 
 public class IncrementalFixStrategy extends FixStrategy {
-	Program origin = null;
+
 	List<AtomicRunModel> repairs = new ArrayList<AtomicRunModel>();
 	AssertIdentifier assertIdentifier = new AssertIdentifier();
 	AssertReplacer assertRemover = new AssertReplacer(controller.getOptions());
+	Program origin = null;
 
 	public IncrementalFixStrategy(RepairMultiController controller) {
 		super(controller);
@@ -37,24 +38,28 @@ public class IncrementalFixStrategy extends FixStrategy {
 		HashSet<String> remainFailField = new HashSet<String>();
 
 		while (!buggyField.isEmpty()) {
+			controller = new RepairMultiController(originProg, controller.getOptions());
+			message = controller.solveSketch(originProg);
+			if (message.equals(""))
+				return "";
 			String field = buggyField.removeFirst();
-			String msg = isolateField(field);
-			if (msg.equals("")) {
+			message = isolateField(field);
+			if (message.equals("")) {
 				System.out.println("[no error on field " + field + "]");
 			} else {
-				msg = generateFix(new SingleTypeStmtStrategy(controller));
-				if (!msg.equals("")) {
+				message = generateFix(new SingleTypeStmtStrategy(controller));
+				if (!message.equals("")) {
 					remainFailField.add(field);
 					System.out.println("[fail to fix field " + field + "]");
 				} else {
 					System.out.println("[partial fixed field " + field + "]");
 					// TODO record the fix here
-					updatedProg = origin;
-					controller = new RepairMultiController(updatedProg, controller.getOptions(),msg);
+					updatedProg = originProg;
+					controller = new RepairMultiController(updatedProg, controller.getOptions(), message);
 				}
 			}
 		}
-
+		return message;
 		// for (CandidateStrategy cand : candidates) {
 		// for (int j = funcs.size() - 1; j >= 0; j--) {
 		// FENode origin = controller.getFuncMap(funcs.get(j)).getOrigin();
@@ -102,7 +107,7 @@ public class IncrementalFixStrategy extends FixStrategy {
 		// message = assertRemover.removeStmtAssert(prevFail, updatedProg);
 		// updatedProg = assertRemover.getUpdatedProg();
 
-		return message;
+		// return message;
 	}
 
 	// FIXME assume that the failing asserts with the same field can be fixed by
@@ -118,7 +123,7 @@ public class IncrementalFixStrategy extends FixStrategy {
 		// message =
 		// assertRemover.removeStmtAsserts(assertIdentifier.getSimilarAsserts(failAssert),
 		// updatedProg);
-		controller = new RepairMultiController(updatedProg, controller.getOptions(),msg);
+		controller = new RepairMultiController(updatedProg, controller.getOptions(), msg);
 		// System.out.println("[results fix] " + message + "," + failAssert);
 		// }
 		return msg;
