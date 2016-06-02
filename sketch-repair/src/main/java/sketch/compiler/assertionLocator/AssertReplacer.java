@@ -19,7 +19,8 @@ public class AssertReplacer extends FEReplacer {
 	HashSet<StmtAssert> removeList = new HashSet<StmtAssert>();
 	private RepairSketchOptions options = null;
 	private Program updatedProg;
-private String field ="";
+	private String field = "";
+
 	public AssertReplacer(RepairSketchOptions options) {
 		this.options = options;
 	}
@@ -27,31 +28,35 @@ private String field ="";
 	public Program getUpdatedProg() {
 		return updatedProg;
 	}
-	
+
 	public String removeStmtAsserts(HashSet<StmtAssert> assList, Program prog) {
 		this.removeList = assList;
 		updatedProg = (Program) this.visitProgram(prog);
 		return solveSketch(updatedProg);
 	}
+
 	public String removeStmtAsserts(String field, Program prog) {
 		this.field = field;
 		updatedProg = (Program) this.visitProgram(prog);
 		return solveSketch(updatedProg);
 	}
+
 	public String removeStmtAssert(StmtAssert ass, Program prog) {
-//		removeList = new HashSet<StmtAssert>();
+		// removeList = new HashSet<StmtAssert>();
 		removeList.add(ass);
 		return removeStmtAsserts(removeList, prog);
 	}
 
 	public Object visitStmtAssert(StmtAssert stmtAss) {
 		assList.add(stmtAss);
+		if (field.equals(""))
+			return super.visitStmtAssert(stmtAss);
 		if (stmtAss.toString().contains(field)) {
-			System.out.println("[add assert] "+field+","+stmtAss);
-//		if (removeList.contains(stmtAss)) {
+			System.out.println("[add assert] " + field + "," + stmtAss);
+			// if (removeList.contains(stmtAss)) {
 			return super.visitStmtAssert(stmtAss);
 		} else {
-			System.out.println("[no assert] "+field+","+stmtAss);
+			System.out.println("[no assert] " + field + "," + stmtAss);
 			return new StmtEmpty(stmtAss.getOrigin());
 		}
 	}
@@ -67,7 +72,7 @@ private String field ="";
 	}
 
 	public boolean continueRemoveAsserts() {
-		return assList.size()==0 || assList.size() > removeList.size();
+		return assList.size() == 0 || assList.size() > removeList.size();
 	}
-	
+
 }

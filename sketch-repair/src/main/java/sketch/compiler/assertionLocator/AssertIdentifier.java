@@ -36,43 +36,17 @@ public class AssertIdentifier extends FEReplacer {
 		return null;
 	}
 
-	private HashSet<StmtAssert> getSimilarAsserts(StmtAssert ass) {
-		String field = ass.toString().replace("(", "").replace("assert", "").replace(")", "").trim();
-		field = field.substring(0, field.indexOf("==")).trim();
-		if (field.contains(".")) {
-			String[] tkns = field.split("\\.");
-			field = tkns[tkns.length - 1];
-		}
-		HashSet<StmtAssert> assSet = fieldCategory.get(field);
-		if (assSet == null)
-			assSet = new HashSet<StmtAssert>();
-		assSet.add(ass);
-		return assSet;
-
-	}
-	
-	public HashSet<StmtAssert> getSimilarAsserts(String field, Program prog) {
-		this.visitProgram(prog);
-//		HashSet<StmtAssert> assSet = fieldCategory.get(field);
-//		if (assSet == null)
-//			assSet = new HashSet<StmtAssert>();
-//		assSet.add(ass);
-		return  fieldCategory.get(field);
-
-	}
-
-
 	public Object visitStmtAssert(StmtAssert stmtAss) {
 		assList.add(stmtAss);
 		String field = stmtAss.toString().replace("(", "").replace("assert", "").replace(")", "").trim();
 		if (!field.contains("="))
 			return super.visitStmtAssert(stmtAss);
 		field = field.substring(0, field.indexOf("=")).trim();
-		if (field.contains(".")) {
-			String[] tkns = field.split("\\.");
-			field = tkns[tkns.length - 1];
-		}
-		
+		if (!field.contains("."))
+			return super.visitStmtAssert(stmtAss);
+
+		String[] tkns = field.split("\\.");
+		field = tkns[tkns.length - 1];
 		HashSet<StmtAssert> assSet = fieldCategory.get(field);
 		if (assSet == null) {
 			assSet = new HashSet<StmtAssert>();
@@ -80,7 +54,7 @@ public class AssertIdentifier extends FEReplacer {
 		}
 		assSet.add(stmtAss);
 		fieldCategory.put(field, assSet);
-		
+
 		return super.visitStmtAssert(stmtAss);
 	}
 

@@ -30,18 +30,15 @@ public class IncrementalFixStrategy extends FixStrategy {
 	@Override
 	public String generateAtomicRunModel() {
 		String message = "";
-
-		// StmtAssert prevFail = null;
-		// HashSet<StmtAssert> removeList = new HashSet<StmtAssert>();
-		// HashSet<StmtAssert> fixedList = new HashSet<StmtAssert>();
 		LinkedList<String> buggyField = assertIdentifier.getAllAssertField(origin);
 		HashSet<String> remainFailField = new HashSet<String>();
-
+		controller = new RepairMultiController(originProg, controller.getOptions());
+		message = controller.solveSketch(originProg);
 		while (!buggyField.isEmpty()) {
-			controller = new RepairMultiController(originProg, controller.getOptions());
-			message = controller.solveSketch(originProg);
 			if (message.equals(""))
 				return "";
+			updatedProg = originProg;
+			controller = new RepairMultiController(updatedProg, controller.getOptions(), message);
 			String field = buggyField.removeFirst();
 			message = isolateField(field);
 			if (message.equals("")) {
@@ -54,60 +51,13 @@ public class IncrementalFixStrategy extends FixStrategy {
 				} else {
 					System.out.println("[partial fixed field " + field + "]");
 					// TODO record the fix here
-					updatedProg = originProg;
-					controller = new RepairMultiController(updatedProg, controller.getOptions(), message);
-				}
+					}
 			}
+			controller = new RepairMultiController(originProg, controller.getOptions());
+			message = controller.solveSketch(originProg);
 		}
+
 		return message;
-		// for (CandidateStrategy cand : candidates) {
-		// for (int j = funcs.size() - 1; j >= 0; j--) {
-		// FENode origin = controller.getFuncMap(funcs.get(j)).getOrigin();
-		// List<AtomicRunModel> models = new
-		// SingleTypeStmtStrategy(controller).getAtomicRunModel(origin,
-		// funcs.get(j),
-		// types);
-		// for (AtomicRunModel md : models) {
-		// message = runAtomicModel(md);
-		// if (message.equals(""))
-		// return "";
-		// failAssert = assertIdentifier.getAssert(message,
-		// updatedProg);
-		// if (failAssert == null)
-		// continue;
-		// if (prevFail == null) {
-		// prevFail = failAssert;
-		// } else if
-		// (failAssert.toString().trim().equals(prevFail.toString().trim()))
-		// {
-		// System.out.println("[Same error] " + failAssert.toString() +
-		// "," + prevFail.toString());
-		// continue;
-		// }
-		// removeList.addAll(assertIdentifier.getSimilarAsserts(failAssert));
-		// message = assertRemover.removeStmtAsserts(removeList,
-		// updatedProg);
-		// FIXME a bit hacky, but good performance
-
-		// if (message.equals("")) {
-		// System.out.println("[Find fix]" + failAssert);
-		// repairs.add(md);
-		// fixedList.add(failAssert);
-		// // removeList.remove(failAssert);
-		// // String msg =
-		// //
-		// assertRemover.removeStmtAsserts(assertIdentifier.getSimilarAsserts(failAssert),
-		// // updatedProg);
-		// // if (msg.equals(""))
-		// fixedList.addAll(assertIdentifier.getSimilarAsserts(failAssert));
-		// }
-		// }
-		// }
-		// }
-		// message = assertRemover.removeStmtAssert(prevFail, updatedProg);
-		// updatedProg = assertRemover.getUpdatedProg();
-
-		// return message;
 	}
 
 	// FIXME assume that the failing asserts with the same field can be fixed by
@@ -115,14 +65,6 @@ public class IncrementalFixStrategy extends FixStrategy {
 	private String isolateField(String field) {
 		String msg = assertRemover.removeStmtAsserts(field, updatedProg);
 		updatedProg = assertRemover.getUpdatedProg();
-		// Fail-oriented repair, hard to terminate.
-		// StmtAssert failAssert =
-		// controller.getFailureHandler().getFailAssert();
-		// String message = "";
-		// if (failAssert != null) {
-		// message =
-		// assertRemover.removeStmtAsserts(assertIdentifier.getSimilarAsserts(failAssert),
-		// updatedProg);
 		controller = new RepairMultiController(updatedProg, controller.getOptions(), msg);
 		// System.out.println("[results fix] " + message + "," + failAssert);
 		// }
