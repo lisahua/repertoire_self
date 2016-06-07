@@ -10,6 +10,7 @@ import java.util.List;
 
 import sketch.compiler.ast.core.FEReplacer;
 import sketch.compiler.ast.core.Function;
+import sketch.compiler.ast.core.Function.FcnType;
 import sketch.compiler.ast.core.Parameter;
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.stmts.Statement;
@@ -49,7 +50,7 @@ public class SketchAtomRunner extends FEReplacer {
 			existVar.add(p.getName());
 		}
 		StmtBlock block = new StmtBlock(func.getOrigin(), insertRecur(func.getBody()));
-		func = func.creator().body(block).create();
+		func  = func.creator().body(block).create();
 		return func;
 	}
 

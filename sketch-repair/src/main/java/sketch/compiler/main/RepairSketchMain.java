@@ -5,7 +5,6 @@ package sketch.compiler.main;
 
 import static sketch.util.DebugOut.printError;
 
-import java.util.Vector;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,9 +13,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import sketch.compiler.ast.core.Program;
-import sketch.compiler.cmdline.SemanticsOptions.ArrayOobPolicy;
-import sketch.compiler.cmdline.SolverOptions.SynthSolvers;
-import sketch.compiler.cmdline.SolverOptions.VerifSolvers;
 import sketch.compiler.eqTransfer.RepairMapper;
 import sketch.compiler.main.other.ErrorHandling;
 import sketch.compiler.main.other.OutputSketchCode;
@@ -26,9 +22,7 @@ import sketch.compiler.main.passes.CleanupFinalCode;
 import sketch.compiler.main.passes.ParseProgramStage;
 import sketch.compiler.main.passes.SubstituteSolution;
 import sketch.compiler.main.seq.SequentialSketchMain;
-import sketch.compiler.solvers.SATBackend;
-import sketch.compiler.solvers.parallel.StrategicalBackend;
-import sketch.compiler.wrapper.SATBackEndAssertWrapper;
+import sketch.compiler.passes.printers.SimpleCodePrinter;
 import sketch.util.exceptions.SketchException;
 
 public class RepairSketchMain extends SequentialSketchMain {
@@ -62,6 +56,7 @@ public class RepairSketchMain extends SequentialSketchMain {
 			SynthesisResult synthResult = this.partialEvalAndSolve(prog);
 			prog = synthResult.lowered.result;
 			Program finalCleaned = synthResult.lowered.highLevelC;
+			
 			Program substituted;
 			if (synthResult.solution != null) {
 				substituted = (new SubstituteSolution(varGen, options, synthResult.solution))
@@ -69,9 +64,12 @@ public class RepairSketchMain extends SequentialSketchMain {
 			} else {
 				substituted = finalCleaned;
 			}
+			
 			Program substitutedCleaned = (new CleanupFinalCode(varGen, options, visibleRControl(finalCleaned)))
 					.visitProgram(substituted);
+			
 			generateCode(substitutedCleaned);
+			
 			return true;
 		} catch (SketchException se) {
 			System.out.println("========Repair starts: " + se.getMessage() + "==========");

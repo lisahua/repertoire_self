@@ -147,6 +147,8 @@ public class RepairMultiController {
 		RepairGenerator generator = new RepairGenerator(this);
 		String res = generator.generateAtomicRunModel();
 		if (res.equals("")) {
+			RepairMapper.setChangedFuncs(generator.getChangedFunc());
+			RepairMapper.checkMapping(prog);
 			return true;
 		}
 		return false;

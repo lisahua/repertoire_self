@@ -5,6 +5,7 @@ package sketch.compiler.CandidateGenerator.multi.fixStrategy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import sketch.compiler.CandidateGenerator.multi.AtomicRunModel;
@@ -25,7 +26,7 @@ public abstract class FixStrategy {
 	// List<String> funcs = null;
 	List<CandidateStrategy> candidates = null;
 	Program originProg = null;
-	
+	HashSet<String> changedFunc = new HashSet<String>();
 
 	public FixStrategy(RepairMultiController controller) {
 		this.controller = controller;
@@ -68,7 +69,7 @@ public abstract class FixStrategy {
 					worker.runEvent(md);
 					// updatedProg = (Program) worker.visitProgram(updatedProg);
 					originProg = (Program) worker.visitProgram(originProg);
-
+					changedFunc.add(funcs.get(j));
 					return message;
 				}
 			}
@@ -78,5 +79,8 @@ public abstract class FixStrategy {
 
 	public Program getAtomicRepairProgram() {
 		return originProg;
+	}
+	public HashSet<String> getChangedFunc() {
+		return changedFunc;
 	}
 }
