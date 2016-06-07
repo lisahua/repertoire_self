@@ -18,6 +18,7 @@ import sketch.compiler.codegenerators.NodesToCUDA;
 import sketch.compiler.codegenerators.NodesToSuperCTest;
 import sketch.compiler.codegenerators.NodesToSuperCpp;
 import sketch.compiler.codegenerators.NodesToSuperH;
+import sketch.compiler.eqTransfer.RepairMapper;
 import sketch.compiler.main.passes.OutputCCode;
 import sketch.compiler.main.seq.SequentialSketchMain;
 import sketch.compiler.passes.lowering.EliminateMultiDimArrays;
@@ -54,6 +55,7 @@ public class OutputSketchCode extends OutputCCode {
 
 		if (!options.feOpts.outputCode && !options.feOpts.noOutputPrint) {
 			try {
+				prog = RepairMapper.checkMapping(prog);
 				prog.accept(new SimpleSketchFilePrinter(file));
 				
 			} catch (FileNotFoundException e) {

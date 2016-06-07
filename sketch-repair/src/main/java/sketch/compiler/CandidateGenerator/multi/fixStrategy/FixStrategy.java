@@ -25,6 +25,7 @@ public abstract class FixStrategy {
 	// List<String> funcs = null;
 	List<CandidateStrategy> candidates = null;
 	Program originProg = null;
+	
 
 	public FixStrategy(RepairMultiController controller) {
 		this.controller = controller;

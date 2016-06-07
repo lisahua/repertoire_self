@@ -12,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import sketch.compiler.CandidateGenerator.multi.candStrategy.RepairGenerator;
-import sketch.compiler.assertionLocator.AssertIsolator;
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.Package;
 import sketch.compiler.ast.core.Parameter;
@@ -21,6 +20,7 @@ import sketch.compiler.ast.core.stmts.StmtAssert;
 import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtVarDecl;
 import sketch.compiler.bugLocator.FailureAssertHandler;
+import sketch.compiler.eqTransfer.RepairMapper;
 import sketch.compiler.main.other.RepairSketchOptions;
 import sketch.compiler.main.other.RepairStageRunner;
 import sketch.compiler.main.other.SimpleSketchFilePrinter;
@@ -146,8 +146,9 @@ public class RepairMultiController {
 	private boolean runAtomicModel() {
 		RepairGenerator generator = new RepairGenerator(this);
 		String res = generator.generateAtomicRunModel();
-		if (res.equals(""))
+		if (res.equals("")) {
 			return true;
+		}
 		return false;
 	}
 

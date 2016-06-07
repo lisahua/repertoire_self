@@ -17,6 +17,7 @@ import sketch.compiler.ast.core.Program;
 import sketch.compiler.cmdline.SemanticsOptions.ArrayOobPolicy;
 import sketch.compiler.cmdline.SolverOptions.SynthSolvers;
 import sketch.compiler.cmdline.SolverOptions.VerifSolvers;
+import sketch.compiler.eqTransfer.RepairMapper;
 import sketch.compiler.main.other.ErrorHandling;
 import sketch.compiler.main.other.OutputSketchCode;
 import sketch.compiler.main.other.RepairSketchOptions;
@@ -56,6 +57,7 @@ public class RepairSketchMain extends SequentialSketchMain {
 		Program prog = null;
 		try {
 			prog = parseProgram();
+			RepairMapper.setOriginProgram(prog);
 			prog = this.preprocAndSemanticCheck(prog);
 			SynthesisResult synthResult = this.partialEvalAndSolve(prog);
 			prog = synthResult.lowered.result;
