@@ -8,33 +8,27 @@ import java.util.List;
 
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.stmts.Statement;
-import sketch.compiler.ast.core.stmts.StmtAssign;
 import sketch.compiler.ast.core.stmts.StmtBlock;
-import sketch.compiler.ast.core.stmts.StmtExpr;
 import sketch.compiler.ast.core.stmts.StmtIfThen;
-import sketch.compiler.ast.core.stmts.StmtReturn;
-import sketch.compiler.ast.core.stmts.StmtVarDecl;
 import sketch.compiler.ast.core.stmts.StmtWhile;
 
-public class TempVarReverter  {
+public class TempVarReverter {
 	private Function origin = null;
 	public String funcName = "";
-private int count = 0;
+	private int count = 0;
+
 	public TempVarReverter(Function origin) {
 		this.origin = origin;
 		funcName = origin.getName();
 		if (funcName.contains("@"))
 			funcName = funcName.substring(0, funcName.indexOf("@"));
 	}
+
 	public TempVarReverter() {
-	
+
 	}
+
 	public List<String> visitFunction(Function func) {
-//		String fName = func.getName();
-//		if (fName.contains("@"))
-//			fName = fName.substring(0, fName.indexOf("@"));
-//		if (!fName.equals(funcName))
-//			return null;
 		List<String> stmtS = recurMatch(func.getBody());
 
 		return stmtS;
@@ -50,46 +44,37 @@ private int count = 0;
 		} else if (stmt instanceof StmtWhile) {
 			count++;
 			stmtS.addAll(matchLoop((StmtWhile) stmt));
-		} else if (stmt instanceof StmtVarDecl) {
-			count++;
-			StmtVarDecl decl = (StmtVarDecl) stmt;
-			stmtS.add("varDecl," +decl.toString() );
-		} else if (stmt instanceof StmtAssign) {
-			count++;
-			StmtAssign assign = (StmtAssign) stmt;
-			stmtS.add(new FlattenStmtModel(assign,count).getFlatS() );
-		} else if (stmt instanceof StmtExpr) {
-			count++;
-			stmtS.add("stmtExpr,"+stmt.toString() );
-		} else if (stmt instanceof StmtReturn) {
-			count++;
-			stmtS.add("stmtReturn,"+stmt.toString() );
-		}
+		} else {
+			stmtS.add(new FlattenStmtModel(stmt,++count).getFlatS());
+		} 
 		return stmtS;
 	}
 
 	List<String> matchIfThen(StmtIfThen stmt) {
 		List<String> stmtS = new ArrayList<String>();
-		stmtS.add("if," + stmt.getCond());
+		FlattenStmtModel model = new FlattenStmtModel(stmt,++count);
+		stmtS.add(model.getFlatS());
 		stmtS.addAll(recurMatch(stmt.getCons()));
 		stmtS.addAll(recurMatch(stmt.getAlt()));
-		stmtS.add("endif," + stmt.getCond());
+		stmtS.add("endif," + model.getFlatS().substring(model.getFlatS().indexOf(",")));
 		return stmtS;
 	}
 
 	List<String> matchLoop(StmtWhile loop) {
 		List<String> stmtS = new ArrayList<String>();
-		stmtS.add("while," + loop.getCond());
+		FlattenStmtModel model = new FlattenStmtModel(loop,++count);
+		stmtS.add(model.getFlatS());
 		stmtS.addAll(recurMatch(loop.getBody()));
-		stmtS.add("endwhile," + loop.getCond());
+		stmtS.add("endwhile," +model.getFlatS().substring(model.getFlatS().indexOf(",")));
 		return stmtS;
 	}
 
 	List<String> matchBlock(StmtBlock block) {
 		List<String> stmtS = new ArrayList<String>();
 		List<Statement> list = ((StmtBlock) block).getStmts();
-		for (int i = 0; i < list.size(); i++)
+		for (int i = 0; i < list.size(); i++) {
 			stmtS.addAll(recurMatch(list.get(i)));
+		}
 		return stmtS;
 	}
 

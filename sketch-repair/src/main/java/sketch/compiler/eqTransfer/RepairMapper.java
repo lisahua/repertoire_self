@@ -20,7 +20,8 @@ public class RepairMapper {
 	}
 
 	public static void setChangedFuncs(HashSet<String> func) {
-		funcs = func;
+		if (funcs == null || funcs.size() == 0)
+			funcs = func;
 	}
 
 	public static Program checkMapping(Program prog) {
@@ -48,6 +49,7 @@ public class RepairMapper {
 	private static Program parseUpdateProg(Program prog) {
 		if (prog == null)
 			return prog;
+		System.out.println("[parseUpdateProg] " + originMap.keySet() + "," + funcs);
 		for (sketch.compiler.ast.core.Package pkg : prog.getPackages()) {
 			for (Function func : pkg.getFuncs()) {
 				String fName = func.getName();
@@ -96,6 +98,7 @@ public class RepairMapper {
 				// if last two chars equal
 				if (matchTwoFlat(c1, c2)) {
 					dp[i + 1][j + 1] = dp[i][j];
+					System.out.println("match " + c1 + " ---" + c2);
 				} else {
 					int replace = dp[i][j] + 1;
 					int insert = dp[i][j + 1] + 1;
@@ -109,7 +112,6 @@ public class RepairMapper {
 	}
 
 	private static boolean matchTwoFlat(String origin, String update) {
-
-		return false;
+		return FlattenStmtModel.matchNode(origin, update);
 	}
 }

@@ -118,37 +118,40 @@ public class RepairMultiController {
 		return runAtomicModel();
 	}
 
-	private boolean runCandidates() {
-		List<String> types = failHandler.getBuggyTypeS();
-		List<String> funcs = failHandler.getSuspFunctions();
-		List<SketchTypeReplacer> replacer = new ArrayList<SketchTypeReplacer>(Arrays.asList(
-				new SketchTypeExprReplacer(), new SketchTypeLoopReplacer(), new SketchTypeDependentLoopReplacer()));
-
-		for (SketchTypeReplacer rep : replacer) {
-			for (int j = funcs.size() - 1; j >= 0; j--) {
-				// for (int i = types.size() - 1; i >= 0; i--) {
-				rep.generateCandidate(this, types, funcs.get(j));
-				// prog.accept(rep);
-				// Program updateProg = (Program) rep.visitProgram(prog);
-				String message = solveSketch((Program) rep.visitProgram(prog));
-
-				if (message.equals(""))
-					return true;
-				// failHandler.findBuggyAssertion(message);
-				// if (!failHandler.getBuggyTypeS().equals(types))
-				// prog = updateProg;
-				// }
-			}
-		}
-		return false;
-	}
+//	private boolean runCandidates() {
+//		List<String> types = failHandler.getBuggyTypeS();
+//		List<String> funcs = failHandler.getSuspFunctions();
+//		List<SketchTypeReplacer> replacer = new ArrayList<SketchTypeReplacer>(Arrays.asList(
+//				new SketchTypeExprReplacer(), new SketchTypeLoopReplacer(), new SketchTypeDependentLoopReplacer()));
+//
+//		for (SketchTypeReplacer rep : replacer) {
+//			for (int j = funcs.size() - 1; j >= 0; j--) {
+//				// for (int i = types.size() - 1; i >= 0; i--) {
+//				rep.generateCandidate(this, types, funcs.get(j));
+//				// prog.accept(rep);
+//				// Program updateProg = (Program) rep.visitProgram(prog);
+//				String message = solveSketch((Program) rep.visitProgram(prog));
+//
+//				if (message.equals(""))
+//					return true;
+//				// failHandler.findBuggyAssertion(message);
+//				// if (!failHandler.getBuggyTypeS().equals(types))
+//				// prog = updateProg;
+//				// }
+//			}
+//		}
+//		return false;
+//	}
 
 	private boolean runAtomicModel() {
 		RepairGenerator generator = new RepairGenerator(this);
 		String res = generator.generateAtomicRunModel();
 		if (res.equals("")) {
+			System.out.println("controller " + generator.getChangedFunc());
 			RepairMapper.setChangedFuncs(generator.getChangedFunc());
-			RepairMapper.checkMapping(prog);
+			String name = options.sketchName.substring(0,options.sketchName.indexOf("."))+".repair";
+			RepairStageRunner runner = new RepairStageRunner(options);
+			 RepairMapper.checkMapping(runner.readSketch(name));
 			return true;
 		}
 		return false;
@@ -226,12 +229,10 @@ public class RepairMultiController {
 		System.out.println("solve sketch " + options.sktmpdir().getAbsolutePath());
 		String path = options.sketchName + ++num;
 		try {
-
 			new SimpleSketchFilePrinter(path).visitProgram(prog);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-
 		RepairStageRunner runner = new RepairStageRunner(options);
 		String res = runner.solveSketch(path);
 		parsedProg = runner.getFixProg();

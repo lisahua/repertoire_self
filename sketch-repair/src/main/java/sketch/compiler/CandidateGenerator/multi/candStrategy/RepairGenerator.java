@@ -3,22 +3,12 @@
  */
 package sketch.compiler.CandidateGenerator.multi.candStrategy;
 
-import java.time.Duration;
 import java.util.HashSet;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
-import sketch.compiler.CandidateGenerator.multi.AtomicRunModel;
 import sketch.compiler.CandidateGenerator.multi.RepairMultiController;
-import sketch.compiler.CandidateGenerator.multi.SketchAtomRunner;
 import sketch.compiler.CandidateGenerator.multi.fixStrategy.FixStrategy;
 import sketch.compiler.CandidateGenerator.multi.fixStrategy.IncrementalFixStrategy;
-import sketch.compiler.CandidateGenerator.multi.fixStrategy.OneCycleFixStrategy;
 import sketch.compiler.ast.core.Program;
-import sketch.util.exceptions.SketchException;
 
 public class RepairGenerator {
 	RepairMultiController controller = null;
@@ -37,14 +27,16 @@ public class RepairGenerator {
 		FixStrategy strategy = new IncrementalFixStrategy(controller);
 		String message = strategy.generateAtomicRunModel();
 		changedFunc = strategy.getChangedFunc();
+		updatedProg = strategy.getAtomicRepairProgram();
 		return message;
 	}
 
 	public HashSet<String> getChangedFunc() {
-		// TODO Auto-generated method stub
 		return changedFunc;
 	}
-
+	public Program getProgram() {
+		return updatedProg;
+	}
 	// private String runAtomicModelWithTimeOut(AtomicRunModel md) {
 	// final SketchAtomRunner worker = new SketchAtomRunner(controller);
 	// worker.runEvent(md);

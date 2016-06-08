@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import sketch.compiler.ast.core.Program;
 import sketch.compiler.ast.core.TempVarGen;
+import sketch.compiler.eqTransfer.RepairMapper;
 import sketch.compiler.main.RepairSketchMain;
 import sketch.compiler.main.passes.CleanupFinalCode;
 import sketch.compiler.main.passes.ParseProgramStage;
@@ -28,6 +29,7 @@ public class RepairStageRunner extends RepairSketchMain {
 		this.options = options.clone();
 	}
 
+	
 	protected boolean repairProgram(Program prog, String e) {
 		RepairStage rStage = new RepairStage(options);
 		serr = parseErr(e);
@@ -53,10 +55,12 @@ public class RepairStageRunner extends RepairSketchMain {
 			} else {
 				substituted = finalCleaned;
 			}
-			Program substitutedCleaned = (new CleanupFinalCode(varGen, options, visibleRControl(finalCleaned)))
+//			Program substitutedCleaned = (new CleanupFinalCode(varGen, options, visibleRControl(finalCleaned)))
+//					.visitProgram(substituted);
+//			generateCode(substitutedCleaned);
+			prog = (new CleanupFinalCode(varGen, options, visibleRControl(finalCleaned)))
 					.visitProgram(substituted);
-			generateCode(substitutedCleaned);
-
+			generateCode(prog);
 			// new CodeGenerator().testJavaWriter(substitutedCleaned);
 
 			return "";

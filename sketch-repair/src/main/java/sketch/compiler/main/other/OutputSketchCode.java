@@ -55,7 +55,8 @@ public class OutputSketchCode extends OutputCCode {
 
 		if (!options.feOpts.outputCode && !options.feOpts.noOutputPrint) {
 			try {
-				prog = RepairMapper.checkMapping(prog);
+//				RepairMapper.checkMapping(prog);
+//				System.out.println("[check mapping]");
 				prog.accept(new SimpleSketchFilePrinter(file));
 				
 			} catch (FileNotFoundException e) {
