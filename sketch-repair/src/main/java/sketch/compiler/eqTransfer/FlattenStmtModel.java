@@ -177,8 +177,8 @@ public class FlattenStmtModel {
 		String[] updateTkn = update.split(",");
 		if (!orgTkn[0].equals(updateTkn[0]))
 			return false;
-//		else if (orgTkn.length != updateTkn.length)
-//			return false;
+		// else if (orgTkn.length != updateTkn.length)
+		// return false;
 		else
 			return matchToken(orgTkn, updateTkn);
 	}
@@ -186,13 +186,20 @@ public class FlattenStmtModel {
 	private static boolean matchToken(String[] origin, String[] update) {
 		if (origin.length < 3)
 			return true;
-		if (origin[0].equals("return"))
+		else if (origin[0].equals("return"))
 			return true;
-		if (origin[0].contains("if") || origin[0].contains("while"))
-			if (origin[1].equals(update[1]) )
+		else if (origin[0].contains("if") || origin[0].contains("while"))
+			if (origin[1].equals(update[1]))
 				return true;
-		if (origin[1].equals(update[1]) && origin[2].equals(update[2]) && origin[3].equals(update[3]))
-			return true;
+		if (origin[0].equals("assign")) {
+			if (origin[1].contains(".")) {
+				return origin[1].equals(update[1]);
+			} else {
+				return origin[1].equals(update[1]) && origin[2].equals(update[2]) && origin[3].equals(update[3]);
+			}
+		} else if (origin[0].equals("varDecl")) {
+			return origin[1].equals(update[1]) && origin[2].equals(update[2]) ;
+		}
 		return false;
 	}
 
