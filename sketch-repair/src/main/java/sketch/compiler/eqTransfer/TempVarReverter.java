@@ -13,24 +13,12 @@ import sketch.compiler.ast.core.stmts.StmtIfThen;
 import sketch.compiler.ast.core.stmts.StmtWhile;
 
 public class TempVarReverter {
-	private Function origin = null;
+//	private Function origin = null;
 	public String funcName = "";
 	private int count = 0;
-
-	public TempVarReverter(Function origin) {
-		this.origin = origin;
-		funcName = origin.getName();
-		if (funcName.contains("@"))
-			funcName = funcName.substring(0, funcName.indexOf("@"));
-	}
-
-	public TempVarReverter() {
-
-	}
-
+	
 	public List<String> visitFunction(Function func) {
 		List<String> stmtS = recurMatch(func.getBody());
-
 		return stmtS;
 	}
 
@@ -45,7 +33,9 @@ public class TempVarReverter {
 			count++;
 			stmtS.addAll(matchLoop((StmtWhile) stmt));
 		} else {
-			stmtS.add(new FlattenStmtModel(stmt,++count).getFlatS());
+			String tmp = new FlattenStmtModel(stmt,++count).getFlatS();
+			if (tmp.trim().length()>0)
+			stmtS.add(tmp);
 		} 
 		return stmtS;
 	}

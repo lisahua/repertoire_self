@@ -27,7 +27,7 @@ public abstract class FixStrategy {
 	List<CandidateStrategy> candidates = null;
 	Program originProg = null;
 	HashSet<String> changedFunc = new HashSet<String>();
-
+	HashSet<AtomicRunModel> changedModel = new HashSet<AtomicRunModel>();
 	public FixStrategy(RepairMultiController controller) {
 		this.controller = controller;
 		// types = controller.getFailureHandler().getBuggyTypeS();
@@ -70,6 +70,7 @@ public abstract class FixStrategy {
 					// updatedProg = (Program) worker.visitProgram(updatedProg);
 					originProg = (Program) worker.visitProgram(originProg);
 					changedFunc.add(funcs.get(j));
+					changedModel.add(md);
 					return message;
 				}
 			}
@@ -82,5 +83,8 @@ public abstract class FixStrategy {
 	}
 	public HashSet<String> getChangedFunc() {
 		return changedFunc;
+	}
+	public HashSet<AtomicRunModel> getChangeModel() {
+		return changedModel;
 	}
 }

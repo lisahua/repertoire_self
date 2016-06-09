@@ -3,7 +3,10 @@
  */
 package sketch.compiler.eqTransfer;
 
+import java.util.List;
+
 import sketch.compiler.ast.core.exprs.ExprBinary;
+import sketch.compiler.ast.core.exprs.ExprFunCall;
 import sketch.compiler.ast.core.exprs.Expression;
 import sketch.compiler.ast.core.stmts.Statement;
 import sketch.compiler.ast.core.stmts.StmtAssign;
@@ -64,6 +67,12 @@ public class FlattenStmtModel {
 		flatS = type + "," + flattenStmt(exp.getCond()) + "," + originS + "," + location + "," + autoGen;
 	}
 
+	public FlattenStmtModel(Expression exp) {
+		originS = exp.toString();
+		type = "exp";
+		flatS = type + "," + flattenStmt(exp) + "," + originS + "," + location + "," + autoGen;
+	}
+
 	public String toString() {
 		return flatS;
 	}
@@ -79,6 +88,16 @@ public class FlattenStmtModel {
 			nameRHS += getExprName(binRHS.getLeft().toString()) + binRHS.getOpString();
 			symbolRHS += getExprSymbol(binRHS.getRight().toString());
 			nameRHS += getExprName(binRHS.getRight().toString());
+		} else if (exp instanceof ExprFunCall) {
+			String symbol = "";
+			String name = "";
+			ExprFunCall fCall = (ExprFunCall) exp;
+			List<Expression> param = fCall.getParams();
+			for (Expression para : param) {
+				symbol += getExprSymbol(para.toString()) + " ";
+				name += getExprName(para.toString()) + " ";
+			}
+			return fCall.getName() + "," + symbol + "," + name;
 		} else {
 			symbolRHS += getExprSymbol(exp.toString());
 			nameRHS += getExprName(exp.toString());
@@ -135,7 +154,7 @@ public class FlattenStmtModel {
 		return "$";
 	}
 
-	private String getExprName(String str) {
+	public String getExprName(String str) {
 		String varName = str;
 		while (varName.startsWith("_")) {
 			autoGen = true;
@@ -145,9 +164,11 @@ public class FlattenStmtModel {
 		if (varName.contains("_")) {
 			varName = varName.substring(0, varName.indexOf("_"));
 		}
-		if (str.contains(".")) {
-			return varName + str.substring(str.indexOf("."));
+		if (varName.contains(".")) {
+			varName = varName.substring(0, varName.indexOf("."));
 		}
+		if (str.contains("."))
+			return varName + str.substring(str.indexOf("."));
 		return varName;
 	}
 
@@ -156,23 +177,23 @@ public class FlattenStmtModel {
 		String[] updateTkn = update.split(",");
 		if (!orgTkn[0].equals(updateTkn[0]))
 			return false;
-		else if (orgTkn.length != updateTkn.length)
-			return false;
+//		else if (orgTkn.length != updateTkn.length)
+//			return false;
 		else
 			return matchToken(orgTkn, updateTkn);
 	}
 
 	private static boolean matchToken(String[] origin, String[] update) {
-		int count = 0;
-
-		for (int i = 1; i < origin.length - 2; i++) {
-			if (origin[i].equals(update[i]))
-				count++;
-		}
-		if (origin[0].equals("assign"))
-			return count > 3;
-		else
-			return count > 2;
+		if (origin.length < 3)
+			return true;
+		if (origin[0].equals("return"))
+			return true;
+		if (origin[0].contains("if") || origin[0].contains("while"))
+			if (origin[1].equals(update[1]) )
+				return true;
+		if (origin[1].equals(update[1]) && origin[2].equals(update[2]) && origin[3].equals(update[3]))
+			return true;
+		return false;
 	}
 
 }

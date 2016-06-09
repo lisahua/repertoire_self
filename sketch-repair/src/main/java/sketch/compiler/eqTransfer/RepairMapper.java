@@ -3,6 +3,7 @@
  */
 package sketch.compiler.eqTransfer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -20,8 +21,7 @@ public class RepairMapper {
 	}
 
 	public static void setChangedFuncs(HashSet<String> func) {
-		if (funcs == null || funcs.size() == 0)
-			funcs = func;
+		funcs = func;
 	}
 
 	public static Program checkMapping(Program prog) {
@@ -72,11 +72,13 @@ public class RepairMapper {
 		List<String> flatOrigin = revert.visitFunction(origin);
 		List<String> flatUpdate = revert.visitFunction(update);
 		System.out.println("[Test match stmt origin ] ");
+		int id = 0;
 		for (String s : flatOrigin)
-			System.out.println(s);
+			System.out.println(id++ + s);
 		System.out.println("[Test match stmt update ] ");
+		id = 0;
 		for (String s : flatUpdate)
-			System.out.println(s);
+			System.out.println(id++ + s);
 		editDistance(flatOrigin, flatUpdate);
 	}
 
@@ -84,6 +86,8 @@ public class RepairMapper {
 		int len1 = flatOrigin.size();
 		int len2 = flatUpdate.size();
 		int[][] dp = new int[len1 + 1][len2 + 1];
+		int[] originMap = new int[len1 + 1];
+
 		for (int i = 0; i <= len1; i++) {
 			dp[i][0] = i;
 		}
@@ -93,12 +97,19 @@ public class RepairMapper {
 		// iterate though, and check last char
 		for (int i = 0; i < len1; i++) {
 			String c1 = flatOrigin.get(i);
-			for (int j = 0; j < len2; j++) {
+			for (int j = i; j < len2; j++) {
 				String c2 = flatUpdate.get(j);
 				// if last two chars equal
 				if (matchTwoFlat(c1, c2)) {
 					dp[i + 1][j + 1] = dp[i][j];
-					System.out.println("match " + c1 + " ---" + c2);
+					if (originMap[i] == 0) {
+						if (i == 0)
+							originMap[i] = j;
+						else if (originMap[i - 1] < j) {
+							originMap[i] = j;
+							System.out.println("match " + i + "," + j + "," + c1 + " ---" + c2);
+						}
+					}
 				} else {
 					int replace = dp[i][j] + 1;
 					int insert = dp[i][j + 1] + 1;
@@ -109,9 +120,23 @@ public class RepairMapper {
 				}
 			}
 		}
+		for (int i = 0; i < len1 - 1; i++) {
+			if (originMap[i] + 1 == originMap[i + 1])
+				continue;
+			List<String> list = new ArrayList<String>();
+			for (int j = originMap[i]; j < originMap[i + 1]; j++) {
+				list.add(flatUpdate.get(j));
+			}
+			MergeDeclWithAssign.compareWithStmt(flatOrigin.get(i), list);
+		}
+
 	}
 
 	private static boolean matchTwoFlat(String origin, String update) {
 		return FlattenStmtModel.matchNode(origin, update);
+	}
+
+	private static void atomicify() {
+
 	}
 }
