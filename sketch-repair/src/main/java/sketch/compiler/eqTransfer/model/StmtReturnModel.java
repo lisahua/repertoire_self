@@ -8,8 +8,8 @@ public class StmtReturnModel extends StmtModel {
 	String expSymbol;
 	String expName;
 
-	public StmtReturnModel(String origin) {
-		super(origin);
+	public StmtReturnModel(String origin,int loc) {
+		super(origin,loc);
 		expSymbol = tokens[1];
 		expName = tokens[2];
 	}

@@ -1,14 +1,14 @@
 /**
- * @author Lisa Jun 10, 2016 StmtIfModel.java 
+ * @author Lisa Jun 10, 2016 StmtWhile.java 
  */
 package sketch.compiler.eqTransfer.model;
 
-public class StmtIfModel extends StmtModel {
+public class StmtExprModel extends StmtModel {
 
 	String expSymbol;
 	String expName;
 
-	public StmtIfModel(String origin,int loc) {
+	public StmtExprModel(String origin,int loc) {
 		super(origin,loc);
 		expSymbol = tokens[1];
 		expName = tokens[2];

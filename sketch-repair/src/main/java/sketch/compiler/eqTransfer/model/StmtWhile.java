@@ -8,8 +8,8 @@ public class StmtWhile extends StmtModel {
 	String expSymbol;
 	String expName;
 
-	public StmtWhile(String origin) {
-		super(origin);
+	public StmtWhile(String origin,int loc) {
+		super(origin,loc);
 		expSymbol = tokens[1];
 		expName = tokens[2];
 	}

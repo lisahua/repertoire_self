@@ -4,8 +4,10 @@
 package sketch.compiler.eqTransfer;
 
 import java.util.List;
+import java.util.TreeSet;
 
 import sketch.compiler.ast.core.FEReplacer;
+import sketch.compiler.eqTransfer.model.StmtModel;
 
 public class MergeDeclWithAssign extends FEReplacer {
 
@@ -72,11 +74,17 @@ public class MergeDeclWithAssign extends FEReplacer {
 		if (id < update.size() - 1)
 			atomicify(update.subList(id, update.size()));
 	}
-	
+
 	public static void mergeStmts(int[] matchID, List<String> flatOrigin, List<String> flatUpdate) {
-		
+		StmtModel model = new StmtModel(flatUpdate.get(0),0);
+		TreeSet<StmtModel> mergeSet = new TreeSet<StmtModel>();
+		for (int i = 1; i < matchID.length; i++) {
+			mergeSet.add(model);
+			StmtModel next = new StmtModel(flatUpdate.get(i),i);
+			model = model.parse(next);
+		}
 	}
-	
+
 	private static int parseType() {
 		return 0;
 	}
