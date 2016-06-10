@@ -79,9 +79,27 @@ public class RepairMapper {
 		id = 0;
 		for (String s : flatUpdate)
 			System.out.println(id++ + s);
-		editDistance(flatOrigin, flatUpdate);
+		// editDistance(flatOrigin, flatUpdate);
+		parseCompare(flatOrigin, flatUpdate);
 	}
 
+	private static void parseCompare(List<String> flatOrigin, List<String> flatUpdate) {
+		int[] originMap = new int[flatOrigin.size() + 1];
+		HashSet<Integer> matchedUpdate = new HashSet<Integer>();
+		for (int i = 0; i < flatOrigin.size(); i++) {
+			for (int j = originMap[i]; j < flatUpdate.size(); j++) {
+				if (matchTwoFlat(flatOrigin.get(i), flatUpdate.get(j)) && originMap[i + 1] == 0
+						&& !matchedUpdate.contains(j)) {
+					originMap[i + 1] = j;
+					matchedUpdate.add(j);
+					System.out.println("match " + i + "," + j + "," + flatOrigin.get(i) + " ---" + flatUpdate.get(j));
+				}
+			}
+		}
+		MergeDeclWithAssign.mergeStmts(originMap, flatOrigin, flatUpdate);
+	}
+
+	@Deprecated
 	private static void editDistance(List<String> flatOrigin, List<String> flatUpdate) {
 		int len1 = flatOrigin.size();
 		int len2 = flatUpdate.size();
@@ -136,7 +154,4 @@ public class RepairMapper {
 		return FlattenStmtModel.matchNode(origin, update);
 	}
 
-	private static void atomicify() {
-
-	}
 }

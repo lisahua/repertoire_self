@@ -14,6 +14,18 @@ public class MergeDeclWithAssign extends FEReplacer {
 
 	}
 
+	private static void mergeDeclAssign(List<String> stmts) {
+
+	}
+
+	private static void mergeAssigns(List<String> stmts) {
+
+	}
+
+	private static void mergeRenamed() {
+
+	}
+
 	public static void compareWithStmt(String origin, List<String> update) {
 		varDeclSplit(origin, update);
 	}
@@ -26,15 +38,15 @@ public class MergeDeclWithAssign extends FEReplacer {
 		int id = 0;
 		for (; id < update.size(); id++) {
 			String[] upTkn = update.get(id).split(",");
-			 System.out.println("[MergeDeclWithAssign] " + update.get(id));
+			System.out.println("[MergeDeclWithAssign] " + update.get(id));
 			boolean flag = false;
 			// if it is auto-gen, ignore
-//			if (upTkn[upTkn.length - 1].equals("true"))
-//				continue;
+			// if (upTkn[upTkn.length - 1].equals("true"))
+			// continue;
 			if (upTkn[0].equals("varDecl")) {
 				if (FlattenStmtModel.matchNode(origin, update.get(id))) {
 					flag = true;
-					 System.out.println("[MergeDeclWithAssign] true");
+					System.out.println("[MergeDeclWithAssign] true");
 					continue;
 				}
 			} else if (upTkn[0].equals("assign")) {
@@ -44,20 +56,28 @@ public class MergeDeclWithAssign extends FEReplacer {
 					var = var.substring(0, tmp);
 				if (varName.equals(var)) {
 					flag = true;
-					 System.out.println("[MergeDeclWithAssign] true");
+					System.out.println("[MergeDeclWithAssign] true");
 					continue;
 				}
 			} else if (upTkn[0].equals("stmtExpr")) {
 				if (originTkn[4].contains(upTkn[1])) {
 					flag = true;
-					 System.out.println("[MergeDeclWithAssign] true");
+					System.out.println("[MergeDeclWithAssign] true");
 					continue;
 				}
 			}
 			if (!flag)
 				break;
 		}
-//		if (id > 0)
-			atomicify(update.subList(id , update.size()));
+		if (id < update.size() - 1)
+			atomicify(update.subList(id, update.size()));
+	}
+	
+	public static void mergeStmts(int[] matchID, List<String> flatOrigin, List<String> flatUpdate) {
+		
+	}
+	
+	private static int parseType() {
+		
 	}
 }
