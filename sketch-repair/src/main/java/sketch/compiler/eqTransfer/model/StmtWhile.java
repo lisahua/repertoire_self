@@ -3,10 +3,31 @@
  */
 package sketch.compiler.eqTransfer.model;
 
-public class StmtWhile {
+public class StmtWhile extends StmtModel {
+
 	String expSymbol;
 	String expName;
-	String origin;
-	int location;
-	boolean autoGen;
+
+	public StmtWhile(String origin) {
+		super(origin);
+		expSymbol = tokens[1];
+		expName = tokens[2];
+	}
+
+	public String getExpSymbol() {
+		return expSymbol;
+	}
+
+	public void setExpSymbol(String expSymbol) {
+		this.expSymbol = expSymbol;
+	}
+
+	public String getExpName() {
+		return expName;
+	}
+
+	public void setExpName(String expName) {
+		this.expName = expName;
+	}
+
 }

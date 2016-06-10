@@ -78,6 +78,6 @@ public class MergeDeclWithAssign extends FEReplacer {
 	}
 	
 	private static int parseType() {
-		
+		return 0;
 	}
 }

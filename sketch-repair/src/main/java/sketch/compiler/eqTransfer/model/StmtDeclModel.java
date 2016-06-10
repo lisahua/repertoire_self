@@ -3,11 +3,21 @@
  */
 package sketch.compiler.eqTransfer.model;
 
-public class StmtDeclModel {
+public class StmtDeclModel extends StmtModel {
 	String type;
 	String name;
-	String origin;
-	int location;
-	boolean autoGen;
+
+	public StmtDeclModel(String origin) {
+		super(origin);
+		type = tokens[1];
+		name = tokens[3];
+	}
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 
 }
