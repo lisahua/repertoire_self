@@ -3,7 +3,7 @@
  */
 package sketch.compiler.eqTransfer.model;
 
-public  class StmtModel implements Comparable {
+public class StmtModel implements Comparable {
 	int stmtType;
 	String origin;
 	int location;
@@ -42,10 +42,10 @@ public  class StmtModel implements Comparable {
 		this.stmtType = stmtType;
 	}
 
-	public StmtModel(String origin,int loc) {
+	public StmtModel(String origin, int loc) {
 		tokens = origin.split(",");
 		this.origin = tokens[tokens.length - 3];
-		location =loc;
+		location = loc;
 		autoGen = Boolean.parseBoolean(tokens[tokens.length - 1]);
 		if (tokens[0].equals("varDecl"))
 			stmtType = 1;
@@ -61,21 +61,21 @@ public  class StmtModel implements Comparable {
 			stmtType = 6;
 	}
 
-	public static int checkType(String line) {
+	public static StmtModel genModel(String line, int loc) {
 		String token = line.split(",")[0];
 		if (token.equals("varDecl"))
-			return 1;
+			return new StmtDeclModel(line, loc);
 		else if (token.equals("assign"))
-			return 2;
-		else if (token.equals("if"))
-			return 3;
-		else if (token.equals("while"))
-			return 4;
+			return new StmtAssignModel(line, loc);
+		else if (token.contains("if"))
+			return new StmtIfModel(line, loc);
+		else if (token.contains("while"))
+			return new StmtWhile(line, loc);
 		else if (token.equals("stmtExpr"))
-			return 5;
+			return new StmtExprModel(line, loc);
 		else if (token.equals("return"))
-			return 6;
-		return 0;
+			return new StmtReturnModel(line, loc);
+		return null;
 	}
 
 	public StmtModel parse(StmtModel next) {
@@ -89,10 +89,10 @@ public  class StmtModel implements Comparable {
 	@Override
 	public int compareTo(Object o) {
 		StmtModel model = (StmtModel) o;
-		return model.location-location;
+		return location - model.location;
 	}
-	
+
 	public String toString() {
-		return location+","+origin;
+		return location + "," + origin;
 	}
 }

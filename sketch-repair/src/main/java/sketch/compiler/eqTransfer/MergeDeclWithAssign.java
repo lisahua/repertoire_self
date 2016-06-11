@@ -3,6 +3,7 @@
  */
 package sketch.compiler.eqTransfer;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -76,16 +77,37 @@ public class MergeDeclWithAssign extends FEReplacer {
 	}
 
 	public static void mergeStmts(int[] matchID, List<String> flatOrigin, List<String> flatUpdate) {
-		StmtModel model = new StmtModel(flatUpdate.get(0),0);
+		StmtModel model = StmtModel.genModel(flatUpdate.get(0), 0);
 		TreeSet<StmtModel> mergeSet = new TreeSet<StmtModel>();
-		for (int i = 1; i < matchID.length; i++) {
+		for (int i = 1; i < flatUpdate.size(); i++) {
 			mergeSet.add(model);
-			StmtModel next = new StmtModel(flatUpdate.get(i),i);
-			model = model.parse(next);
+			StmtModel next = StmtModel.genModel(flatUpdate.get(i), i);
+			if (next == null) {
+				System.out.println("[mergestmt bug] " + flatUpdate.get(i));
+			} else
+				model = model.parse(next);
 		}
+		int[] mergeID = new int[mergeSet.size()];
+		int i = 0;
+		for (StmtModel md : mergeSet) {
+			mergeID[i++] = md.getLocation();
+		}
+		HashSet<Integer> matchSet = new HashSet<Integer>();
+		HashSet<Integer> mergeIDSet = new HashSet<Integer>();
+		for (int id : matchID)
+			matchSet.add(id);
+		for (int id : mergeID) {
+			if (!matchSet.contains(id)) {
+				mergeIDSet.add(id);
+				System.out.println(id);
+			}
+		}
+for (int id: mergeIDSet) {
+	
+}
 	}
 
-	private static int parseType() {
-		return 0;
-	}
+	// System.out.println("[merge stmt] " + mergeID);
+	// check with matchID
+
 }

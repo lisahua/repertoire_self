@@ -156,10 +156,11 @@ public class FlattenStmtModel {
 
 	public String getExprName(String str) {
 		String varName = str;
-		while (varName.startsWith("_")) {
+		if (varName.startsWith("_")) {
 			autoGen = true;
-			// FIXME may be __out
-			varName = varName.substring(1);
+			// BUGFIX because tmp_s_a tmp_s_b are different values
+			// varName = varName.substring(1);
+			return varName;
 		}
 		if (varName.contains("_")) {
 			varName = varName.substring(0, varName.indexOf("_"));
@@ -198,7 +199,7 @@ public class FlattenStmtModel {
 				return origin[1].equals(update[1]) && origin[2].equals(update[2]) && origin[3].equals(update[3]);
 			}
 		} else if (origin[0].equals("varDecl")) {
-			return origin[1].equals(update[1]) && origin[2].equals(update[2]) ;
+			return origin[1].equals(update[1]) && origin[2].equals(update[2]);
 		}
 		return false;
 	}

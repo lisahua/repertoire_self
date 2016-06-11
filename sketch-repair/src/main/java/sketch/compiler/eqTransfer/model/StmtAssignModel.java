@@ -11,8 +11,8 @@ public class StmtAssignModel extends StmtModel {
 	String rhsName;
 	String opString;
 
-	public StmtAssignModel(String origin,int loc) {
-		super(origin,loc);
+	public StmtAssignModel(String origin, int loc) {
+		super(origin, loc);
 		lhsSymbol = tokens[1];
 		lhsName = tokens[2];
 		opString = tokens[3];
@@ -63,22 +63,23 @@ public class StmtAssignModel extends StmtModel {
 
 	@Override
 	public StmtModel parseNext(StmtModel next) {
-		
-		
-//		switch (next.stmtType) {
-//		case 1:
-//		case 3:
-//		case 4:
-//		case 2: 
-//			return next;
-//		
-//			
-//			
-//			return next;
-//		case 5:
-//		}
+
+		switch (next.stmtType) {
+		case 1:
+		case 3:
+		case 4:
+		case 2:
+			// StmtAssignModel assign = (StmtAssignModel) next;
+			// if (assign.getLhsName().trim().contains(lhsName.trim())
+			// || assign.getLhsName().trim().contains(rhsName.trim())
+			// || assign.getRhsName().trim().contains(lhsName.trim())
+			// || assign.getRhsName().trim().contains(rhsName.trim())) {
+			// return this;
+			// } else
+			// return next;
+		case 5:
+		}
 		return next;
 	}
 
-	
 }
