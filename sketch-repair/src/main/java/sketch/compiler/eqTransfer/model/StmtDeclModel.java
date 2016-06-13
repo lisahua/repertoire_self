@@ -20,6 +20,16 @@ public class StmtDeclModel extends StmtModel {
 	public void setType(String type) {
 		this.type = type;
 	}
+	
+	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	@Override
 	public StmtModel parseNext(StmtModel next) {
@@ -37,7 +47,7 @@ public class StmtDeclModel extends StmtModel {
 				return next;
 		case 5:
 			StmtExprModel exp = (StmtExprModel) next;
-			System.out.println("stmtdeclmodel "+origin+","+exp.getExpName());
+//			System.out.println("stmtdeclmodel "+origin+","+exp.getExpName());
 			if (exp.getExpName().trim().contains(name)) {
 //				System.out.println("stmtdeclmodel "+origin+","+exp.getExpName());
 				

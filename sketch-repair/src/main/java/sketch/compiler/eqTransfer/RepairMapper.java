@@ -61,13 +61,13 @@ public class RepairMapper {
 				if (funcs == null || !funcs.contains(fName))
 					continue;
 				Function originFunc = originMap.get(fName);
-				matchStmts(originFunc, func);
+				List<String> added = matchStmts(originFunc, func);
 			}
 		}
 		return prog;
 	}
 
-	private static void matchStmts(Function origin, Function update) {
+	private static List<String> matchStmts(Function origin, Function update) {
 		TempVarReverter revert = new TempVarReverter();
 		List<String> flatOrigin = revert.visitFunction(origin);
 		List<String> flatUpdate = revert.visitFunction(update);
@@ -80,10 +80,10 @@ public class RepairMapper {
 		for (String s : flatUpdate)
 			System.out.println(id++ + s);
 		// editDistance(flatOrigin, flatUpdate);
-		parseCompare(flatOrigin, flatUpdate);
+		return parseCompare(flatOrigin, flatUpdate);
 	}
 
-	private static void parseCompare(List<String> flatOrigin, List<String> flatUpdate) {
+	private static List<String> parseCompare(List<String> flatOrigin, List<String> flatUpdate) {
 		int[] originMap = new int[flatOrigin.size() + 1];
 		HashSet<Integer> matchedUpdate = new HashSet<Integer>();
 		for (int i = 0; i < flatOrigin.size(); i++) {
@@ -96,7 +96,7 @@ public class RepairMapper {
 				}
 			}
 		}
-		MergeDeclWithAssign.mergeStmts(originMap, flatOrigin, flatUpdate);
+		return MergeDeclWithAssign.mergeStmts(originMap, flatOrigin, flatUpdate);
 	}
 
 	@Deprecated

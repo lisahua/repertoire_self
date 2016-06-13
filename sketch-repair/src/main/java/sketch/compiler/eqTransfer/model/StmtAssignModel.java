@@ -18,7 +18,7 @@ public class StmtAssignModel extends StmtModel {
 		opString = tokens[3];
 		rhsSymbol = tokens[4];
 		rhsName = tokens[5];
-		FlattenNameResolver.addUpdate(lhsName, rhsName);
+//		FlattenNameResolver.addUpdate(lhsName, this);
 	}
 
 	public String getLhsSymbol() {
