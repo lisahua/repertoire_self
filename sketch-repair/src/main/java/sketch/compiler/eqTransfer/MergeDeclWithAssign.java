@@ -6,6 +6,7 @@ package sketch.compiler.eqTransfer;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import sketch.compiler.ast.core.FEReplacer;
@@ -13,39 +14,61 @@ import sketch.compiler.eqTransfer.model.StmtModel;
 
 public class MergeDeclWithAssign extends FEReplacer {
 
-	public static List<String> atomicify(int[] mergeID, HashSet<Integer> matchSet, List<StmtModel> flatOrigin,
+	public static TreeSet<StmtModel> atomicify(int[] mergeID, HashSet<Integer> matchSet, List<StmtModel> flatOrigin,
 			List<StmtModel> flatUpdate) {
-		System.out.println("[atomicify] ");
-		// HashMap<String, String> map = new HashMap<String, String>();
-		// HashMap<String, String> newGenMap = new HashMap<String, String>();
-
-		List<String> res = new ArrayList<String>();
+		// TreeMap<Integer, List<StmtModel>> mergeLR = new TreeMap<Integer,
+		// List<StmtModel>>();
+		TreeSet<StmtModel> newProg = new TreeSet<StmtModel>();
+		if (mergeID[0] > 0)
+			newProg.addAll(flatUpdate.subList(0, mergeID[0]));
 		for (int i = 0; i < mergeID.length - 1; i++) {
+			List<StmtModel> res = new ArrayList<StmtModel>();
 			StmtModel model = flatUpdate.get(mergeID[i]);
-			if (model.toString().contains("_out"))
-				continue;
+			// if (model.toString().contains("_out"))
+			// continue;
 			// hacky if its a single stmt
-			if (matchSet.contains(model.getLocation() + 1))
-				continue;
+			// if (matchSet.contains(model.getLocation() + 1))
+			// continue;
 			switch (model.getStmtType()) {
 			case 1:
-				String[] lines = new MergeDeclStrategy().atomicify(mergeID[i], mergeID[i + 1], flatOrigin, flatUpdate)
-						.split(",");
-				for (String line : lines)
-					res.add(line);
+				res.addAll(MergeLRStrategy.atomicify(mergeID[i], mergeID[i + 1], flatOrigin, flatUpdate));
 				break;
 			case 2:
-				lines = new MergeAssignStrategy().atomicify(mergeID[i], mergeID[i + 1], flatOrigin, flatUpdate)
-						.split(",");
-				for (String line : lines)
-					res.add(line);
+				res.addAll(MergeLRStrategy.atomicify(mergeID[i], mergeID[i + 1], flatOrigin, flatUpdate));
 				break;
 			}
+			if (res.size() == 0) {
+				// TODO check bound
+				newProg.addAll(flatUpdate.subList(mergeID[i], mergeID[i + 1]));
+			} else {
+//				TreeSet<Integer> eids = new TreeSet<Integer>();
+//				TreeSet<Integer> existids = new TreeSet<Integer>();
+//				for (StmtModel replace : res) {
+//					eids.addAll(replace.getEliminatedID());
+//					existids.add(replace.getNewModel().getLocation());
+//				}
+//				for (int k = mergeID[i]; k < mergeID[i + 1]; k++) {
+//					if (existids.contains(k))
+//						newProg.add(flatUpdate.get(k));
+//					else if (eids.contains(k))
+//						continue;
+//					else
+//						newProg.add(flatUpdate.get(k));
+//				}
+			}
+			// newProg.addAll(res);
 		}
-		return res;
+		newProg.addAll(flatUpdate.subList(mergeID[mergeID.length - 1], flatUpdate.size()));
+		// List<StmtModel> mergeLL = MergeLLStrategy.merge(mergeLR, flatUpdate);
+
+		return newProg;
 	}
 
-	public static void compareWithStmt(String origin, List<String> update) {
+	private static List<StmtModel> mergeFinal(List<StmtModel> flatUpdate) {
+		return flatUpdate;
+	}
+
+	private static void compareWithStmt(String origin, List<String> update) {
 		varDeclSplit(origin, update);
 	}
 
@@ -93,7 +116,7 @@ public class MergeDeclWithAssign extends FEReplacer {
 		// atomicify(update.subList(id, update.size()));
 	}
 
-	public static List<String> mergeStmts(int[] matchID, List<String> flatOrigin, List<String> flatUpdate) {
+	public static TreeSet<StmtModel> mergeStmts(int[] matchID, List<String> flatOrigin, List<String> flatUpdate) {
 		StmtModel model = StmtModel.genModel(flatUpdate.get(0), 0);
 		TreeSet<StmtModel> mergeSet = new TreeSet<StmtModel>();
 

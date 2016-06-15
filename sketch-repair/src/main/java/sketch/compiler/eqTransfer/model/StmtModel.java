@@ -9,6 +9,8 @@ public class StmtModel implements Comparable {
 	int location;
 	boolean autoGen;
 	String[] tokens;
+	String updated;
+	String initString;
 
 	public String getOrigin() {
 		return origin;
@@ -43,6 +45,7 @@ public class StmtModel implements Comparable {
 	}
 
 	public StmtModel(String origin, int loc) {
+		initString = origin;
 		tokens = origin.split(",");
 		this.origin = tokens[tokens.length - 3];
 		location = loc;
@@ -92,7 +95,25 @@ public class StmtModel implements Comparable {
 		return location - model.location;
 	}
 
-	public String toString() {
-		return location + "," + origin;
+	public String getUpdated() {
+		return updated;
 	}
+
+	public void setUpdated(String updated) {
+		this.updated = updated;
+	}
+
+	 public String toString() {
+	 return location + "," + updated + "," + origin;
+	 }
+
+	public String getInitString() {
+		return initString;
+	}
+
+	public void setInitString(String initString) {
+		this.initString = initString;
+	}
+	 
+	 
 }

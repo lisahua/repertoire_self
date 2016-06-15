@@ -204,4 +204,15 @@ public class FlattenStmtModel {
 		return false;
 	}
 
+	public static boolean refineMatch(String origin, String update, String update2) {
+		String[] orgTkn = origin.split(",");
+//		String[] updateTkn = update.split(",");
+		String[] updateTkn2 = update2.split(",");
+		if (orgTkn[0].equals("assign")) {
+			if (updateTkn2[5].equals(orgTkn[5]))
+				return true;
+		}
+
+		return false;
+	}
 }

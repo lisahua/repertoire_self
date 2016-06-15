@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.TreeSet;
 
 import sketch.compiler.ast.core.Function;
 import sketch.compiler.ast.core.Program;
+import sketch.compiler.eqTransfer.model.StmtModel;
 
 public class RepairMapper {
 	private static Program origin = null;
@@ -61,13 +63,17 @@ public class RepairMapper {
 				if (funcs == null || !funcs.contains(fName))
 					continue;
 				Function originFunc = originMap.get(fName);
-				List<String> added = matchStmts(originFunc, func);
+				TreeSet<StmtModel> added = matchStmts(originFunc, func);
+				// TODO
+				for (StmtModel model : added) {
+					System.out.println("[RepairMapper] " + model);
+				}
 			}
 		}
 		return prog;
 	}
 
-	private static List<String> matchStmts(Function origin, Function update) {
+	private static TreeSet<StmtModel> matchStmts(Function origin, Function update) {
 		TempVarReverter revert = new TempVarReverter();
 		List<String> flatOrigin = revert.visitFunction(origin);
 		List<String> flatUpdate = revert.visitFunction(update);
@@ -83,16 +89,20 @@ public class RepairMapper {
 		return parseCompare(flatOrigin, flatUpdate);
 	}
 
-	private static List<String> parseCompare(List<String> flatOrigin, List<String> flatUpdate) {
+	private static TreeSet<StmtModel> parseCompare(List<String> flatOrigin, List<String> flatUpdate) {
 		int[] originMap = new int[flatOrigin.size() + 1];
 		HashSet<Integer> matchedUpdate = new HashSet<Integer>();
 		for (int i = 0; i < flatOrigin.size(); i++) {
 			for (int j = originMap[i]; j < flatUpdate.size(); j++) {
-				if (matchTwoFlat(flatOrigin.get(i), flatUpdate.get(j)) && originMap[i + 1] == 0
-						&& !matchedUpdate.contains(j)) {
-					originMap[i + 1] = j;
-					matchedUpdate.add(j);
-					System.out.println("match " + i + "," + j + "," + flatOrigin.get(i) + " ---" + flatUpdate.get(j));
+				if (matchTwoFlat(flatOrigin.get(i), flatUpdate.get(j)) && !matchedUpdate.contains(j)) {
+					if (originMap[i + 1] == 0) {
+						originMap[i + 1] = j;
+						matchedUpdate.add(j);
+						System.out
+								.println("match " + i + "," + j + "," + flatOrigin.get(i) + " ---" + flatUpdate.get(j));
+//					} else {
+//						
+					}
 				}
 			}
 		}
@@ -145,7 +155,7 @@ public class RepairMapper {
 			for (int j = originMap[i]; j < originMap[i + 1]; j++) {
 				list.add(flatUpdate.get(j));
 			}
-			MergeDeclWithAssign.compareWithStmt(flatOrigin.get(i), list);
+			// MergeDeclWithAssign.compareWithStmt(flatOrigin.get(i), list);
 		}
 
 	}
