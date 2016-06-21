@@ -104,7 +104,7 @@ public class StmtModel implements Comparable {
 	}
 
 	 public String toString() {
-	 return location + "," + updated + "," + origin;
+	 return location + "," + updated + "," + initString;
 	 }
 
 	public String getInitString() {

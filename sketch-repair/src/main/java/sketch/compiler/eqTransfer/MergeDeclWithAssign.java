@@ -36,28 +36,14 @@ public class MergeDeclWithAssign extends FEReplacer {
 			case 2:
 				res.addAll(MergeLRStrategy.atomicify(mergeID[i], mergeID[i + 1], flatOrigin, flatUpdate));
 				break;
+			default:
+				//FIXME
+				newProg.addAll(flatUpdate.subList(mergeID[i],mergeID[i+1]));
 			}
-			if (res.size() == 0) {
-				// TODO check bound
-				newProg.addAll(flatUpdate.subList(mergeID[i], mergeID[i + 1]));
-			} else {
-//				TreeSet<Integer> eids = new TreeSet<Integer>();
-//				TreeSet<Integer> existids = new TreeSet<Integer>();
-//				for (StmtModel replace : res) {
-//					eids.addAll(replace.getEliminatedID());
-//					existids.add(replace.getNewModel().getLocation());
-//				}
-//				for (int k = mergeID[i]; k < mergeID[i + 1]; k++) {
-//					if (existids.contains(k))
-//						newProg.add(flatUpdate.get(k));
-//					else if (eids.contains(k))
-//						continue;
-//					else
-//						newProg.add(flatUpdate.get(k));
-//				}
+				newProg.addAll(res);
 			}
 			// newProg.addAll(res);
-		}
+		
 		newProg.addAll(flatUpdate.subList(mergeID[mergeID.length - 1], flatUpdate.size()));
 		// List<StmtModel> mergeLL = MergeLLStrategy.merge(mergeLR, flatUpdate);
 
